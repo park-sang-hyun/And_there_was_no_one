@@ -12,4 +12,4 @@ from .serializers import RoomSerializer, UserRoomSerializer
 # 방 만들기
 @api_view(['POST'])
 def create(request):
-    pass
+    serializer = RoomSerializer(data=request.data)
