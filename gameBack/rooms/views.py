@@ -39,3 +39,23 @@ def create(request):
             }
 
             return Response(context)
+
+
+# 방 입장
+@api_view(['POST'])
+def comein(request, room_pk):
+    # 중계 테이블에서 방과 유저를 연결만 하면 됨
+    userroom = UserRoomSerializer()
+    userroom.leader = False
+    userroom.room = get_object_or_404(Room, pk=room_pk)
+    userroom.user = request.user
+
+    # 유효성 검사
+    if userroom.is_valid(raise_exception=True):
+        userroom.save()
+
+        context = {
+            'message': '방에 입장하셨습니다.',
+        }
+
+        return Response(context)
