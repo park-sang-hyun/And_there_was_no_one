@@ -39,22 +39,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',
 
+    # package
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'corsheaders',
 
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'rest_auth.registration',
     'allauth.socialaccount',
+
+    # app
+    'accounts',
+    'rooms',
 ]
 
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',                    # CORS
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -118,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'ko-kr'
+LANGUAGE_CODE = 'ko-KR'
 
 TIME_ZONE = 'Asia/Seoul'
 
@@ -126,7 +132,13 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
+
+
+# CORS
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREADENTIALS = True      # local 이라서 전체 허용, 배포 이후에 허용할 도메인들만 list안에 할당
 
 
 # Static files (CSS, JavaScript, Images)
