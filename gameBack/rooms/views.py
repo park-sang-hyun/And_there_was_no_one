@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -17,61 +17,56 @@ from .serializers import RoomSerializer, UserRoomSerializer
 def create(request):
     # 받아온 초기 설정 값을 넣어준다
     serializer = RoomSerializer(data=request.data)
-
+    print(serializer)
     # 유효성 검사
     if serializer.is_valid(raise_exception=True):
         # 저장
         room = serializer.save()
 
         # 중계 테이블 연결을 위해 인스턴스 생성
-        userroom = UserRoomSerializer()
-        userroom.leader = True
+        userroom = UserRoom(leader=True)
         userroom.room = room
         userroom.user = request.user
+        print(userroom)
 
-        # 유효성 검사
-        if userroom.is_valid(raise_exception=True):
-            userroom.save()
+        userroom.save()
 
-            context = {
-                'data': serializer.data,
-                'room_pk': room.pk,
-            }
+        context = {
+            'data': serializer.data,
+            'room_pk': room.pk,
+        }
 
-            return Response(context)
+        return Response(context)
 
 
 # 방 입장
 @api_view(['POST'])
 def comein(request, room_pk):
     # 중계 테이블에서 방과 유저를 연결만 하면 됨
-    userroom = UserRoomSerializer()
-    userroom.leader = False
+    userroom = UserRoom(leader=False)
     userroom.room = get_object_or_404(Room, pk=room_pk)
     userroom.user = request.user
 
-    # 유효성 검사
-    if userroom.is_valid(raise_exception=True):
-        userroom.save()
+    userroom.save()
 
-        context = {
-            'message': '방에 입장하셨습니다.',
-        }
+    context = {
+        'message': '방에 입장하셨습니다.',
+    }
 
-        return Response(context)
+    return Response(context)
 
         
 # 방 수정 (방장)
-@api_view(['PUT', 'GET'])
+@api_view(['POST', 'GET'])
 def update(request, room_pk):
 
-    userromm = get_object_or_494(UserRoom, user=request.user)
+    userroom = get_object_or_404(UserRoom, user=request.user)
 
     # 방장이 아니면 접근할 수 없음
     if userroom.leader == True:
         room = get_object_or_404(Room, pk=room_pk)
 
-        if request.method == 'PUT':
+        if request.method == 'POST':
             serializer = RoomSerializer(instance=room, data=request.data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
@@ -92,7 +87,7 @@ def update(request, room_pk):
 @api_view(['DELETE'])
 def delete(request, room_pk):
 
-    userromm = get_object_or_494(UserRoom, user=request.user)
+    userroom = get_object_or_404(UserRoom, user=request.user)
 
     if userroom.leader == True:
         room = get_object_or_404(Room, pk=room_pk)
@@ -116,7 +111,7 @@ def delete(request, room_pk):
 def comeout(request, room_pk):
 
     room = get_object_or_404(Room, pk=room_pk)
-    userroom = get_object_or_404(user=request.user)
+    userroom = get_object_or_404(UserRoom, user=request.user)
 
     # 방을 가지고 해당하는 userroom 인원 정보 가져오기
     count = UserRoom.objects.filter(room=room).count()
@@ -128,9 +123,9 @@ def comeout(request, room_pk):
     else:
         if userroom.leader == True:
         # 방장을 다른 유저에게 넘긴다
-            nextleader = UserRoom.objects.filter(room=room).order_by('-pk')
+            nextleader = UserRoom.objects.filter(room=room).order_by('-pk')[0]
             nextleader.leader = True
-
+            nextleader.save()
         # 중계테이블에 해당 유저 정보를 삭제
         userroom.delete()
 
