@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,3 +144,6 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 # custom 시리얼라이저에 추가한 nickname 필드에 값이 들어가게함 (회원가입시)
 ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
+
+# Channels
+ASGI_APPLICATION = 'gameBack.routing.application'
