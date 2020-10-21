@@ -2,7 +2,8 @@ from django.db import models
 from django.conf import settings
 
 
-class Room(models.model):
+class Room(models.Model):
+    title = models.CharField(max_length=20)             # 방 제목
     count = models.IntegerField(default = 5)            # 인원 수
     mode = models.IntegerField(default = 1)             # 모드 선택
     drawtime = models.IntegerField(default = 10)        # 그림 그리는 시간
@@ -10,7 +11,7 @@ class Room(models.model):
     showagain = models.BooleanField(default = True)     # 다시 보여줄 건지 여부
 
 
-class UserRoom(models.model):
+class UserRoom(models.Model):
     leader = models.BooleanField(default = False)       # 리더 여부
     user = models.ForeignKey(                           # 방에 참여한 유저
                         settings.AUTH_USER_MODEL,
