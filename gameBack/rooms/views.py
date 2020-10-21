@@ -86,3 +86,26 @@ def update(request, room_pk):
     }
 
     return Response(context)
+    
+    
+# 방 삭제
+@api_view(['DELETE'])
+def delete(request, room_pk):
+
+    userromm = get_object_or_494(UserRoom, user=request.user)
+
+    if userroom.leader == True:
+        room = get_object_or_404(Room, pk=room_pk)
+        room.delete()
+
+        context = {
+            'message': '방이 삭제되었습니다.',
+        }
+
+        return Response(context)
+    
+    context = {
+        'message': '방을 삭제할 권한이 없습니다.',
+    }
+
+    return Response(context)
