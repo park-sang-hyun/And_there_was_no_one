@@ -87,7 +87,7 @@ def update(request, room_pk):
 
     return Response(context)
     
-    
+
 # 방 삭제
 @api_view(['DELETE'])
 def delete(request, room_pk):
@@ -106,6 +106,36 @@ def delete(request, room_pk):
     
     context = {
         'message': '방을 삭제할 권한이 없습니다.',
+    }
+
+    return Response(context)
+    
+
+# 방 나가기
+@api_view(['DELETE'])
+def comeout(request, room_pk):
+
+    room = get_object_or_404(Room, pk=room_pk)
+    userroom = get_object_or_404(user=request.user)
+
+    # 방을 가지고 해당하는 userroom 인원 정보 가져오기
+    count = UserRoom.objects.filter(room=room).count()
+
+    # 만약 마지막 1인이었다면 방을 삭제시킨다.
+    if count == 1:
+        room.delete()
+
+    else:
+        if userroom.leader == True:
+        # 방장을 다른 유저에게 넘긴다
+            nextleader = UserRoom.objects.filter(room=room).order_by('-pk')
+            nextleader.leader = True
+
+        # 중계테이블에 해당 유저 정보를 삭제
+        userroom.delete()
+
+    context = {
+        'message': '방을 나오셨습니다.',
     }
 
     return Response(context)
