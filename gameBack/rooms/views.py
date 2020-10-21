@@ -59,3 +59,30 @@ def comein(request, room_pk):
         }
 
         return Response(context)
+
+        
+# 방 수정 (방장)
+@api_view(['PUT', 'GET'])
+def update(request, room_pk):
+
+    userromm = get_object_or_494(UserRoom, user=request.user)
+
+    # 방장이 아니면 접근할 수 없음
+    if userroom.leader == True:
+        room = get_object_or_404(Room, pk=room_pk)
+
+        if request.method == 'PUT':
+            serializer = RoomSerializer(instance=room, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data)
+
+        else:
+            serializer = RoomSerializer(instance=room)
+            return Response(serializer.data)
+    
+    context = {
+        'message': '방 설정을 수정할 권한이 없습니다.',
+    }
+
+    return Response(context)
