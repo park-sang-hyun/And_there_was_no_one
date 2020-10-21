@@ -42,12 +42,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'corsheaders',
 
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'rest_auth.registration',
-    'corsheaders',
+    'allauth.socialaccount',
 
     # app
     'accounts',
@@ -144,7 +145,12 @@ CORS_ALLOW_CREADENTIALS = True      # local 이라서 전체 허용, 배포 이�
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'accounts.User'
-# REST_USE_JWT = True
 
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+# custom 시리얼라이저로 nickname 추가
+# http://127.0.0.1:8000/rest-auth/registration/에서 nickname 필드 입력칸 확인가능
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.UserSerializer',
+}
+
+# custom 시리얼라이저에 추가한 nickname 필드에 값이 들어가게함 (회원가입시)
+ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
