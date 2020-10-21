@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from accounts.models import User
 
 from .models import Room, UserRoom
-from .serializers import RoomSerializer, UserRoomSerializer
+from .serializers import RoomSerializer
 
 
 # front에서 axios 등의 요청을 보낼 때, header에 ( Authorization: Token 토큰값 ) 을 넣어서 보내줄 것
@@ -27,7 +27,6 @@ def create(request):
         userroom = UserRoom(leader=True)
         userroom.room = room
         userroom.user = request.user
-        print(userroom)
 
         userroom.save()
 
@@ -57,7 +56,7 @@ def comein(request, room_pk):
 
         
 # 방 수정 (방장)
-@api_view(['POST', 'GET'])
+@api_view(['PUT', 'GET'])
 def update(request, room_pk):
 
     userroom = get_object_or_404(UserRoom, user=request.user)
@@ -66,7 +65,7 @@ def update(request, room_pk):
     if userroom.leader == True:
         room = get_object_or_404(Room, pk=room_pk)
 
-        if request.method == 'POST':
+        if request.method == 'PUT':
             serializer = RoomSerializer(instance=room, data=request.data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
