@@ -5,13 +5,10 @@ from .models import User
 from django.http import JsonResponse
 
 
-
 @api_view(['PUT']) # update
 def update(request):
-    me = get_object_or_404(User, id=request.user)
-
+    me = get_object_or_404(User, id=request.user.pk)
     me.nickname = request.data['nickname']
-
     # 수정할 내용이 닉네임밖에 없는 것 같음 
     me.save()
     return JsonResponse({'message':'SUCCESS'})
@@ -19,6 +16,6 @@ def update(request):
 
 @api_view(['DELETE']) # delete
 def delete(request):
-   me = get_object_or_404(User, id=request.user)
-   me.delete()
-   return JsonResponse({'message':'SUCCESS'})
+    me = get_object_or_404(User, id=request.user.pk)
+    me.delete()
+    return JsonResponse({'message':'SUCCESS'})
