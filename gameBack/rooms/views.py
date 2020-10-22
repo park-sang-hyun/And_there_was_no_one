@@ -38,12 +38,45 @@ def create(request):
         return Response(context)
 
 
+# 방 정보 확인
+@api_view(['GET'])
+def roomlist(request):
+    rooms = Room.objects.order_by('-pk')
+
+    roomlist = []
+
+    # 해당 방의 현재 멤버 수를 합쳐서 보내준다.
+    for room in rooms:
+        r_dict = {
+            'member': UserRoom.objects.filter(room=room).count(),
+        }
+        r = RoomSerializer(instance=room)
+        r_dict.update(r.data)
+        roomlist.append(r_dict)
+
+    context = {
+        'roomlist': roomlist,
+    }
+
+    return Response(context)
+
+
 # 방 입장
 @api_view(['POST'])
 def comein(request, room_pk):
+    # 현재 방의 최대 인원수보다 방에 입장한 유저수가 적은 지 확인
+    room = get_object_or_404(Room, pk=room_pk)
+    count = UserRoom.objects.filter(room=room).count()
+
+    if room.count <= count:
+        context = {
+            'message': '인원이 꽉 차서 들어갈 수 없습니다.'
+        }
+        return Response(context)
+    
     # 중계 테이블에서 방과 유저를 연결만 하면 됨
     userroom = UserRoom(leader=False)
-    userroom.room = get_object_or_404(Room, pk=room_pk)
+    userroom.room = room
     userroom.user = request.user
 
     userroom.save()
