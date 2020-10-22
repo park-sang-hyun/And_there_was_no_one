@@ -87,7 +87,40 @@ def comein(request, room_pk):
 
     return Response(context)
 
-        
+
+# 빠른 방 입장
+@api_view(['POST'])
+def quickin(request):
+    rooms = Room.objects.all()
+
+    cnt = 1
+    while cnt < 8:
+
+        for room in rooms:
+            # 게임 진행 중인 방은 건너 뛴다.
+
+            # 현재 방 인원을 확인
+            count = UserRoom.objects.filter(room=room).count()
+            if 1 <= room.count - count <= cnt:
+                userroom = UserRoom(leader=False)
+                userroom.room = room
+                userroom.user = request.user
+
+                userroom.save()
+
+                context = {
+                    'message': f'{room.title} 방에 입장하셨습니다.',
+                }
+
+                return Response(context)
+        cnt += 1
+
+    context = {
+        'message': '현재 입장 가능한 방이 없습니다.'
+    }
+    return Response(context)
+
+
 # 방 수정 (방장)
 @api_view(['PUT', 'GET'])
 def update(request, room_pk):
