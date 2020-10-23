@@ -12,12 +12,25 @@ from .serializers import RoomSerializer
 # front에서 axios 등의 요청을 보낼 때, header에 ( Authorization: Token 토큰값 ) 을 넣어서 보내줄 것
 
 
+# 요청한 유저가 연결된 방이 있는지 확인
+def exist(request):
+    if UserRoom.objects.filter(user=request.user).exists():
+        return True, '이미 방에 있습니다.'
+    
+    return False, ''
+
+
 # 방 만들기
 @api_view(['POST'])
 def create(request):
+
+    # 유저가 연결된 방이 있는지 확인
+    msg = exist(request)
+    if msg[0]:
+        return Response({ 'message': msg[1] })
+
     # 받아온 초기 설정 값을 넣어준다
     serializer = RoomSerializer(data=request.data)
-    print(serializer)
     # 유효성 검사
     if serializer.is_valid(raise_exception=True):
         # 저장
@@ -64,6 +77,11 @@ def roomlist(request):
 # 방 입장
 @api_view(['POST'])
 def comein(request, room_pk):
+    # 유저가 연결된 방이 있는지 확인
+    msg = exist(request)
+    if msg[0]:
+        return Response({ 'message': msg[1] })
+        
     # 현재 방의 최대 인원수보다 방에 입장한 유저수가 적은 지 확인
     room = get_object_or_404(Room, pk=room_pk)
     count = UserRoom.objects.filter(room=room).count()
@@ -91,6 +109,11 @@ def comein(request, room_pk):
 # 빠른 방 입장
 @api_view(['POST'])
 def quickin(request):
+    # 유저가 연결된 방이 있는지 확인
+    msg = exist(request)
+    if msg[0]:
+        return Response({ 'message': msg[1] })
+
     rooms = Room.objects.all()
 
     cnt = 1
