@@ -5,12 +5,12 @@
         <span>{{x}}, {{y}}</span>
         <div class="controls">
             <div class="controls__range">
-                <p style="float:left;">PEN SIZE : </p>
+                <p style="float:left;">PEN 크기 : </p>
                 <input type="range" style="margin-top:21px;" id="jsRange" min="0.1" max="5.0" value="2.5" step="0.1" @input="handleRangeChange"/>
             </div>
             <div class="controls__btns">
-                <button id="jsMode" @click="handleModeClick">Pen</button>
-                <button id="jsSave" @click="handleSaveClick">Save</button>
+                <button id="jsMode" @click="handleModeClick">그리기</button>
+                <button id="jsSave" @click="handleSaveClick">제출하기</button>
             </div>
             <div class="controls__colors" id="jsColors">
                 <div class="controls__color jsColor" style="background-color: #2c2c2c" @click="handleColorClick"></div>
@@ -107,12 +107,12 @@ export default {
             this.ctx.lineWidth = size;
         },
         handleModeClick(){
-            if(this.filling===true){
+            if(this.filling === true){
                 this.filling = false;
-                this.mode.innerText = "Pen";
+                this.mode.innerText = "그리기";
             } else{
                 this.filling = true;
-                this.mode.innerText = "Paint";
+                this.mode.innerText = "채우기";
             }
         },
         handleCanvasClick(){
@@ -132,8 +132,4 @@ export default {
         }
     }
 };
-
-
 </script>
-
-
