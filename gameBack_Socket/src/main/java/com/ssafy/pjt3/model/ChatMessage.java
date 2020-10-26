@@ -11,7 +11,8 @@ public class ChatMessage {
     private int x2;
     private int y2;
     private String color;
-    private int width;
+    private double width;
+    private boolean mode;
 
     public enum MessageType {
         CHAT,
@@ -92,12 +93,20 @@ public class ChatMessage {
 		this.color = color;
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
-	public void setWidth(int width) {
+	public void setWidth(double width) {
 		this.width = width;
+	}
+	
+	public boolean getMode() {
+		return mode;
+	}
+
+	public void setMode(boolean mode) {
+		this.mode = mode;
 	}
     
 }

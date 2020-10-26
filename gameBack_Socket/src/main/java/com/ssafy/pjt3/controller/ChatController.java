@@ -32,11 +32,21 @@ public class ChatController {
     }
 	*/
 	@MessageMapping("/topic/{chatRoomId}")
-	public void handleChat(@Payload ChatMessage message, @DestinationVariable("chatRoomId") String chatRoomId,
+	public void handleChat(ChatMessage message, @DestinationVariable("chatRoomId") String chatRoomId,
 			SimpMessageHeaderAccessor headerAccessor) {
 		System.out.println("///////////////chatRoomId : "+chatRoomId);
 		//System.out.println(headerAccessor.getSessionId()+" "+headerAccessor.getSessionAttributes().get("username"));
+		
+		System.out.println("ox: " + message.getX1());
+		System.out.println("oy: " + message.getY1());
+		System.out.println("nx: " + message.getX2());
+		System.out.println("ny: " + message.getY2());
+		System.out.println("color: " + message.getColor());
+		System.out.println("width: " + message.getWidth());
+		System.out.println("mode: " + message.getMode());
+		
 		this.simpMessagingTemplate.convertAndSend("/topic/"+chatRoomId, message);
+		
 	}
 
 	/*
