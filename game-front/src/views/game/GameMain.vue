@@ -2,7 +2,7 @@
     <div>
         <canvas id="jsCanvas" class="canvas" @mousedown="startPainting" @mousemove="onMouseMove" @mouseup="stopPainting" @mouseleave="stopPainting" @click="handleCanvasClick" @contextmenu="handleCM"></canvas>
         
-        <span>{{x}}, {{y}}</span>
+        <!--<span>{{x}}, {{y}}</span>-->
         <div class="controls">
             <div class="controls__range">
                 <p style="float:left;">PEN 크기 : </p>
@@ -31,7 +31,6 @@
 import "../../assets/css/draw.css"
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
-// import $ from 'jquery'
 import http from "../../util/http-common.js";
 
 export default {
@@ -123,9 +122,9 @@ export default {
             );        
         },
         receiveMouseMove(x1, y1, x2, y2, color, width, mode){
-            console.log("painting : ", this.painting)
-            console.log("filling : ", this.filling)
-            console.log("mode : ", mode)
+            //console.log("painting : ", this.painting)
+            //console.log("filling : ", this.filling)
+            //console.log("mode : ", mode)
 
             this.ctx.strokeStyle = color;
             this.ctx.fillStyle = color;
@@ -135,7 +134,6 @@ export default {
             this.ctx.moveTo(x1, y1);
             this.ctx.lineTo(x2, y2);
             this.ctx.stroke();
-            
         },
         send() {
             if (this.stompClient && this.stompClient.connected) {
@@ -165,7 +163,6 @@ export default {
             this.x = x;
             this.y = y;
         
-            
             if(!this.painting) {
                 this.ctx.beginPath();
                 this.ctx.moveTo(x, y);
@@ -209,7 +206,7 @@ export default {
             this.image = this.canvas.toDataURL();
             this.link = document.createElement("a");
             this.link.href = this.image;
-            this.link.download = "PaintJS[🖼]";
+            this.link.download = "DrawBoard";
             this.link.click();
         }
     }
