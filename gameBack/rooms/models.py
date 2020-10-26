@@ -8,18 +8,13 @@ class Room(models.Model):
     count = models.IntegerField(default=5, blank=True, null=True,
                                 validators=[
                                     MaxValueValidator(8),
-                                    MinValueValidator(5)
+                                    MinValueValidator(4)
                                 ])
     mode = models.IntegerField(default=1, blank=True, null=True)
-    drawtime = models.IntegerField(default=10, blank=True, null=True,
+    difficulty = models.IntegerField(default=1, blank=True, null=True,
                                     validators=[
-                                        MaxValueValidator(30),
-                                        MinValueValidator(5)
-                                    ])
-    showtime = models.IntegerField(default=1, blank=True, null=True,
-                                    validators=[
-                                        MaxValueValidator(100),
-                                        MinValueValidator(0)
+                                        MaxValueValidator(3),
+                                        MinValueValidator(1)
                                     ])
     showagain = models.BooleanField(default=True, null=True)
     start = models.BooleanField(default=False, null=True)
