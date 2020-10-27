@@ -5,7 +5,7 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 
 from rest_auth.registration.serializers import RegisterSerializer
-
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
@@ -24,4 +24,12 @@ class UserSerializer(RegisterSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'nickname', )
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Token
+        fields = ('key', 'user')
+
 
