@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
+
 class User(AbstractUser):
     # username, password는 AbstractUser에서 상속받아서 따로 기재하지않는다.
 
@@ -10,8 +11,7 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
-    # verbose_name옵션을 지정하지 않으면 CamelCase 클래스 이름을 기준으로 camel case 이와 같이 모두 소문자로 변경한다
-
+    
     nickname = models.CharField(
         verbose_name=('Nickname'),
         max_length=30,
@@ -20,7 +20,6 @@ class User(AbstractUser):
     playcount = models.IntegerField('플레이수', default=0)
     wincount = models.IntegerField('이긴수', default=0)
     score = models.IntegerField('점수', default=0)
-    friends = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='myfriends')
 
     # VScode경고 때문에 delete할 때 django.db.utils.OperationalError: no such table: allauth_socialaccount 에러남
     # django는 object와 속성들을 모든 model클래스에 동적으로 추가하는데 vscode가 이를 모르고 경고함
@@ -32,3 +31,16 @@ class User(AbstractUser):
     # nickname이 해당 user의 대표값이 돼서 admin페이지에서 nickname으로 구분 가능
     def __str__(self):
         return self.nickname
+
+    class Meta:
+        managed = False
+        db_table = 'User'
+
+
+class Userconnect(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friends')
+    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name='yourfriends')
+
+    class Meta:
+        managed = False
+        db_table = 'UserConnect'

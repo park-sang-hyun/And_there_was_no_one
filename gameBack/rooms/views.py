@@ -12,12 +12,25 @@ from .serializers import RoomSerializer
 # front에서 axios 등의 요청을 보낼 때, header에 ( Authorization: Token 토큰값 ) 을 넣어서 보내줄 것
 
 
+# 요청한 유저가 연결된 방이 있는지 확인
+def exist(request):
+    if UserRoom.objects.filter(user=request.user).exists():
+        return True, '이미 방에 있습니다.'
+    
+    return False, ''
+
+
 # 방 만들기
 @api_view(['POST'])
 def create(request):
+
+    # 유저가 연결된 방이 있는지 확인
+    msg = exist(request)
+    if msg[0]:
+        return Response({ 'message': msg[1] })
+
     # 받아온 초기 설정 값을 넣어준다
     serializer = RoomSerializer(data=request.data)
-    print(serializer)
     # 유효성 검사
     if serializer.is_valid(raise_exception=True):
         # 저장
@@ -38,12 +51,50 @@ def create(request):
         return Response(context)
 
 
+# 방 정보 확인
+@api_view(['GET'])
+def roomlist(request):
+    rooms = Room.objects.order_by('-pk')
+
+    roomlist = []
+
+    # 해당 방의 현재 멤버 수를 합쳐서 보내준다.
+    for room in rooms:
+        r_dict = {
+            'member': UserRoom.objects.filter(room=room).count(),
+        }
+        r = RoomSerializer(instance=room)
+        r_dict.update(r.data)
+        roomlist.append(r_dict)
+
+    context = {
+        'roomlist': roomlist,
+    }
+
+    return Response(context)
+
+
 # 방 입장
 @api_view(['POST'])
 def comein(request, room_pk):
+    # 유저가 연결된 방이 있는지 확인
+    msg = exist(request)
+    if msg[0]:
+        return Response({ 'message': msg[1] })
+        
+    # 현재 방의 최대 인원수보다 방에 입장한 유저수가 적은 지 확인
+    room = get_object_or_404(Room, pk=room_pk)
+    count = UserRoom.objects.filter(room=room).count()
+
+    if room.count <= count:
+        context = {
+            'message': '인원이 꽉 차서 들어갈 수 없습니다.'
+        }
+        return Response(context)
+    
     # 중계 테이블에서 방과 유저를 연결만 하면 됨
     userroom = UserRoom(leader=False)
-    userroom.room = get_object_or_404(Room, pk=room_pk)
+    userroom.room = room
     userroom.user = request.user
 
     userroom.save()
@@ -54,7 +105,45 @@ def comein(request, room_pk):
 
     return Response(context)
 
-        
+
+# 빠른 방 입장
+@api_view(['POST'])
+def quickin(request):
+    # 유저가 연결된 방이 있는지 확인
+    msg = exist(request)
+    if msg[0]:
+        return Response({ 'message': msg[1] })
+
+    rooms = Room.objects.all()
+
+    cnt = 1
+    while cnt < 8:
+
+        for room in rooms:
+            # 게임 진행 중인 방은 건너 뛴다.
+
+            # 현재 방 인원을 확인
+            count = UserRoom.objects.filter(room=room).count()
+            if 1 <= room.count - count <= cnt:
+                userroom = UserRoom(leader=False)
+                userroom.room = room
+                userroom.user = request.user
+
+                userroom.save()
+
+                context = {
+                    'message': f'{room.title} 방에 입장하셨습니다.',
+                }
+
+                return Response(context)
+        cnt += 1
+
+    context = {
+        'message': '현재 입장 가능한 방이 없습니다.'
+    }
+    return Response(context)
+
+
 # 방 수정 (방장)
 @api_view(['PUT', 'GET'])
 def update(request, room_pk):

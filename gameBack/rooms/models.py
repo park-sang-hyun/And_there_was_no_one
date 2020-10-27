@@ -1,24 +1,34 @@
 from django.db import models
-from django.conf import settings
+from accounts.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Room(models.Model):
-    title = models.CharField(max_length=20)             # 방 제목
-    count = models.IntegerField(default = 5)            # 인원 수
-    mode = models.IntegerField(default = 1)             # 모드 선택
-    drawtime = models.IntegerField(default = 10)        # 그림 그리는 시간
-    showtime = models.IntegerField(default = 1)         # 완성된 그림 보여주는 시간
-    showagain = models.BooleanField(default = True)     # 다시 보여줄 건지 여부
+    title = models.CharField(max_length=30)
+    count = models.IntegerField(default=5, blank=True, null=True,
+                                validators=[
+                                    MaxValueValidator(8),
+                                    MinValueValidator(4)
+                                ])
+    mode = models.IntegerField(default=1, blank=True, null=True)
+    difficulty = models.IntegerField(default=1, blank=True, null=True,
+                                    validators=[
+                                        MaxValueValidator(3),
+                                        MinValueValidator(1)
+                                    ])
+    showagain = models.BooleanField(default=True, null=True)
+    start = models.BooleanField(default=False, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Room'
 
 
 class UserRoom(models.Model):
-    leader = models.BooleanField(default = False)       # 리더 여부
-    user = models.ForeignKey(                           # 방에 참여한 유저
-                        settings.AUTH_USER_MODEL,
-                        on_delete=models.CASCADE
-                        )
-    room = models.ForeignKey(                           # 현재 방
-                        Room,
-                        on_delete=models.CASCADE
-                        )
+    leader = models.BooleanField(default=False, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
 
+    class Meta:
+        managed = False
+        db_table = 'UserRoom'
