@@ -46,7 +46,6 @@ public class ChatController {
 		System.out.println("mode: " + message.getMode());
 		
 		this.simpMessagingTemplate.convertAndSend("/topic/"+chatRoomId, message);
-		
 	}
 
 	/*
