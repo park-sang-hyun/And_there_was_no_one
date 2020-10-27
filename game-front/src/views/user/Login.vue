@@ -2,19 +2,14 @@
   <div class="user" id="login">
     <div class="wrapC">
       <Logo :component="component" />
-
       <div class="input-with-label">
         <input
-          v-model="email"
-          v-bind:class="{error : error.email, complete:!error.email&&email.length!==0}"
-          @keyup="checkEmailForm"
-          @keyup.enter="onLogin"
-          id="email"
-          placeholder="이메일을 입력하세요."
+          v-model="username"
           type="text"
+          id="username"
+          placeholder="아이디를 입력하세요."
         />
-        <label for="email">이메일</label>
-        <div class="error-text" v-if="error.email">{{error.email}}</div>
+        <label for="username">아이디</label>
       </div>
 
       <div class="input-with-label">
@@ -43,13 +38,13 @@
           <p>혹시</p>
           <div class="bar"></div>
         </div>
-        <div class="wrap">
+        <!-- <div class="wrap">
           <p>비밀번호를 잊으셨나요?</p>
           <router-link to="/find/password" class="btn--text">비밀번호 찾기</router-link>
-        </div>
+        </div> -->
         <div class="wrap">
           <p>아직 회원이 아니신가요?</p>
-          <router-link to="/user/join/1" class="btn--text">가입하기</router-link>
+          <router-link to="/signup/" class="btn--text">가입하기</router-link>
         </div>
       </div>
     </div>
@@ -59,7 +54,6 @@
 <script>
 //import "../../components/css/user.scss";
 import PV from "password-validator";
-import * as EmailValidator from "email-validator";
 import Logo from "../../components/user/Logo.vue";
 //import UserApi from "../../api/UserApi";
 import http from "../../util/http-common.js";
@@ -72,11 +66,10 @@ export default {
   },
   data: () => {
     return {
-      email: "",
+      username: "",
       password: "",
       passwordSchema: new PV(),
       error: {
-        email: false,
         password: false
       },
       isSubmit: false,
@@ -102,14 +95,6 @@ export default {
       this.token = token
       this.info = info
     },
-    checkEmailForm() {
-      if (this.email.length >= 0 && !EmailValidator.validate(this.email)){
-        this.error.email = "이메일 형식이 아닙니다.";
-      } else {
-        this.error.email = ""
-      }
-        
-    },
     checkPasswordForm() {
        if (
         this.password.length >= 0 &&
@@ -132,31 +117,34 @@ export default {
       if (this.isSubmit) {
 
         storage.setItem("token", "");
-        storage.setItem("User", "");
-        storage.setItem("NickName", "");
+        storage.setItem("id", "");
         storage.setItem("alarmTab", 1);
         
-        let msg = "";
+        let msg = "뭐지 왜 안되지";
         
         http
-        .post("/account/login", {
-          email : this.email,
+        .post("rest-auth/login/", {
+          username : this.username,
           password : this.password,
         },
         )
         .then((res) => {
-          if(res.data.status) {
+          console.log(res)
+          console.log(res.data.key)
+          console.log(res.data.user)
+          if(res.status) {
+            console.log("enter")
             msg = "로그인되었습니다.";
-            storage.setItem("token", res.data.token)
+            storage.setItem("token", res.data.key)
             // var User = {
             //   "email" : res.data.email,
             //   "nickname" : res.data.nickname,
             // }
-            storage.setItem("User", res.data.email)
-            storage.setItem("NickName", res.data.nickname)
+            storage.setItem("id", res.data.user)
+            console.log(storage)
           }
           alert(msg);
-          this.moveFeed();
+          // this.moveFeed();
         })
         // .catch((err) => {
         //   this.error.password = "로그인 정보가 일치하지 않습니다. 다시 입력하세요.";
