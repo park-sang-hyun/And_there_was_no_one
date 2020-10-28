@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ssafy</groupId>
-	<artifactId>gameBack_Robby</artifactId>
+	<artifactId>gameBack_Lobby</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>gameBack_Robby</name>
+	<name>gameBack_Lobby</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
