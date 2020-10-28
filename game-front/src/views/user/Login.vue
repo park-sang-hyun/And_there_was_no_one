@@ -2,6 +2,7 @@
   <div class="user" id="login">
     <div class="wrapC">
       <Logo :component="component" />
+      <h5>Login page</h5>
       <div class="input-with-label">
         <input
           v-model="username"
@@ -55,7 +56,6 @@
 //import "../../components/css/user.scss";
 import PV from "password-validator";
 import Logo from "../../components/user/Logo.vue";
-//import UserApi from "../../api/UserApi";
 import http from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
@@ -120,7 +120,7 @@ export default {
         storage.setItem("id", "");
         storage.setItem("alarmTab", 1);
         
-        let msg = "뭐지 왜 안되지";
+        let msg = "";
         
         http
         .post("rest-auth/login/", {
@@ -136,26 +136,22 @@ export default {
             console.log("enter")
             msg = "로그인되었습니다.";
             storage.setItem("token", res.data.key)
-            // var User = {
-            //   "email" : res.data.email,
-            //   "nickname" : res.data.nickname,
-            // }
             storage.setItem("id", res.data.user)
             console.log(storage)
           }
           alert(msg);
-          // this.moveFeed();
+          this.moveFeed();
         })
-        // .catch((err) => {
-        //   this.error.password = "로그인 정보가 일치하지 않습니다. 다시 입력하세요.";
-        // })
+        .catch((err) => {
+          this.error.password = "로그인 정보가 일치하지 않습니다. 다시 입력하세요.";
+        })
       
     }
   },
 
-  // moveFeed(){
-  //       this.$router.push("/main");
-  // },
+  moveFeed(){
+        this.$router.push("/lobby");
+  },
 },
  
 };
