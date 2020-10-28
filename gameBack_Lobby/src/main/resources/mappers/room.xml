@@ -9,10 +9,14 @@
 		select * from room where 1=1
      </select>
 
- 
-     <insert id="insert">
-    		insert into room(title, max_count, cur_count, mode, difficulty, start) 
-    		values(#{title},#{max_count},#{cur_count},#{mode},#{difficulty},#{start})
+     <insert id="create" useGeneratedKeys="true" keyProperty="id">
+    	insert into room(title, max_count, cur_count, mode, difficulty, start) 
+    	values(#{title},#{max_count},#{cur_count},#{mode},#{difficulty},#{start})
+     </insert>
+     
+     <insert id="connectUser" parameterType="com.ssafy.pjt3.dto.UserRoom">
+    	insert into userroom(leader, user_id, room_id) 
+    	values(#{leader},#{user_id},#{room_id})
      </insert>
     
     <update id="update" >
