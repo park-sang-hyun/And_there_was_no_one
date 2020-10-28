@@ -3,9 +3,6 @@
         <div>
             <img src="../../assets/images/Logo.jpg">
         </div>
-        <h5 class="mt-2 mb-5" style="color:#464545">
-            내 마음을 그려줘^^
-        </h5>
     </div>
     
 </template>
