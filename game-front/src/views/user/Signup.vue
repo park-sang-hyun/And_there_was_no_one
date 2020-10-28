@@ -1,8 +1,8 @@
 <template>
-  <div class="user" id="login">
+  <div class="user" id="signup">
     <div class="wrapC">
       <Logo :component="component" />
-      <h5>Login page</h5>
+      <h5>Signup page</h5>
       <div class="input-with-label">
         <input
           v-model="username"
@@ -13,41 +13,48 @@
         <label for="username">아이디</label>
       </div>
 
+      <!-- 닉네임 중복체크하기  -->
       <div class="input-with-label">
         <input
-          v-model="password"
-          type="password"
-          v-bind:class="{error : error.password, complete:!error.password&&password.length!==0}"
-          id="password"
+          v-model="nickname"
+          type="text"
+          id="nickname"
+          placeholder="닉네임을 입력하세요."
+        />
+        <label for="nickname">닉네임</label>
+      </div>
+
+      <div class="input-with-label">
+        <input
+          v-model="password1"
+          type="password1"
+          v-bind:class="{error : error.password1, complete:!error.password1&&password1.length!==0}"
+          id="password1"
           @keyup="checkPasswordForm"
-          @keyup.enter="onLogin"
           placeholder="비밀번호를 입력하세요."
         />
-        <label for="password">비밀번호</label>
-        <div class="error-text" v-if="error.password">{{error.password}}</div>
+        <label for="password1">비밀번호</label>
+        <div class="error-text" v-if="error.password1">{{error.password1}}</div>
+      </div>
+      <!-- 비밀번호 맞는지 체크하기  -->
+      <div class="input-with-label">
+        <input
+          v-model="password2"
+          type="password2"
+          id="password2"
+          @keyup.enter="onSignup"
+          placeholder="비밀번호를 다시 입력하세요."
+        />
+        <label for="password2">비밀번호확인</label>
       </div>
 
       <button
-        class="btn btn--back btn--login"
-        @click="onLogin"
+        class="btn btn--back btn--signup"
+        @click="onSignup"
         :disabled="!isSubmit"
         :class="{disabled : !isSubmit}"
-      >로그인</button>
-      
-      <div class="add-option mt-4">
-        <div class="text">
-          <p>혹시</p>
-          <div class="bar"></div>
-        </div>
-        <!-- <div class="wrap">
-          <p>비밀번호를 잊으셨나요?</p>
-          <router-link to="/find/password" class="btn--text">비밀번호 찾기</router-link>
-        </div> -->
-        <div class="wrap">
-          <p>아직 회원이 아니신가요?</p>
-          <router-link to="/signup/" class="btn--text">가입하기</router-link>
-        </div>
-      </div>
+      >회원가입</button>
+
     </div>
   </div>
 </template>
@@ -67,10 +74,12 @@ export default {
   data: () => {
     return {
       username: "",
-      password: "",
+      nickname: "",
+      password1: "",
+      password2: "",
       passwordSchema: new PV(),
       error: {
-        password: false
+        password1: false
       },
       isSubmit: false,
     };
@@ -97,12 +106,12 @@ export default {
     },
     checkPasswordForm() {
        if (
-        this.password.length >= 0 &&
-        !this.passwordSchema.validate(this.password)
+        this.password1.length >= 0 &&
+        !this.passwordSchema.validate(this.password1)
       ){
-        this.error.password = "영문,숫자 포함 8 자리이상이어야 합니다.";
+        this.error.password1 = "영문,숫자 포함 8 자리이상이어야 합니다.";
       } else {
-        this.error.password = ""
+        this.error.password1 = ""
       }
         
       
@@ -113,7 +122,7 @@ export default {
     },
 
     // 로그인 요청 - 토큰 받아서 local storage에 넣기
-    onLogin() {
+    onSignup() {
       if (this.isSubmit) {
 
         storage.setItem("token", "");
@@ -123,9 +132,11 @@ export default {
         let msg = "";
         
         http
-        .post("rest-auth/login/", {
+        .post("rest-auth/registration/", {
           username : this.username,
-          password : this.password,
+          nickname : this.nickname,
+          password1 : this.password1,
+          password2 : this.password2,
         },
         )
         .then((res) => {
@@ -134,7 +145,7 @@ export default {
           console.log(res.data.user)
           if(res.status) {
             console.log("enter")
-            msg = "로그인되었습니다.";
+            msg = "회원가입되었습니다.";
             storage.setItem("token", res.data.key)
             storage.setItem("id", res.data.user)
             console.log(storage)
@@ -143,7 +154,7 @@ export default {
           this.moveFeed();
         })
         .catch((err) => {
-          this.error.password = "로그인 정보가 일치하지 않습니다. 다시 입력하세요.";
+          this.error.password1 = err;
         })
       
     }

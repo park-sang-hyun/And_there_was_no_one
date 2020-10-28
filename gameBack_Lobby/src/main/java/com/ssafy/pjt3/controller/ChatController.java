@@ -5,16 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.ssafy.pjt3.model.ChatMessage;
 
-/**
- * Created by rajeevkumarsingh on 24/07/17.
- */
 @Controller
 public class ChatController {
 	private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
@@ -37,14 +33,11 @@ public class ChatController {
 		System.out.println("///////////////chatRoomId : "+chatRoomId);
 		//System.out.println(headerAccessor.getSessionId()+" "+headerAccessor.getSessionAttributes().get("username"));
 		
-		System.out.println("ox: " + message.getX1());
-		System.out.println("oy: " + message.getY1());
-		System.out.println("nx: " + message.getX2());
-		System.out.println("ny: " + message.getY2());
-		System.out.println("color: " + message.getColor());
-		System.out.println("width: " + message.getWidth());
-		System.out.println("mode: " + message.getMode());
-		
+		System.out.println("type: " + message.getType());
+		System.out.println("content: " + message.getContent());
+		System.out.println("sender: " + message.getSender());
+		System.out.println("roomName: " + message.getRoomName());
+	
 		this.simpMessagingTemplate.convertAndSend("/topic/"+chatRoomId, message);
 	}
 

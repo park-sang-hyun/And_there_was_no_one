@@ -1,14 +1,22 @@
 import Login from './views/user/Login.vue'
+import Signup from './views/user/Signup.vue'
 import GameMain from './views/game/GameMain.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
+import Lobby from './views/lobby/lobby.vue'
 
 export default [
-    // User
+    // Auth 
     {
         path : '/',
         name : 'Login',
         component : Login
+    },
+    // Auth 
+    {
+        path : '/signup',
+        name : 'Signup',
+        component : Signup
     },
     // GameMain
     {
@@ -29,5 +37,11 @@ export default [
         // path: '/playing/:roomId',
         name: 'PlayGame',
         component: PlayGame
+    },
+    // Lobby
+    {
+        path : '/lobby',
+        name : 'Lobby',
+        component : Lobby
     },
 ]

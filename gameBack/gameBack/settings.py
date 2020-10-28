@@ -169,6 +169,10 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'accounts.serializers.UserSerializer',
 }
 
+REST_AUTH_SERIALIZERS = {
+    'TOKEN_SERIALIZER': 'accounts.serializers.TokenSerializer',
+}
+
 # custom 시리얼라이저에 추가한 nickname 필드에 값이 들어가게함 (회원가입시)
 ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 
