@@ -1,7 +1,11 @@
-import Vue from 'vue'
+import Vue from 'vue';
 import VueRouter from 'vue-router';
-import routes from './routes'
-import App from './App.vue'
+import routes from './routes';
+import App from './App.vue';
+
+// 패키지;
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 Vue.config.productionTip = false
 
