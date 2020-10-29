@@ -2,7 +2,7 @@ package com.ssafy.pjt3.dto;
 
 public class User {
 	int id;
-	String userid;
+	String username;
 	String nickname;
 	String password;
 	int playcount;
@@ -10,10 +10,10 @@ public class User {
 	int score;
 	
 	public User() {}
-	
-	public User(int id, String userid, String nickname, String password, int playcount, int wincount, int score) {
+
+	public User(int id, String username, String nickname, String password, int playcount, int wincount, int score) {
 		this.id = id;
-		this.userid = userid;
+		this.username = username;
 		this.nickname = nickname;
 		this.password = password;
 		this.playcount = playcount;
@@ -29,12 +29,12 @@ public class User {
 		this.id = id;
 	}
 
-	public String getUserid() {
-		return userid;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getNickname() {
