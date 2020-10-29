@@ -1,5 +1,7 @@
 package com.ssafy.pjt3.service;
 
-public class UserService {
+import java.sql.SQLException;
 
+public interface UserService {
+	public int findPkId(String username) throws SQLException;
 }

@@ -8,15 +8,25 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.pjt3.dao.RoomDao;
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.UserRoom;
 
 @Service
 public class RoomServiceImpl implements RoomService {
-	
 	@Autowired
 	RoomDao roomDao;
 
 	@Override
 	public List<Room> findAll() throws SQLException {
 		return roomDao.findAll();
+	}
+
+	@Override
+	public void createRoom(Room room) throws SQLException {
+		roomDao.createRoom(room);
+	}
+
+	@Override
+	public void connectUserToRoom(UserRoom userroom) throws SQLException {
+		roomDao.connectUserToRoom(userroom);
 	}
 }

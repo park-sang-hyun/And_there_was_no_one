@@ -1,5 +1,7 @@
 package com.ssafy.pjt3.dao;
 
-public class UserDao {
+import java.sql.SQLException;
 
+public interface UserDao {
+	public int findPkId(String username) throws SQLException;
 }

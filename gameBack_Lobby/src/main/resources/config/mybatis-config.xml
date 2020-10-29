@@ -7,5 +7,6 @@
     </typeAliases>
 	<mappers>	  
 		<mapper resource="mappers/room.xml" />
+		<mapper resource="mappers/user.xml" />
 	</mappers>
 </configuration>
