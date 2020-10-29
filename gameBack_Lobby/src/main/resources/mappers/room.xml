@@ -18,6 +18,29 @@
     	insert into userroom(leader, user_id, room_id) 
     	values(#{leader},#{user_id},#{room_id})
      </insert>
+     
+     <select id="findRoomPkId" resultType="int">
+		select room_id from userroom where user_id=#{user_id}
+     </select>
+     
+     <select id="findUserInRoom" resultType="com.ssafy.pjt3.dto.User">
+		select u.id, u.username, u.nickname, u.password, u.playcount, u.wincount, u.score
+		from userroom as ur
+		join user as u
+		on ur.user_id = u.id;
+     </select>
+     
+     <update id="takeLeader">
+     	update userroom 
+     	set leader = 1
+     	where user_id=#{user_id}
+     </update>
+     
+     <update id="giveLeader">
+     	update userroom 
+     	set leader = 0
+     	where user_id=#{user_id}
+     </update>
     
     <update id="update" >
     	update room set title =    	
