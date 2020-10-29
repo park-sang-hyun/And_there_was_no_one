@@ -4,7 +4,7 @@
         <div class="screen__top">
             <!-- 방제목 -->
             <div class="room__title">
-                {{ defaultroom.title }}
+                [001]번방 {{ defaultroom.title }} 
             </div>
         </div>
 
@@ -20,7 +20,8 @@
         <div class="screen__right">
             <!-- 게임 설정 출력 (상중하 / 모드) -->
             <div class="setting__part">
-                <span>게임 설정</span>
+                <mode/>
+                <difficulty/>
             </div>
 
             <!-- 방장인 경우 클릭 가능 -->
@@ -29,7 +30,7 @@
             </div>
 
             <!-- 게임 시작 버튼 -->
-            <div class="game__start">
+            <div class="game__start d-flex justify-content-center align-items-center">
                 <div class="btn btn-primary start-button">게임 시작</div>
             </div>
         </div>
@@ -38,12 +39,16 @@
 
 <script>
 import user from '@/components/game/WaitUser.vue'
+import mode from '@/components/game/modeSetting.vue';
+import difficulty from '@/components/game/difficultySetting.vue';
 
 export default {
     name: 'WaitRoom',
     
     components: {
         user,
+        difficulty,
+        mode,
     },
 
     data() {
@@ -223,7 +228,8 @@ export default {
 /* 버튼 */
 .start-button {
     display: block;
-    width: 100%;
+    width: 80%;
+    height: 50%;
 }
 
 </style>

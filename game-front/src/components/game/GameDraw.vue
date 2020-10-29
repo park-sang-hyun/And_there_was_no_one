@@ -28,15 +28,21 @@
 </template>
 
 <script>
-import "../../assets/css/draw.css"
+import "@/assets/css/draw.css"
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
-import http from "../../util/http-common.js";
+import http from "@/util/http-common.js";
 
 export default {
     components:{
 
     },
+    props: {
+        window: {
+            type: Object,
+        }
+    },
+
     data: () =>{
         return{
             x: 0,
