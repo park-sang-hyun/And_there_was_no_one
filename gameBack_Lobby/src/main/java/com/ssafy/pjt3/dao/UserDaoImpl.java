@@ -16,4 +16,9 @@ public class UserDaoImpl implements UserDao{
 		return session.selectOne("user_mapper.selectPkId", username);
 	}
 
+	@Override
+	public boolean isLeader(int user_id) throws SQLException {
+		return session.selectOne("user_mapper.isLeader", user_id);
+	}
+
 }

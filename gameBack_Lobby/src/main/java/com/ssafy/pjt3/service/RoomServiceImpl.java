@@ -45,4 +45,14 @@ public class RoomServiceImpl implements RoomService {
 	public void mandateLeader(int giveUser, int takeUser) throws SQLException {
 		roomDao.mandateLeader(giveUser, takeUser);
 	}
+
+	@Override
+	public void leaveRoom(int user_id) throws SQLException {
+		roomDao.leaveRoom(user_id);
+	}
+
+	@Override
+	public void deleteRoom(int room_id) throws SQLException {
+		roomDao.deleteRoom(room_id);
+	}
 }
