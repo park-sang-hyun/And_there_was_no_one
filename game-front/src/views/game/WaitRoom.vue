@@ -4,7 +4,7 @@
         <div class="screen__top">
             <!-- 방제목 -->
             <div class="room__title">
-                [001]번방 {{ defaultroom.title }} 
+                [001]번방 {{ room.title }} 
             </div>
         </div>
 
@@ -12,7 +12,7 @@
         <div class="screen__left">
             <!-- 입장한 유저 목록 -->
             <div class="user__part">
-                <user v-for="mem in defaultroom.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;"/>
+                <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;"/>
             </div>
         </div>
 
@@ -20,8 +20,8 @@
         <div class="screen__right">
             <!-- 게임 설정 출력 (상중하 / 모드) -->
             <div class="setting__part">
-                <mode/>
-                <difficulty/>
+                <mode :mode="room.mode" />
+                <difficulty :difficulty="room.difficulty" />
             </div>
 
             <!-- 방장인 경우 클릭 가능 -->
@@ -56,8 +56,9 @@ export default {
             room: {},
             defaultroom: {
                 title: '스겜',
+                mode: 1,
                 count: 8,
-                difficulty: 1,
+                difficulty: 2,
                 start: false,
                 members: [
                     {
@@ -112,6 +113,9 @@ export default {
 
 
     created() {
+        // 이후엔 요청 보내서 받아올 것
+        this.room = this.defaultroom;
+
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
@@ -178,14 +182,14 @@ export default {
     font-weight: bold;
     text-align: center;
     line-height: 60px;
-    background-color: beige;
+    /* background-color: beige; */
 }
 
 .screen__left {
     display: inline-block;
     width: var(--leftSize);
     height: var(--mainSize);
-    background-color: aquamarine;
+    /* background-color: aquamarine; */
 }
 
 .screen__right {
@@ -193,7 +197,7 @@ export default {
     float: right;
     width: var(--rightSize);
     height: var(--mainSize);
-    background-color: skyblue;
+    /* background-color: skyblue; */
 }
 
 

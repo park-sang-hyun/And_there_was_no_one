@@ -69,7 +69,7 @@ export default {
 .user__part {
     width: var(--userWidth);
     height: var(--userHeight);
-    background-color: rgba(0, 0, 0, 0.3);
+    /* background-color: rgba(0, 0, 0, 0.3); */
     margin: 10px 10px 10px 10px;
     border-radius: 20px;
 }

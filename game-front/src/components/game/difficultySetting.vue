@@ -4,23 +4,23 @@
         <div class="radio__header">난이도</div>
         <div class="toggle_radio">
 
-            <input type="radio" class="toggle_option" id="first_toggle" name="toggle_option">
-            <input type="radio" checked class="toggle_option" id="second_toggle" name="toggle_option">
-            <input type="radio" class="toggle_option" id="third_toggle" name="toggle_option">
+            <input type="radio" class="toggle_option" id="first_toggle" name="toggle_option" value="1" v-model="difficultySelect">
+            <input type="radio" checked class="toggle_option" id="second_toggle" name="toggle_option" value="2" v-model="difficultySelect">
+            <input type="radio" class="toggle_option" id="third_toggle" name="toggle_option" value="3" v-model="difficultySelect">
 
             <label for="first_toggle">
                 <span class="description">시간 5초</span>
-                <p class="day">상 </p>
+                <p class="day">상</p>
             </label>
 
             <label for="second_toggle">
                 <span class="description">시간 10초</span>
-                <p class="day">중 </p>
+                <p class="day">중</p>
             </label>
 
             <label for="third_toggle">
                 <span class="description">시간 15초</span>
-                <p class="day">하 </p>
+                <p class="day">하</p>
             </label>
             
             <div class="toggle_option_slider">
@@ -35,19 +35,19 @@ export default {
     name: "difficultySetting",
 
     props: {
-
+        difficulty: {
+            object: Number,
+        }
     },
 
     data() {
         return {
-            defaultRoom: {
-                difficulty: 1,
-            }
+            difficultySelect: 2,
         }
     },
 
     created() {
-
+        this.difficultySelect = this.difficulty;
     },
 
     methods: {
