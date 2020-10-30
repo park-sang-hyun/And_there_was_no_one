@@ -33,9 +33,9 @@ public class RoomController {
 
 		try {
 			list = roomService.findAll();
-			for (int i = 0; i < list.size(); i++) {
-				System.out.println("title: " + list.get(i).getTitle());
-			}
+			//for (int i = 0; i < list.size(); i++) {
+			//	System.out.println("title: " + list.get(i).getTitle());
+			//}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class RoomController {
 			roomService.createRoom(room);
 			int room_id = room.getId();
 			int user_id = userService.findPkId(username);
-			System.out.println("roompk : " + room_id + "  userpk : " + user_id);
+			//System.out.println("roompk : " + room_id + "  userpk : " + user_id);
 			
 			UserRoom userroom = new UserRoom();
 			
@@ -69,25 +69,41 @@ public class RoomController {
 	public void roomLeave(@PathVariable String username) {
 		try {
 			int user_id = userService.findPkId(username);
+			boolean isLeader = userService.isLeader(user_id);
 			int room_id = roomService.findRoomPkId(user_id);
-			System.out.println("userpkid : " + user_id + "  roompkid : " + room_id);
+			
+			//System.out.println("userpkid : " + user_id);
+			//System.out.println("isLeader : " + isLeader);
+			//System.out.println("roompkid : " + room_id);
 			
 			List<User> userList = roomService.findUserInRoom(room_id);
 			
-			//게임방에 유저가 2명이상이면 방장을 위임하고 나가고, 본인 한명 뿐이면 그냥 나가게 된다
-			if(userList.size() > 1) {
-				//방장을 위임할 유저 탐색(점수 기준)
-				User mandateUser = new User();
-				mandateUser.setScore(-1);
-				
-				for(int i=0; i<userList.size(); i++) {
-					if(userList.get(i).getId() != user_id && userList.get(i).getScore() > mandateUser.getScore()) mandateUser = userList.get(i);
-				}
-				
-				//방장이 게임방 안의 가장 점수가 높은사람에게 방장 위임
-				roomService.mandateLeader(user_id, mandateUser.getId());
+			if(isLeader==true) {
+				//게임방에 유저가 2명 이상이면 방장을 위임하고 나가고, 본인 한명 뿐이면 그냥 나가게 된다
+				if(userList.size() > 1) {
+					//방장을 위임할 유저 탐색(점수 기준)
+					User mandateUser = new User();
+					mandateUser.setScore(-1);
+					
+					for(int i=0; i<userList.size(); i++) {
+						if(userList.get(i).getId() != user_id && userList.get(i).getScore() > mandateUser.getScore()) mandateUser = userList.get(i);
+					}
+					
+					//방장이 게임방 안의 가장 점수가 높은사람에게 방장 위임
+					roomService.mandateLeader(user_id, mandateUser.getId());
+					
+					//게임방 퇴장하기
+					roomService.leaveRoom(user_id);
+				}else {
+					//게임방 퇴장하기
+					roomService.leaveRoom(user_id);
+					
+					//게임방 삭제하기
+					roomService.deleteRoom(room_id);
+				}		
 			}else {
-				
+				//게임방 퇴장하기
+				roomService.leaveRoom(user_id);
 			}
 			
 		}catch(SQLException e) {
