@@ -58,6 +58,7 @@ public class RoomController {
 			userroom.setUser_id(user_id);
 			userroom.setRoom_id(room_id);
 			
+			// 게임방에 들어가고, 방의 현재 인원수 1증가
 			roomService.connectUserToRoom(userroom);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -110,5 +111,30 @@ public class RoomController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@GetMapping("/enter/{username}/{leader_username}")
+	public void roomEnter(@PathVariable String username, @PathVariable String leader_username) {
+		try {
+			int leader_id = userService.findPkId(leader_username);
+			Room leader_room = roomService.findRoomWithUserid(leader_id);
+			int user_id = userService.findPkId(username);
+			
+			//System.out.println("room_id : " + leader_room.getId());
+			//System.out.println("room_id : " + leader_room.getTitle());
+			
+			UserRoom userroom = new UserRoom();
+			
+			userroom.setLeader(false);
+			userroom.setUser_id(user_id);
+			userroom.setRoom_id(leader_room.getId());
+			
+			// 게임방에 들어가고, 방의 현재 인원수 1증가
+			roomService.connectUserToRoom(userroom);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
