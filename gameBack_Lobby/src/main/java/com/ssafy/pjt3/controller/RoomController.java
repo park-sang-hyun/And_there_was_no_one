@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.pjt3.dto.Room;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.dto.UserRoom;
+import com.ssafy.pjt3.model.BasicResponse;
 import com.ssafy.pjt3.service.RoomService;
 import com.ssafy.pjt3.service.UserService;
 
@@ -114,14 +117,24 @@ public class RoomController {
 	}
 	
 	@GetMapping("/enter/{username}/{leader_username}")
-	public void roomEnter(@PathVariable String username, @PathVariable String leader_username) {
+	public Object roomEnter(@PathVariable String username, @PathVariable String leader_username) {
+		final BasicResponse result = new BasicResponse();
+		
 		try {
 			int leader_id = userService.findPkId(leader_username);
 			Room leader_room = roomService.findRoomWithUserid(leader_id);
 			int user_id = userService.findPkId(username);
 			
-			//System.out.println("room_id : " + leader_room.getId());
-			//System.out.println("room_id : " + leader_room.getTitle());
+			if(leader_room.getMax_count() == leader_room.getCur_count()) {
+				result.status = false;
+                result.data = "방에 인원이 가득 찼습니다.";
+                return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			else if(leader_room.isStart()==true) {
+				result.status = false;
+                result.data = "이미 게임이 시작된 방입니다.";
+                return new ResponseEntity<>(result, HttpStatus.OK);
+			}
 			
 			UserRoom userroom = new UserRoom();
 			
@@ -136,5 +149,8 @@ public class RoomController {
 			e.printStackTrace();
 		}
 		
+		result.status = true;
+        result.data = "방 입장 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }
