@@ -30,11 +30,17 @@ public class RoomDaoImpl implements RoomDao {
 	@Override
 	public void connectUserToRoom(UserRoom userroom) throws SQLException {
 		session.insert("room_mapper.connectUser", userroom);
+		session.update("room_mapper.curCountPlus", userroom.getRoom_id());
 	}
 
 	@Override
 	public int findRoomPkId(int user_id) throws SQLException {
 		return session.selectOne("room_mapper.findRoomPkId", user_id);
+	}
+	
+	@Override
+	public Room findRoomWithUserid(int user_id) throws SQLException {
+		return session.selectOne("room_mapper.findRoomWithUserid", user_id);
 	}
 
 	@Override

@@ -35,6 +35,11 @@ public class RoomServiceImpl implements RoomService {
 	public int findRoomPkId(int user_id) throws SQLException {
 		return roomDao.findRoomPkId(user_id);
 	}
+	
+	@Override
+	public Room findRoomWithUserid(int user_id) throws SQLException {
+		return roomDao.findRoomWithUserid(user_id);
+	}
 
 	@Override
 	public List<User> findUserInRoom(int room_id) throws SQLException {
