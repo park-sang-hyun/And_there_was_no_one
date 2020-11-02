@@ -83,7 +83,7 @@ public class RoomController {
 			
 			List<User> userList = roomService.findUserInRoom(room_id);
 			
-			if(isLeader==true) {
+			if(isLeader == true) {
 				//게임방에 유저가 2명 이상이면 방장을 위임하고 나가고, 본인 한명 뿐이면 그냥 나가게 된다
 				if(userList.size() > 1) {
 					//방장을 위임할 유저 탐색(점수 기준)
@@ -167,6 +167,19 @@ public class RoomController {
 			room.setDifficulty(difficulty);
 			
 			roomService.modifyRoom(room);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@PutMapping("mandate/{username}/{leader_username}")
+	public void mandate(@PathVariable String username, @PathVariable String leader_username) {
+		try {
+			int user_id = userService.findPkId(username);
+			int leader_user_id = userService.findPkId(leader_username);
+			
+			roomService.mandateLeader(leader_user_id, user_id);
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
