@@ -53,51 +53,19 @@
      </update>
      
      <delete id="leaveRoom" >
-       delete from userroom where user_id = #{user_id}    
+       delete from userroom where user_id=#{user_id}    
      </delete>
      
      <delete id="deleteRoom" >
-       delete from room where id = #{room_id}    
+       delete from room where id=#{room_id}    
      </delete>
     
-    <update id="update" >
-    	update room set title =    	
-    	<if test="title != null">
-    		#{title}
-    	</if>               
-    	<if test="title == null">
-    		title
-    	</if>
-    	, max_count =
-    	<if test="max_count != null">
-    		#{max_count}
-    	</if>               
-    	<if test="max_count == null">
-    		max_count
-    	</if>
-    	, mode = 
-    	<if test="mode != null">
-    		#{mode}
-    	</if>               
-    	<if test="mode == null">
-    		mode
-    	</if>
-    	, difficulty = 
-    	<if test="difficulty != null">
-    		#{difficulty}
-    	</if>               
-    	<if test="difficulty == null">
-    		difficulty
-    	</if>
-    	
-    	where id = #{id}
+    <update id="modifyRoom" >
+    	update room set title=#{title}        
+    	, max_count=#{max_count}
+    	, mode=#{mode}
+    	, difficulty=#{difficulty}
+    	where id=#{id}
     </update>
-    
-    <delete id="delete" >
-       delete from room where id = #{id}    
-    </delete>
-
+ 
 </mapper>
-
-
-
