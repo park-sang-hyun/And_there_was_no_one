@@ -60,4 +60,9 @@ public class RoomServiceImpl implements RoomService {
 	public void deleteRoom(int room_id) throws SQLException {
 		roomDao.deleteRoom(room_id);
 	}
+
+	@Override
+	public void modifyRoom(Room room) throws SQLException {
+		roomDao.modifyRoom(room);
+	}
 }

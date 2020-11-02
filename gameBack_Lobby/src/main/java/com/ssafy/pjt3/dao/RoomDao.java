@@ -17,4 +17,5 @@ public interface RoomDao {
 	public void mandateLeader(int giveUser, int takeUser) throws SQLException;
 	public void leaveRoom(int user_id) throws SQLException;
 	public void deleteRoom(int room_id) throws SQLException;
+	public void modifyRoom(Room room) throws SQLException;
 }

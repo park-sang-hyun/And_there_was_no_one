@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,7 +49,7 @@ public class RoomController {
 	}
 	
 	@PostMapping("/create")
-	public void roomCreate(Room room, @RequestParam String username) {
+	public void create(Room room, @RequestParam String username) {
 		try {
 			roomService.createRoom(room);
 			int room_id = room.getId();
@@ -70,7 +71,7 @@ public class RoomController {
 	}
 	
 	@DeleteMapping("leave/{username}")
-	public void roomLeave(@PathVariable String username) {
+	public void leave(@PathVariable String username) {
 		try {
 			int user_id = userService.findPkId(username);
 			boolean isLeader = userService.isLeader(user_id);
@@ -117,7 +118,7 @@ public class RoomController {
 	}
 	
 	@GetMapping("/enter/{username}/{leader_username}")
-	public Object roomEnter(@PathVariable String username, @PathVariable String leader_username) {
+	public Object enter(@PathVariable String username, @PathVariable String leader_username) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
@@ -152,5 +153,23 @@ public class RoomController {
 		result.status = true;
         result.data = "방 입장 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@PutMapping("modify/{username}")
+	public void modify(@PathVariable String username, @RequestParam String title, int max_count, int mode, int difficulty) {
+		try {
+			int user_id = userService.findPkId(username);
+			Room room = roomService.findRoomWithUserid(user_id);
+
+			room.setTitle(title);
+			room.setMax_count(max_count);
+			room.setMode(mode);
+			room.setDifficulty(difficulty);
+			
+			roomService.modifyRoom(room);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

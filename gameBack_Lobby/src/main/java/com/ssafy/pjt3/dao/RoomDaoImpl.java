@@ -63,4 +63,9 @@ public class RoomDaoImpl implements RoomDao {
 	public void deleteRoom(int room_id) throws SQLException {
 		session.delete("room_mapper.deleteRoom", room_id);
 	}
+
+	@Override
+	public void modifyRoom(Room room) throws SQLException {
+		session.update("room_mapper.modifyRoom", room);
+	}
 }
