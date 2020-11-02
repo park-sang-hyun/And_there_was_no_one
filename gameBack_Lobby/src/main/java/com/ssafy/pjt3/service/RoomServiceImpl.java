@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.pjt3.dao.RoomDao;
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.dto.UserRoom;
 
 @Service
@@ -28,5 +29,35 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public void connectUserToRoom(UserRoom userroom) throws SQLException {
 		roomDao.connectUserToRoom(userroom);
+	}
+
+	@Override
+	public int findRoomPkId(int user_id) throws SQLException {
+		return roomDao.findRoomPkId(user_id);
+	}
+	
+	@Override
+	public Room findRoomWithUserid(int user_id) throws SQLException {
+		return roomDao.findRoomWithUserid(user_id);
+	}
+
+	@Override
+	public List<User> findUserInRoom(int room_id) throws SQLException {
+		return roomDao.findUserInRoom(room_id);
+	}
+
+	@Override
+	public void mandateLeader(int giveUser, int takeUser) throws SQLException {
+		roomDao.mandateLeader(giveUser, takeUser);
+	}
+
+	@Override
+	public void leaveRoom(int user_id) throws SQLException {
+		roomDao.leaveRoom(user_id);
+	}
+
+	@Override
+	public void deleteRoom(int room_id) throws SQLException {
+		roomDao.deleteRoom(room_id);
 	}
 }

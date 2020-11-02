@@ -17,4 +17,9 @@ public class UserServiceImpl implements UserService{
 		return userDao.findPkId(username);
 	}
 
+	@Override
+	public boolean isLeader(int user_id) throws SQLException {
+		return userDao.isLeader(user_id);
+	}
+
 }
