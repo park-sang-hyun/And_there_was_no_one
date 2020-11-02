@@ -31,7 +31,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .gerstner-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
