@@ -4,8 +4,8 @@
         <div class="mode__header">게임 모드</div>
         <div class="mode_radio">
 
-            <input type="radio" class="mode_option" id="first_mode" name="mode_option" value="1" v-model="modeSelect">
-            <input type="radio" class="mode_option" id="second_mode" name="mode_option" value="2" v-model="modeSelect">
+            <input :disabled="!isLeader" type="radio" class="mode_option" id="first_mode" name="mode_option" value="1" v-model="modeSelect">
+            <input :disabled="!isLeader" type="radio" class="mode_option" id="second_mode" name="mode_option" value="2" v-model="modeSelect">
 
             <label for="first_mode">
                 <span class="description">새 보드에</span>
@@ -30,8 +30,11 @@ export default {
 
     props: {
         mode: {
-          object: Number,
-        }
+            object: Number,
+        },
+        isLeader: {
+            object: Boolean,
+        },
     },
 
     data() {
@@ -44,6 +47,10 @@ export default {
         this.modeSelect = this.mode;
     },
 
+    computed: {
+
+    },
+
     methods: {
 
     },
@@ -52,15 +59,18 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+@import url(https://fonts.googleapis.com/css?family=Francois+One);
+@import url(https://fonts.googleapis.com/css?family=PT+Sans);
 
 #modeSetting {
-    font-family: 'Nanum Gothic', sans-serif;
+    /* font-family: 'Nanum Gothic', sans-serif; */
+    font-family: 'Audiowide';
 }
 
 .mode__header {
     font-size: 1.5rem;
     font-weight: bold;
-    color: black;
+    color: white;
     text-align: center;
 }
 
@@ -85,7 +95,7 @@ export default {
 }
 .mode_radio label{
     font: 90%/1.618;
-    color: rgba(0,0,0,.9);
+    color: white;
     z-index: 0;
     display: block;
     width: 150px;
@@ -115,11 +125,11 @@ export default {
 }
 
 #first_mode:checked ~ .mode_option_slider{
-    background: rgba(255,255,255,.3);
+    background: rgba(255,255,255,.15);
     left: 0px;
 }
 #second_mode:checked ~ .mode_option_slider{
-    background: rgba(255,255,255,.3);
+    background: rgba(255,255,255,.15);
     left: 159px;
 }
 

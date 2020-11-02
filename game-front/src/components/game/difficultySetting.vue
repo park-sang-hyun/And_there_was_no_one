@@ -4,9 +4,9 @@
         <div class="radio__header">난이도</div>
         <div class="toggle_radio">
 
-            <input type="radio" class="toggle_option" id="first_toggle" name="toggle_option" value="1" v-model="difficultySelect">
-            <input type="radio" checked class="toggle_option" id="second_toggle" name="toggle_option" value="2" v-model="difficultySelect">
-            <input type="radio" class="toggle_option" id="third_toggle" name="toggle_option" value="3" v-model="difficultySelect">
+            <input :disabled="!isLeader" type="radio" class="toggle_option" id="first_toggle" name="toggle_option" value="1" v-model="difficultySelect">
+            <input :disabled="!isLeader" type="radio" checked class="toggle_option" id="second_toggle" name="toggle_option" value="2" v-model="difficultySelect">
+            <input :disabled="!isLeader" type="radio" class="toggle_option" id="third_toggle" name="toggle_option" value="3" v-model="difficultySelect">
 
             <label for="first_toggle">
                 <span class="description">시간 5초</span>
@@ -37,7 +37,10 @@ export default {
     props: {
         difficulty: {
             object: Number,
-        }
+        },
+        isLeader: {
+            object: Boolean,
+        },
     },
 
     data() {
@@ -49,99 +52,106 @@ export default {
     created() {
         this.difficultySelect = this.difficulty;
     },
+    
+    computed: {
+        
+    },
 
     methods: {
-
+        
     },
 }
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+@import url(https://fonts.googleapis.com/css?family=Francois+One);
+@import url(https://fonts.googleapis.com/css?family=PT+Sans);
 
 #difficultySetting {
-    font-family: 'Nanum Gothic', sans-serif;
+    /* font-family: 'Nanum Gothic', sans-serif; */
+    font-family: 'Audiowide';
 }
 
 .radio__header {
     font-size: 1.5rem;
     font-weight: bold;
-    color: black;
+    color: white;
     text-align: center;
 }
 
 .toggle_radio{
-  position: relative;
-  background: rgba(255,255,255,.2);
-  margin: 4px auto;
-  overflow: hidden;
-  padding: 0 !important;
-  -webkit-border-radius: 50px;
-  -moz-border-radius: 50px;
-  border-radius: 5px;
-  position: relative;
-  height: 70px;
-  width: 318px;
+    position: relative;
+    background: rgba(255,255,255,.2);
+    margin: 4px auto;
+    overflow: hidden;
+    padding: 0 !important;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 5px;
+    position: relative;
+    height: 70px;
+    width: 318px;
 }
 .toggle_radio > * {
-  float: left;
+    float: left;
 }
 .toggle_radio input[type=radio]{
-  display: none;
-/*   position: fixed; */
+    display: none;
+  /*   position: fixed; */
 }
 .toggle_radio label{
-  font: 90%/1.618;
-  color: rgba(0,0,0,.9);
-  z-index: 0;
-  display: block;
-  width: 100px;
-  height: 70px;
-  margin: 3px 3px;
-  -webkit-border-radius: 50px;
-  -moz-border-radius: 50px;
-  border-radius: 50px;
-  cursor: pointer;
-  z-index: 1;
-/*   line-height:100px; */
-  /*background: rgba(0,0,0,.1);*/
-  text-align: center;
-  /*margin: 0 2px;*/
-  /*background: blue;*/ /*make it blue*/
+    font: 90%/1.618;
+    color: white;
+    z-index: 0;
+    display: block;
+    width: 100px;
+    height: 70px;
+    margin: 3px 3px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    cursor: pointer;
+    z-index: 1;
+  /*   line-height:100px; */
+    /*background: rgba(0,0,0,.1);*/
+    text-align: center;
+    /*margin: 0 2px;*/
+    /*background: blue;*/ /*make it blue*/
 }
 .toggle_option_slider{
-  /*display: none;*/
-  /*background: red;*/
-  width: 100px;
-  height: 73px;
-  position: absolute;
-  top: 0px;
-  -webkit-border-radius: 1px;
-  -moz-border-radius: 1px;
-  border-radius: 1px;
-  -webkit-transition: all .4s ease;
-  -moz-transition: all .4s ease;
-  -o-transition: all .4s ease;
-  -ms-transition: all .4s ease;
-  transition: all .4s ease;
+    /*display: none;*/
+    /*background: red;*/
+    width: 100px;
+    height: 73px;
+    position: absolute;
+    top: 0px;
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+    -webkit-transition: all .4s ease;
+    -moz-transition: all .4s ease;
+    -o-transition: all .4s ease;
+    -ms-transition: all .4s ease;
+    transition: all .4s ease;
 }
 
 #first_toggle:checked ~ .toggle_option_slider{
-  background: rgba(255,255,255,.3);
-  left: 0px;
+    background: rgba(255,255,255,.15);
+    left: 0px;
 }
 #second_toggle:checked ~ .toggle_option_slider{
-  background: rgba(255,255,255,.3);
-  left: 109px;
+    background: rgba(255,255,255,.15);
+    left: 109px;
 }
 #third_toggle:checked ~ .toggle_option_slider{
-  background: rgba(255,255,255,.3);
-  left: 218px;
+    background: rgba(255,255,255,.15);
+    left: 218px;
 }
 
 span.description{
-  top:0px;
-  font-size: 0.8em;
+    top:0px;
+    font-size: 0.8em;
 }
 
 p.day {

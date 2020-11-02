@@ -20,6 +20,8 @@
                 <div class="row">
                     <!-- 화면 왼쪽 하단 -->
                     <div class="screen__left__bottom d-flex justify-content-center align-items-center">
+
+                        <!-- canvas(그림 그리기) -->
                         <draw :window="windowScreen"/>
                     </div>
                 </div>
@@ -117,12 +119,13 @@ export default {
             document.documentElement.style.setProperty('--leftBottomSize', (this.window.height * 0.85) + suffix);
         },
 
-    }
-
+    },
 }
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300');
+
 /* 가상 선택자, 우선 순위가 제일 높음 */
 :root {
     --leftWidth: 800px;
@@ -132,28 +135,34 @@ export default {
     --leftBottomSize: 400px;
 }
 
+#PlayGame {
+    height: 100%;
+    width: 100%;
+    background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
+    color: white;
+}
+
 /* 전체 영역 3부분으로 나눔 왼상단 | 왼하단 | 오 */
 .screen__left__top {
     display: block;
     width: var(--leftSize);
     height: var(--leftTopSize);
     font-weight: bold;
-    background-color: beige;
-    padding: 10px;
+    /* background-color: beige; */
 }
 
 .screen__left__bottom {
     display: block;
     width: 100%;
     height: var(--leftBottomSize);
-    background-color: rgba(62, 62, 62, 0.5);
+    /* background-color: rgba(62, 62, 62, 0.5); */
 }
 
 .screen__right {
     display: block;
     width: var(--rightSize);
     height: var(--heightSize);
-    background-color: skyblue;
+    /* background-color: skyblue; */
 }
 
 /* 개별 스타일 적용 */
@@ -161,14 +170,14 @@ export default {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #000dff;
-    margin: 10px 0px 20px 0px;
+    margin: 10px auto;
 }
 
 .game__setting {
     text-align: center;
-    margin-bottom: 10px;
     font-weight: bold;
 }
+
+/* 타이머 */
 
 </style>
