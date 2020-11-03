@@ -12,8 +12,8 @@
         <div class="screen__left">
             <!-- 입장한 유저 목록 -->
             <div class="user__part">
-                <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;" v-on:originReturn="originReturn"/>
-                <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block;" v-on:originReturn="originReturn"/>
+                <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;" />
+                <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block;"/>
             </div>
             <!-- 채팅 (상용구) -->
             <div class="chat__part d-flex justify-content-center">
@@ -151,7 +151,7 @@ export default {
 
         // 본인 위치 확인 (1 대신에 쿠키에서 본인 pk값 받아올 것)
         for (let i=0; i < this.room.members.length; i++) {
-            if (this.room.members[i].id === 1) {
+            if (this.room.members[i].id === 2) {
                 this.user = i;
             }
         }
@@ -239,7 +239,7 @@ export default {
 #waitRoom {
     height: 100%;
     width: 100%;
-    min-width: 1000px;
+    min-width: 1024px;
     background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
     color: white;
 }
