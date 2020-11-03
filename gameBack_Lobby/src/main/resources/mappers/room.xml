@@ -39,44 +39,4 @@
 		from user as u, userroom as ur
 		where ur.room_id = #{room_id} and ur.user_id = u.id;
      </select>
-     
-     <update id="takeLeader">
-     	update userroom 
-     	set leader = 1
-     	where user_id=#{user_id}
-     </update>
-     
-     <update id="giveLeader">
-     	update userroom 
-     	set leader = 0
-     	where user_id=#{user_id}
-     </update>
-     
-     <update id="curCountMinus">
-     	update room 
-		set cur_count = cur_count - 1
-		where id=(select room_id from userroom where user_id=#{user_id});	
-     </update>
-     
-     <delete id="leaveRoom" >
-       	delete from userroom where user_id=#{user_id}    
-     </delete>
-     
-     <delete id="deleteRoom" >
-       	delete from room where id=#{room_id}    
-     </delete>
-    
-    <update id="modifyRoom" >
-    	update room set title=#{title}        
-    	, max_count=#{max_count}
-    	, mode=#{mode}
-    	, difficulty=#{difficulty}
-    	where id=#{id}
-    </update>
-    
-    <update id="startGame" >
-    	update room set start=true
-    	where id=#{room_id}
-    </update>
- 
 </mapper>

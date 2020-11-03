@@ -6,30 +6,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.pjt3.dao.RoomDao;
+import com.ssafy.pjt3.dao.GameDao;
 import com.ssafy.pjt3.dto.Room;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.dto.UserRoom;
 
 @Service
-public class RoomServiceImpl implements RoomService {
+public class GameServiceImpl implements GameService {
 	@Autowired
-	RoomDao roomDao;
-
-	@Override
-	public List<Room> findAll() throws SQLException {
-		return roomDao.findAll();
-	}
-
-	@Override
-	public void createRoom(Room room) throws SQLException {
-		roomDao.createRoom(room);
-	}
-
-	@Override
-	public void enterRoom(UserRoom userroom) throws SQLException {
-		roomDao.enterRoom(userroom);
-	}
+	GameDao roomDao;
 
 	@Override
 	public int findRoomPkId(int user_id) throws SQLException {
@@ -39,6 +24,11 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public Room findRoomWithUserid(int user_id) throws SQLException {
 		return roomDao.findRoomWithUserid(user_id);
+	}
+	
+	@Override
+	public Room findRoomWithRoomid(int room_id) throws SQLException {
+		return roomDao.findRoomWithRoomid(room_id);
 	}
 
 	@Override
