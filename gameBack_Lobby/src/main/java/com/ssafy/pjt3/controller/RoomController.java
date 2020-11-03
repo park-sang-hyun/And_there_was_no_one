@@ -64,7 +64,6 @@ public class RoomController {
 			roomService.createRoom(room);
 			int room_id = room.getId();
 			int user_id = userService.findPkId(username);
-			//System.out.println("roompk : " + room_id + "  userpk : " + user_id);
 			
 			UserRoom userroom = new UserRoom();
 			
@@ -82,53 +81,6 @@ public class RoomController {
 		result.status = true;
         result.data = "방 생성 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-	
-	@DeleteMapping("leave/{username}")
-	public void leave(@PathVariable String username) {
-		try {
-			int user_id = userService.findPkId(username);
-			boolean isLeader = userService.isLeader(user_id);
-			int room_id = roomService.findRoomPkId(user_id);
-			
-			//System.out.println("userpkid : " + user_id);
-			//System.out.println("isLeader : " + isLeader);
-			//System.out.println("roompkid : " + room_id);
-			
-			List<User> userList = roomService.findUserInRoom(room_id);
-			
-			if(isLeader == true) {
-				//게임방에 유저가 2명 이상이면 방장을 위임하고 나가고, 본인 한명 뿐이면 그냥 나가게 된다
-				if(userList.size() > 1) {
-					//방장을 위임할 유저 탐색(점수 기준)
-					User mandateUser = new User();
-					mandateUser.setScore(-1);
-					
-					for(int i=0; i<userList.size(); i++) {
-						if(userList.get(i).getId() != user_id && userList.get(i).getScore() > mandateUser.getScore()) mandateUser = userList.get(i);
-					}
-					
-					//방장이 게임방 안의 가장 점수가 높은사람에게 방장 위임
-					roomService.mandateLeader(user_id, mandateUser.getId());
-					
-					//게임방 퇴장하기
-					roomService.leaveRoom(user_id);
-				}else {
-					//게임방 퇴장하기
-					roomService.leaveRoom(user_id);
-					
-					//게임방 삭제하기
-					roomService.deleteRoom(room_id);
-				}		
-			}else {
-				//게임방 퇴장하기
-				roomService.leaveRoom(user_id);
-			}
-			
-		}catch(SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	@GetMapping("/enter/{username}/{leader_username}")
@@ -167,76 +119,5 @@ public class RoomController {
 		result.status = true;
         result.data = "방 입장 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-	
-	@PutMapping("modify/{username}")
-	public Object modify(@PathVariable String username, @RequestParam String title, int max_count, int mode, int difficulty) {
-		final BasicResponse result = new BasicResponse();
-		
-		try {
-			int user_id = userService.findPkId(username);
-			Room room = roomService.findRoomWithUserid(user_id);
-
-			room.setTitle(title);
-			room.setMax_count(max_count);
-			room.setMode(mode);
-			room.setDifficulty(difficulty);
-			
-			roomService.modifyRoom(room);
-		}catch(SQLException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		result.status = true;
-        result.data = "방 수정 완료";
-        return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-	
-	@PutMapping("mandate/{username}/{leader_username}")
-	public Object mandate(@PathVariable String username, @PathVariable String leader_username) {
-		final BasicResponse result = new BasicResponse();
-		
-		try {
-			int user_id = userService.findPkId(username);
-			int leader_user_id = userService.findPkId(leader_username);
-			
-			roomService.mandateLeader(leader_user_id, user_id);
-		}catch(SQLException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		result.status = true;
-        result.data = "방장 위임 완료";
-        return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-	
-	@DeleteMapping("kickout/{username}")
-	public Object kickout(@PathVariable String username) {
-		final BasicResponse result = new BasicResponse();
-		
-		try {
-			int user_id = userService.findPkId(username);
-			
-			roomService.kickoutUser(user_id);
-		}catch(SQLException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		result.status = true;
-        result.data = "강제 퇴장 완료";
-        return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-	
-	@PutMapping("start/{room_id}")
-	public void start(@PathVariable int room_id) {
-		try {
-			roomService.startGame(room_id);
-		}catch(SQLException e){
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }

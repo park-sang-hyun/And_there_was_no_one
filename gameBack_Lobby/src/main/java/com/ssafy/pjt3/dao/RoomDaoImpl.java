@@ -47,37 +47,4 @@ public class RoomDaoImpl implements RoomDao {
 	public List<User> findUserInRoom(int room_id) throws SQLException {
 		return session.selectList("room_mapper.findUserInRoom", room_id);
 	}
-
-	@Override
-	public void mandateLeader(int giveUser, int takeUser) throws SQLException {
-		session.update("room_mapper.takeLeader", takeUser);
-		session.update("room_mapper.giveLeader", giveUser);
-	}
-
-	@Override
-	public void leaveRoom(int user_id) throws SQLException {
-		session.update("room_mapper.curCountMinus",user_id);
-		session.delete("room_mapper.leaveRoom", user_id);
-	}
-
-	@Override
-	public void deleteRoom(int room_id) throws SQLException {
-		session.delete("room_mapper.deleteRoom", room_id);
-	}
-
-	@Override
-	public void modifyRoom(Room room) throws SQLException {
-		session.update("room_mapper.modifyRoom", room);
-	}
-
-	@Override
-	public void kickoutUser(int user_id) throws SQLException {
-		session.update("room_mapper.curCountMinus",user_id);
-		session.delete("room_mapper.leaveRoom", user_id);
-	}
-
-	@Override
-	public void startGame(int room_id) throws SQLException {
-		session.update("room_mapper.startGame", room_id);	
-	}
 }
