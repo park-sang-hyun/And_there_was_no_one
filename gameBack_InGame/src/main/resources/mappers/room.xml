@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/hrm.xml -->
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                        
+<mapper namespace="room_mapper"> <!-- mybatis는 namespace필수!! -->
+     <select id="selectAll" resultType="room">
+		select * from room where 1=1
+     </select>
+
+     <insert id="create" useGeneratedKeys="true" keyProperty="id">
+    	insert into room(title, max_count, cur_count, mode, difficulty, start) 
+    	values(#{title},#{max_count},#{cur_count},#{mode},#{difficulty},#{start})
+     </insert>
+     
+     <insert id="enterRoom" parameterType="com.ssafy.pjt3.dto.UserRoom">
+    	insert into userroom(leader, user_id, room_id) 
+    	values(#{leader},#{user_id},#{room_id})
+     </insert>
+     
+     <update id="curCountPlus">
+     	update room 
+     	set cur_count = cur_count + 1
+     	where id=#{userroom.getRoom_id()}	
+     </update>
+     
+     <select id="findRoomPkId" resultType="int">
+		select room_id from userroom where user_id=#{user_id}
+     </select>
+     
+     <select id="findRoomWithUserid" resultType="com.ssafy.pjt3.dto.Room">
+		select r.id, r.title, r.cur_count, r.max_count, r.mode, r.difficulty, r.start
+		from userroom as ur, room as r
+		where ur.user_id = #{user_id} and ur.room_id = r.id;
+     </select>
+     
+     <select id="findUserInRoom" resultType="com.ssafy.pjt3.dto.User">
+		select u.id, u.username, u.nickname, u.password, u.playcount, u.wincount, u.score
+		from user as u, userroom as ur
+		where ur.room_id = #{room_id} and ur.user_id = u.id;
+     </select>
+     
+     <update id="takeLeader">
+     	update userroom 
+     	set leader = 1
+     	where user_id=#{user_id}
+     </update>
+     
+     <update id="giveLeader">
+     	update userroom 
+     	set leader = 0
+     	where user_id=#{user_id}
+     </update>
+     
+     <update id="curCountMinus">
+     	update room 
+		set cur_count = cur_count - 1
+		where id=(select room_id from userroom where user_id=#{user_id});	
+     </update>
+     
+     <delete id="leaveRoom" >
+       	delete from userroom where user_id=#{user_id}    
+     </delete>
+     
+     <delete id="deleteRoom" >
+       	delete from room where id=#{room_id}    
+     </delete>
+    
+    <update id="modifyRoom" >
+    	update room set title=#{title}        
+    	, max_count=#{max_count}
+    	, mode=#{mode}
+    	, difficulty=#{difficulty}
+    	where id=#{id}
+    </update>
+    
+    <update id="startGame" >
+    	update room set start=true
+    	where id=#{room_id}
+    </update>
+ 
+</mapper>
