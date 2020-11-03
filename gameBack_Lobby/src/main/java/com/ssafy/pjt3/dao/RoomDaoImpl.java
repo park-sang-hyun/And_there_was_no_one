@@ -75,4 +75,9 @@ public class RoomDaoImpl implements RoomDao {
 		session.update("room_mapper.curCountMinus",user_id);
 		session.delete("room_mapper.leaveRoom", user_id);
 	}
+
+	@Override
+	public void startGame(int room_id) throws SQLException {
+		session.update("room_mapper.startGame", room_id);	
+	}
 }

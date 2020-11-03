@@ -70,4 +70,9 @@ public class RoomServiceImpl implements RoomService {
 	public void kickoutUser(int user_id) throws SQLException {
 		roomDao.leaveRoom(user_id);
 	}
+
+	@Override
+	public void startGame(int room_id) throws SQLException {
+		roomDao.startGame(room_id);
+	}
 }

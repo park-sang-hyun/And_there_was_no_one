@@ -221,4 +221,14 @@ public class RoomController {
         result.data = "강제 퇴장 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+	
+	@PutMapping("start/{room_id}")
+	public void start(@PathVariable int room_id) {
+		try {
+			roomService.startGame(room_id);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

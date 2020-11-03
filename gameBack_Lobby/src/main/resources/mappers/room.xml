@@ -73,5 +73,10 @@
     	, difficulty=#{difficulty}
     	where id=#{id}
     </update>
+    
+    <update id="startGame" >
+    	update room set start=true
+    	where id=#{room_id}
+    </update>
  
 </mapper>
