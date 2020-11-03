@@ -49,7 +49,9 @@ public class RoomController {
 	}
 	
 	@PostMapping("/create")
-	public void create(Room room, @RequestParam String username) {
+	public Object create(Room room, @RequestParam String username) {
+		final BasicResponse result = new BasicResponse();
+		
 		try {
 			roomService.createRoom(room);
 			int room_id = room.getId();
@@ -63,11 +65,15 @@ public class RoomController {
 			userroom.setRoom_id(room_id);
 			
 			// 게임방에 들어가고, 방의 현재 인원수 1증가
-			roomService.connectUserToRoom(userroom);
+			roomService.enterRoom(userroom);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		result.status = true;
+        result.data = "방 생성 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("leave/{username}")
@@ -144,7 +150,7 @@ public class RoomController {
 			userroom.setRoom_id(leader_room.getId());
 			
 			// 게임방에 들어가고, 방의 현재 인원수 1증가
-			roomService.connectUserToRoom(userroom);
+			roomService.enterRoom(userroom);
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,7 +162,9 @@ public class RoomController {
 	}
 	
 	@PutMapping("modify/{username}")
-	public void modify(@PathVariable String username, @RequestParam String title, int max_count, int mode, int difficulty) {
+	public Object modify(@PathVariable String username, @RequestParam String title, int max_count, int mode, int difficulty) {
+		final BasicResponse result = new BasicResponse();
+		
 		try {
 			int user_id = userService.findPkId(username);
 			Room room = roomService.findRoomWithUserid(user_id);
@@ -171,10 +179,16 @@ public class RoomController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		result.status = true;
+        result.data = "방 수정 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@PutMapping("mandate/{username}/{leader_username}")
-	public void mandate(@PathVariable String username, @PathVariable String leader_username) {
+	public Object mandate(@PathVariable String username, @PathVariable String leader_username) {
+		final BasicResponse result = new BasicResponse();
+		
 		try {
 			int user_id = userService.findPkId(username);
 			int leader_user_id = userService.findPkId(leader_username);
@@ -184,5 +198,27 @@ public class RoomController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		result.status = true;
+        result.data = "방장 위임 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("kickout/{username}")
+	public Object kickout(@PathVariable String username) {
+		final BasicResponse result = new BasicResponse();
+		
+		try {
+			int user_id = userService.findPkId(username);
+			
+			roomService.kickoutUser(user_id);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		result.status = true;
+        result.data = "강제 퇴장 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }

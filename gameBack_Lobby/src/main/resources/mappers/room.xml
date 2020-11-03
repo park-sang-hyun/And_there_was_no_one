@@ -13,7 +13,7 @@
     	values(#{title},#{max_count},#{cur_count},#{mode},#{difficulty},#{start})
      </insert>
      
-     <insert id="connectUser" parameterType="com.ssafy.pjt3.dto.UserRoom">
+     <insert id="enterRoom" parameterType="com.ssafy.pjt3.dto.UserRoom">
     	insert into userroom(leader, user_id, room_id) 
     	values(#{leader},#{user_id},#{room_id})
      </insert>
@@ -52,12 +52,18 @@
      	where user_id=#{user_id}
      </update>
      
+     <update id="curCountMinus">
+     	update room 
+		set cur_count = cur_count - 1
+		where id=(select room_id from userroom where user_id=#{user_id});	
+     </update>
+     
      <delete id="leaveRoom" >
-       delete from userroom where user_id=#{user_id}    
+       	delete from userroom where user_id=#{user_id}    
      </delete>
      
      <delete id="deleteRoom" >
-       delete from room where id=#{room_id}    
+       	delete from room where id=#{room_id}    
      </delete>
     
     <update id="modifyRoom" >
