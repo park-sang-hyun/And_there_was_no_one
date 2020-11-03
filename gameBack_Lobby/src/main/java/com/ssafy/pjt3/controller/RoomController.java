@@ -31,21 +31,29 @@ public class RoomController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/list")
-	public List<Room> showList() {
+	@GetMapping("/list/{page}")
+	public List<Room> showList(@PathVariable int page) {
 		List<Room> list = new ArrayList<Room>();
+		List<Room> pagenavigation = new ArrayList<Room>();
 
 		try {
 			list = roomService.findAll();
-			//for (int i = 0; i < list.size(); i++) {
-			//	System.out.println("title: " + list.get(i).getTitle());
-			//}
+			
+			int start = page * 8 - 8;
+			int end = page * 8;
+			
+			if(end > list.size()) end = list.size();
+			
+			for(int i = start; i < end; i++) {
+				pagenavigation.add(list.get(i));
+			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return list;
+		
+		return pagenavigation;
 	}
 	
 	@PostMapping("/create")
