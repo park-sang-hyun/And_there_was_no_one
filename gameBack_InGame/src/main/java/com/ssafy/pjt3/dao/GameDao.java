@@ -17,4 +17,5 @@ public interface GameDao {
 	public void modifyRoom(Room room) throws SQLException;
 	public void kickoutUser(int user_id) throws SQLException;
 	public void startGame(int room_id) throws SQLException;
+	public void endGame(int room_id) throws SQLException;
 }

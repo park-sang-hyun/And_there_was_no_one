@@ -64,5 +64,10 @@
     	update room set start=true
     	where id=#{room_id}
     </update>
+    
+    <update id="endGame" >
+    	update room set start=false
+    	where id=#{room_id}
+    </update>
  
 </mapper>

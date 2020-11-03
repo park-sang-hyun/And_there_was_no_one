@@ -84,7 +84,7 @@ public class GameController {
 		return gamedata;
 	}
 	
-	@GetMapping("ingame/{room_id}")
+	@GetMapping("exitgame/{room_id}")
 	public Object exitgame(@PathVariable int room_id) {
 		final BasicResponse result = new BasicResponse();
 		

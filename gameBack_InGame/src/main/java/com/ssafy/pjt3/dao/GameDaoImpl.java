@@ -67,4 +67,9 @@ public class GameDaoImpl implements GameDao {
 	public void startGame(int room_id) throws SQLException {
 		session.update("room_mapper.startGame", room_id);	
 	}
+
+	@Override
+	public void endGame(int room_id) throws SQLException {
+		session.update("room_mapper.endGame", room_id);	
+	}
 }

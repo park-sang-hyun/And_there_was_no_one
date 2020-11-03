@@ -65,4 +65,9 @@ public class GameServiceImpl implements GameService {
 	public void startGame(int room_id) throws SQLException {
 		roomDao.startGame(room_id);
 	}
+
+	@Override
+	public void endGame(int room_id) throws SQLException {
+		roomDao.endGame(room_id);
+	}
 }
