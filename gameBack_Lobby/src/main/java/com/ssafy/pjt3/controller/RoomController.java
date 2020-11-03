@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,25 +31,35 @@ public class RoomController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/list")
-	public List<Room> showList() {
+	@GetMapping("/list/{page}")
+	public List<Room> showList(@PathVariable int page) {
 		List<Room> list = new ArrayList<Room>();
+		List<Room> pagenavigation = new ArrayList<Room>();
 
 		try {
 			list = roomService.findAll();
-			//for (int i = 0; i < list.size(); i++) {
-			//	System.out.println("title: " + list.get(i).getTitle());
-			//}
+			
+			int start = page * 8 - 8;
+			int end = page * 8;
+			
+			if(end > list.size()) end = list.size();
+			
+			for(int i = start; i < end; i++) {
+				pagenavigation.add(list.get(i));
+			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		return list;
+		
+		return pagenavigation;
 	}
 	
 	@PostMapping("/create")
-	public void roomCreate(Room room, @RequestParam String username) {
+	public Object create(Room room, @RequestParam String username) {
+		final BasicResponse result = new BasicResponse();
+		
 		try {
 			roomService.createRoom(room);
 			int room_id = room.getId();
@@ -62,15 +73,19 @@ public class RoomController {
 			userroom.setRoom_id(room_id);
 			
 			// 게임방에 들어가고, 방의 현재 인원수 1증가
-			roomService.connectUserToRoom(userroom);
+			roomService.enterRoom(userroom);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		result.status = true;
+        result.data = "방 생성 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("leave/{username}")
-	public void roomLeave(@PathVariable String username) {
+	public void leave(@PathVariable String username) {
 		try {
 			int user_id = userService.findPkId(username);
 			boolean isLeader = userService.isLeader(user_id);
@@ -82,7 +97,7 @@ public class RoomController {
 			
 			List<User> userList = roomService.findUserInRoom(room_id);
 			
-			if(isLeader==true) {
+			if(isLeader == true) {
 				//게임방에 유저가 2명 이상이면 방장을 위임하고 나가고, 본인 한명 뿐이면 그냥 나가게 된다
 				if(userList.size() > 1) {
 					//방장을 위임할 유저 탐색(점수 기준)
@@ -117,7 +132,7 @@ public class RoomController {
 	}
 	
 	@GetMapping("/enter/{username}/{leader_username}")
-	public Object roomEnter(@PathVariable String username, @PathVariable String leader_username) {
+	public Object enter(@PathVariable String username, @PathVariable String leader_username) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
@@ -143,7 +158,7 @@ public class RoomController {
 			userroom.setRoom_id(leader_room.getId());
 			
 			// 게임방에 들어가고, 방의 현재 인원수 1증가
-			roomService.connectUserToRoom(userroom);
+			roomService.enterRoom(userroom);
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -152,5 +167,76 @@ public class RoomController {
 		result.status = true;
         result.data = "방 입장 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@PutMapping("modify/{username}")
+	public Object modify(@PathVariable String username, @RequestParam String title, int max_count, int mode, int difficulty) {
+		final BasicResponse result = new BasicResponse();
+		
+		try {
+			int user_id = userService.findPkId(username);
+			Room room = roomService.findRoomWithUserid(user_id);
+
+			room.setTitle(title);
+			room.setMax_count(max_count);
+			room.setMode(mode);
+			room.setDifficulty(difficulty);
+			
+			roomService.modifyRoom(room);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		result.status = true;
+        result.data = "방 수정 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@PutMapping("mandate/{username}/{leader_username}")
+	public Object mandate(@PathVariable String username, @PathVariable String leader_username) {
+		final BasicResponse result = new BasicResponse();
+		
+		try {
+			int user_id = userService.findPkId(username);
+			int leader_user_id = userService.findPkId(leader_username);
+			
+			roomService.mandateLeader(leader_user_id, user_id);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		result.status = true;
+        result.data = "방장 위임 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("kickout/{username}")
+	public Object kickout(@PathVariable String username) {
+		final BasicResponse result = new BasicResponse();
+		
+		try {
+			int user_id = userService.findPkId(username);
+			
+			roomService.kickoutUser(user_id);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		result.status = true;
+        result.data = "강제 퇴장 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@PutMapping("start/{room_id}")
+	public void start(@PathVariable int room_id) {
+		try {
+			roomService.startGame(room_id);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

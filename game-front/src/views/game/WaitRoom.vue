@@ -151,7 +151,7 @@ export default {
 
         // 본인 위치 확인 (1 대신에 쿠키에서 본인 pk값 받아올 것)
         for (let i=0; i < this.room.members.length; i++) {
-            if (this.room.members[i].id === 2) {
+            if (this.room.members[i].id === 1) {
                 this.user = i;
             }
         }
@@ -328,8 +328,8 @@ export default {
 /* 우측 하단 버튼 */
 .game__start > button {
     border: none;
-    background-color: #f7ef0b;
-    box-shadow: 0px 5px 0px 0px #a0a70e;
+    background-color: #f7130b;
+    box-shadow: 0px 5px 0px 0px #b12208;
     outline: none;
     border-radius: 5px;
     padding: 10px 30px;

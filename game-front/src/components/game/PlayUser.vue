@@ -100,9 +100,9 @@ export default {
 
 .user__image {
     width: var(--userImage);
-    max-width: 95px;
+    max-width: 50px;
     height: var(--userImage);
-    max-height: 95px;
+    max-height: 50px;
     border-radius: 50%;
     background-color: black;
 }
