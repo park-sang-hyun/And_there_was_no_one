@@ -28,8 +28,8 @@ public class RoomDaoImpl implements RoomDao {
 	}
 
 	@Override
-	public void connectUserToRoom(UserRoom userroom) throws SQLException {
-		session.insert("room_mapper.connectUser", userroom);
+	public void enterRoom(UserRoom userroom) throws SQLException {
+		session.insert("room_mapper.enterRoom", userroom);
 		session.update("room_mapper.curCountPlus", userroom.getRoom_id());
 	}
 
@@ -56,6 +56,7 @@ public class RoomDaoImpl implements RoomDao {
 
 	@Override
 	public void leaveRoom(int user_id) throws SQLException {
+		session.update("room_mapper.curCountMinus",user_id);
 		session.delete("room_mapper.leaveRoom", user_id);
 	}
 
@@ -67,5 +68,11 @@ public class RoomDaoImpl implements RoomDao {
 	@Override
 	public void modifyRoom(Room room) throws SQLException {
 		session.update("room_mapper.modifyRoom", room);
+	}
+
+	@Override
+	public void kickoutUser(int user_id) throws SQLException {
+		session.update("room_mapper.curCountMinus",user_id);
+		session.delete("room_mapper.leaveRoom", user_id);
 	}
 }

@@ -27,8 +27,8 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public void connectUserToRoom(UserRoom userroom) throws SQLException {
-		roomDao.connectUserToRoom(userroom);
+	public void enterRoom(UserRoom userroom) throws SQLException {
+		roomDao.enterRoom(userroom);
 	}
 
 	@Override
@@ -64,5 +64,10 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public void modifyRoom(Room room) throws SQLException {
 		roomDao.modifyRoom(room);
+	}
+
+	@Override
+	public void kickoutUser(int user_id) throws SQLException {
+		roomDao.leaveRoom(user_id);
 	}
 }
