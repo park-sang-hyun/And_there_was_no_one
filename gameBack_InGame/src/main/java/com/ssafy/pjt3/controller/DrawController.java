@@ -5,17 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.pjt3.model.ChatMessage;
 
-/**
- * Created by rajeevkumarsingh on 24/07/17.
- */
-@Controller
+
+@RestController
 public class DrawController {
 	private static final Logger logger = LoggerFactory.getLogger(DrawController.class);
 	
@@ -31,10 +28,10 @@ public class DrawController {
         return chatMessage;
     }
 	*/
-	@MessageMapping("/topic/{chatRoomId}")
-	public void handleChat(ChatMessage message, @DestinationVariable("chatRoomId") String chatRoomId,
+	@MessageMapping("/topic/{RoomId}")
+	public void handledraw(ChatMessage message, @DestinationVariable("RoomId") String RoomId,
 			SimpMessageHeaderAccessor headerAccessor) {
-		System.out.println("///////////////chatRoomId : "+chatRoomId);
+		System.out.println("///////////////RoomId : "+RoomId);
 		//System.out.println(headerAccessor.getSessionId()+" "+headerAccessor.getSessionAttributes().get("username"));
 		
 		System.out.println("ox: " + message.getX1());
@@ -45,7 +42,7 @@ public class DrawController {
 		System.out.println("width: " + message.getWidth());
 		System.out.println("mode: " + message.getMode());
 		
-		this.simpMessagingTemplate.convertAndSend("/topic/"+chatRoomId, message);
+		this.simpMessagingTemplate.convertAndSend("/topic/"+RoomId, message);
 	}
 
 	/*
