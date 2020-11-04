@@ -11,12 +11,15 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
-public class WebSocketHandler extends TextWebSocketHandler {
+public class LobbyChattingHandler extends TextWebSocketHandler {
 	private Map<String, WebSocketSession> sessions = new HashMap<String, WebSocketSession>();
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		System.out.println("세션아이디[" + session.getId() + "] 입장.");
+//		session.getPrincipal().getName()
+		String senderId = getMemberId(session);
+		System.out.println(senderId);
 
 		Iterator<String> sessionIds = sessions.keySet().iterator();
 
@@ -28,6 +31,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 		}
 
 		sessions.put(session.getId(), session);
+		
 	}
 	
 	@Override
@@ -59,6 +63,20 @@ public class WebSocketHandler extends TextWebSocketHandler {
 			sessionId = sessionIds.next();
 			sessions.get(sessionId).sendMessage(new TextMessage(session.getId() + " : " + message.getPayload()));
 		}
+	}
+	
+	
+	private String getMemberId(WebSocketSession session) {
+		System.out.println(session);
+		System.out.println(session.getAttributes());
+		Map<String, Object> httpSession = session.getAttributes();
+		System.out.println(session.getAttributes());
+		
+//		for(int i=0; i<httpSession.size(); i++) {
+//			System.out.println("key : " + httpSession.get);
+//		}
+		String m_id = (String) httpSession.get("eogma77");
+		return m_id==null?null:m_id;
 	}
 
 }

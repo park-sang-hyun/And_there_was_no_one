@@ -54,6 +54,7 @@ export default {
 				},
         sendMessage(e) {
           console.log("메시지 전송")
+          this.message = "안녕하세요" + ",러러러ㅓㄹ"
           this.logs.push({ event: "메시지 전송", data: this.message });
           this.socket.send(this.message);
           this.message = "";

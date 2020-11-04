@@ -157,4 +157,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+#Spring
+*.class
+
 # End of https://www.toptal.com/developers/gitignore/api/django,vuejs

@@ -123,7 +123,7 @@ export default {
         let msg = "";
         
         http
-        .post("rest-auth/login/", {
+        .post("user/login", {
           username : this.username,
           password : this.password,
         },

@@ -7,8 +7,13 @@
     <select id="selectPkId" parameterType="String" resultType="int">
 		select id from user where username=#{username}
     </select>
+    
 	<select id="isLeader" resultType="boolean">
 		select leader from userroom where user_id=#{user_id}
+	</select>
+	
+	<select id="login" parameterType="LoginRequest">
+		select * from user where username=#{username} and password=#{password}
 	</select>
 	
 </mapper>

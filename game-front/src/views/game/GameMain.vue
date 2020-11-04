@@ -184,7 +184,7 @@ export default {
         handleRangeChange(e){
             let size = e.target.value;
             this.ctx.lineWidth = size;
-        },
+        }, 
         handleModeClick(){
             if(this.filling === true){
                 this.filling = false;

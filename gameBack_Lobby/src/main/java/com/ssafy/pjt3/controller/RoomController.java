@@ -76,9 +76,9 @@ public class RoomController {
 			boolean isLeader = userService.isLeader(user_id);
 			int room_id = roomService.findRoomPkId(user_id);
 			
-			//System.out.println("userpkid : " + user_id);
-			//System.out.println("isLeader : " + isLeader);
-			//System.out.println("roompkid : " + room_id);
+			// System.out.println("userpkid : " + user_id);
+			// System.out.println("isLeader : " + isLeader);
+			// System.out.println("roompkid : " + room_id);
 			
 			List<User> userList = roomService.findUserInRoom(room_id);
 			

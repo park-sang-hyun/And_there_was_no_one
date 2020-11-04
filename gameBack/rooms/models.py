@@ -16,7 +16,6 @@ class Room(models.Model):
                                         MaxValueValidator(3),
                                         MinValueValidator(1)
                                     ])
-    showagain = models.BooleanField(default=True, null=True)
     start = models.BooleanField(default=False, null=True)
 
     class Meta:

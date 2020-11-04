@@ -4,11 +4,8 @@
 <configuration>
     <typeAliases>
        <package name="com.ssafy.pjt3.dto"/>
-       <package name="com.ssafy.pjt3.model"/>
     </typeAliases>
 	<mappers>	  
 		<mapper resource="mappers/room.xml" />
-		<mapper resource="mappers/user.xml" />
-		<mapper resource="mappers/authtoken.xml"/>
 	</mappers>
 </configuration>

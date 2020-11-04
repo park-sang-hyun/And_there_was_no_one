@@ -6,6 +6,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.pjt3.dto.User;
+import com.ssafy.pjt3.model.LoginRequest;
+
 @Repository
 public class UserDaoImpl implements UserDao{
 	@Autowired
@@ -21,4 +24,13 @@ public class UserDaoImpl implements UserDao{
 		return session.selectOne("user_mapper.isLeader", user_id);
 	}
 
+	@Override
+	public User login(LoginRequest request) throws SQLException {
+		return session.selectOne("user_mapper.login", request);
+	}
+
+	@Override
+	public void createUser(User user) throws SQLException {
+		
+	}
 }

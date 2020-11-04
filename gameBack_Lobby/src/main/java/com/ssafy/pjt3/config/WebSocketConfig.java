@@ -5,8 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
-import com.ssafy.pjt3.handler.WebSocketHandler;
+import com.ssafy.pjt3.handler.LobbyChattingHandler;
 
 
 @Configuration
@@ -14,10 +15,13 @@ import com.ssafy.pjt3.handler.WebSocketHandler;
 public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Autowired
-	WebSocketHandler webSocketHandler;
+	LobbyChattingHandler lobbyChattingHandler;
+	
+	
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(webSocketHandler, "/chatting").setAllowedOrigins("*");
+		registry.addHandler(lobbyChattingHandler, "/chatting").addInterceptors().setAllowedOrigins("*");
+	
 	}
 }
