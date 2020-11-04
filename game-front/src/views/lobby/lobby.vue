@@ -15,12 +15,12 @@
 
     <div class="gerstner-2">
       <div class="comp">
-        <Profile :component="component" class="profile"/>
-        <Friends :component="component" class="friends"/>
+        <Profile class="profile"/>
+        <Friends class="friends"/>
       </div>
       <div class="comp">
-        <Roomlist :component="component" class="roomlist"/>
-        <Chat :component="component" class="chat"/>
+        <Roomlist class="roomlist"/>
+        <Chat class="chat"/>
       </div>
     </div>
 

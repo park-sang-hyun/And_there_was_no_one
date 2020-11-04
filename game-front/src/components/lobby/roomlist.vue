@@ -10,11 +10,9 @@
     </div>
 
     <ul class="pagination" id="menu">
-      <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-      <li class="page-item"><a class="page-link" href="#">1</a></li>
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
-      <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      <li class="page-item"><a class="page-link" @click="prevPage">Prev</a></li>
+      <li class="page-item"><a class="page-link" href="#">{{ pageNow }} of {{ pageLen }}</a></li>
+      <li class="page-item"><a class="page-link" @click="nextPage" >Next</a></li>
     </ul>
     
 
@@ -24,11 +22,28 @@
 
 <script>
 export default {
-    data() {
+    data: () =>{
       return {
-        list: [0, 1, 2, 3, 4, 5, 6, 7]
+        list: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        pageLen: 0,
+        pageNow: 1,
       }
     },
+    created(){
+        this.pageLen = Math.ceil(this.list.length / 8)  // 소수점 올림
+        this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
+        console.log(this.pageLen)
+    },
+    methods: {
+      nextPage() {
+        this.pageNow = ((this.pageNow + 1) > this.pageLen) ? this.pageNow : (this.pageNow + 1)
+        console.log(this.pageNow)
+      },
+      prevPage() {
+        this.pageNow = ((this.pageNow - 1) < 1) ? 1 : (this.pageNow - 1)
+        console.log(this.pageLen)
+      }
+    }
 }
 
 
