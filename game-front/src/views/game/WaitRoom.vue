@@ -18,9 +18,9 @@
             <!-- 채팅 (상용구) -->
             <div class="chat__part d-flex justify-content-center">
                 <div class="input-group">
-                    <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases">
-                        <option selected>채팅 문구 선택</option>
-                        <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'">{{ chat }}</option>
+                    <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
+                        <option selected style="color:black;">채팅 문구 선택</option>
+                        <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
                     </select>
                     <div class="input-group-append">
                         <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
@@ -42,7 +42,7 @@
 
             <!-- 채팅 부분 -->
             <div class="room__chatting d-flex justify-content-center">
-                <div>이 부분을 뭘로 채워야하나..</div>
+                <div class="chatting__area">채팅 내용이 나올 부분</div>
             </div>
 
             <!-- 게임 시작 버튼 -->
@@ -289,17 +289,14 @@ export default {
 .setting__part {
     display: block;
     width: 100%;
-    height: 60%;
+    height: 55%;
     padding: 20px;
 }
 
 .room__chatting {
     display: block;
     width: 100%;
-    height: 20%;
-    /* background-color: rgba(255, 255, 255, 0.3); */
-    padding: 20px;
-    border-radius: 30px;
+    height: 25%;
 }
 
 .game__start {
@@ -333,7 +330,7 @@ export default {
     outline: none;
     border-radius: 5px;
     padding: 10px 30px;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     text-decoration: none;
     margin: 20px;
     color: black;
@@ -356,6 +353,13 @@ export default {
     padding: 0px;
     border-radius: 5px;
     overflow: hidden;
+}
+
+.chatting__area {
+    width: 82%;
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    border-radius: 10px;
 }
 
 

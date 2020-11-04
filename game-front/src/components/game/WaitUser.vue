@@ -8,7 +8,6 @@
             <div class="user__right col-7">
                 <div class="row mt-4">{{ userData.nickname }}</div>
             </div>
-            <div class="chat__message d-flex justify-content-center">Ready</div>
         </div>
     </div>
 </template>
@@ -114,31 +113,6 @@ export default {
     background-color: black;
 }
 
-.chat__message {
-    position: absolute;
-    color: black;
-    left: var(--userLeft);
-    top: 60%;
-    min-width: 60px;
-    transform: translate(-50%);
-	background-color: var(--myColor);
-	padding: 5px;
-	font-size: 0.9rem;
-	border-radius: 1rem;
-    box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
-}
-
-.chat__message::before {
-	content: '';
-	position: absolute;
-	width: 0;
-	height: 0;
-	bottom: 100%;
-	left: 1em;
-	border: .75rem solid transparent;
-	border-top: none;
-	border-bottom-color: var(--myColor);
-}
 
 
 </style>

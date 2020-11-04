@@ -3,6 +3,7 @@ import Signup from './views/user/Signup.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import Lobby from './views/lobby/lobby.vue'
+import LoadingOne from './views/game/LoadingOne.vue'
 
 export default [
     // Auth 
@@ -36,5 +37,11 @@ export default [
         path : '/lobby',
         name : 'Lobby',
         component : Lobby
+    },
+    // LoadingOne
+    {
+        path: '/loading',
+        name: 'LoadingOne',
+        component: LoadingOne
     },
 ]
