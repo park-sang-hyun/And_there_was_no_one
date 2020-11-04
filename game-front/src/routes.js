@@ -4,8 +4,15 @@ import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import Lobby from './views/lobby/lobby.vue'
 import LoadingOne from './views/game/LoadingOne.vue'
+import Test from './views/user/tmp.vue'
 
 export default [
+    // test 
+    {
+        path : '/test',
+        name : 'Test',
+        component : Test
+    },
     // Auth 
     {
         path : '/',

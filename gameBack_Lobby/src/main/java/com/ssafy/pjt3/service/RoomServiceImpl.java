@@ -45,34 +45,4 @@ public class RoomServiceImpl implements RoomService {
 	public List<User> findUserInRoom(int room_id) throws SQLException {
 		return roomDao.findUserInRoom(room_id);
 	}
-
-	@Override
-	public void mandateLeader(int giveUser, int takeUser) throws SQLException {
-		roomDao.mandateLeader(giveUser, takeUser);
-	}
-
-	@Override
-	public void leaveRoom(int user_id) throws SQLException {
-		roomDao.leaveRoom(user_id);
-	}
-
-	@Override
-	public void deleteRoom(int room_id) throws SQLException {
-		roomDao.deleteRoom(room_id);
-	}
-
-	@Override
-	public void modifyRoom(Room room) throws SQLException {
-		roomDao.modifyRoom(room);
-	}
-
-	@Override
-	public void kickoutUser(int user_id) throws SQLException {
-		roomDao.leaveRoom(user_id);
-	}
-
-	@Override
-	public void startGame(int room_id) throws SQLException {
-		roomDao.startGame(room_id);
-	}
 }

@@ -1,68 +1,63 @@
 <template>
-  <div class="user" id="login">
-    <div class="wrapC">
-      <Logo :component="component" />
-      <h5>Login page</h5>
-      <div class="input-with-label">
-        <input
-          v-model="username"
-          type="text"
-          id="username"
-          placeholder="아이디를 입력하세요."
-        />
-        <label for="username">아이디</label>
-      </div>
-
-      <div class="input-with-label">
-        <input
-          v-model="password"
-          type="password"
-          v-bind:class="{error : error.password, complete:!error.password&&password.length!==0}"
-          id="password"
-          @keyup="checkPasswordForm"
-          @keyup.enter="onLogin"
-          placeholder="비밀번호를 입력하세요."
-        />
-        <label for="password">비밀번호</label>
+    <div class="container">
+      <form>
+        <h1>Login page</h1>
+        <div class="form-item">
+          <!-- <label for="username"><span class="entypo-user"></span></label> -->
+          <input
+            v-model="username"
+            type="text"
+            id="username"
+            placeholder="아이디를 입력하세요."
+          />
+        </div>
+        
+        <div class="form-item">
+          <!-- <label for="password"><span class="entypo-lock"></span></label> -->
+          <input
+              v-model="password"
+              type="password"
+              v-bind:class="{error : error.password, complete:!error.password&&password.length!==0}"
+              id="password"
+              @keyup="checkPasswordForm"
+              @keyup.enter="onLogin"
+              placeholder="비밀번호를 입력하세요."
+            />
+        </div>
         <div class="error-text" v-if="error.password">{{error.password}}</div>
-      </div>
+        <button
+          type="button"
+          class="button"
+          @click="onLogin"
+          :disabled="!isSubmit"
+          :class="{disabled : !isSubmit}"
+        >Login</button>
+        
+        <div class="add-option mt-4">
+          <!-- <div class="wrap">
+            <p>비밀번호를 잊으셨나요?</p>
+            <router-link to="/find/password" class="btn--text">비밀번호 찾기</router-link>
+          </div> -->
+          <div class="wrap">
+            <router-link to="/signup/" class="btn--text">Signup</router-link>
+          </div>
+        </div>
+      </form>
 
-      <button
-        class="btn btn--back btn--login"
-        @click="onLogin"
-        :disabled="!isSubmit"
-        :class="{disabled : !isSubmit}"
-      >로그인</button>
-      
-      <div class="add-option mt-4">
-        <div class="text">
-          <p>혹시</p>
-          <div class="bar"></div>
-        </div>
-        <!-- <div class="wrap">
-          <p>비밀번호를 잊으셨나요?</p>
-          <router-link to="/find/password" class="btn--text">비밀번호 찾기</router-link>
-        </div> -->
-        <div class="wrap">
-          <p>아직 회원이 아니신가요?</p>
-          <router-link to="/signup/" class="btn--text">가입하기</router-link>
-        </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>
 //import "../../components/css/user.scss";
 import PV from "password-validator";
-import Logo from "../../components/user/Logo.vue";
+// import Logo from "../../components/user/Logo.vue";
 import http from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
 
 export default {
   components: {
-    Logo,
+    // Logo,
   },
   data: () => {
     return {
@@ -156,3 +151,114 @@ export default {
  
 };
 </script>
+<style scoped>
+  @import url(http://weloveiconfonts.com/api/?family=entypo);
+
+  /* entypo */
+  [class*="entypo-"]:before {
+    font-family: 'entypo', sans-serif;
+  }
+
+  * { 
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  body {
+    /* background: black;
+    font: 16px "Helvetica Neue";
+    font-weight: 200;
+    letter-spacing: 1.5px; */
+  }
+
+  .container {
+    width: 360px;
+    background: ivory;
+    background-color: #fff;
+    margin: 40px auto auto;
+    padding: 8px 0 20px 0;
+    border-radius: 4px;
+    -webkit-box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);      
+    box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);
+  }
+
+  form {
+    width: 80%;
+    margin: auto;
+  }
+
+  .form-item {
+    margin: 18px auto;
+    border-bottom: 1px solid #000;
+    overflow: hidden;
+  }
+
+  label {
+    float: left;
+    width: 20px;
+    margin-right: 10px;
+    text-align: center;
+  }
+
+  input {
+    float: left;
+    width: 89%;
+    padding: 0 0 6px 0;
+    background-color: #fff;
+    color: #000;
+    font: 16px "Helvetica Neue";
+    font-weight: 200;
+    letter-spacing: 1.5px;
+    outline: none;
+    border: none;
+  }
+
+  input::-webkit-input-placeholder {
+    padding: 0;
+    color: #999999;
+    font-weight: 200;
+  }
+  input:-moz-placeholder {
+    color: #cdcdcd;
+    font-weight: 200;
+  }
+  input:-ms-input-placeholder {
+    color: #cdcdcd;
+    font-weight: 200;
+  }
+
+  .button {
+    background-color: #fff;
+    color: #000;
+    width: 100%;
+    margin: 30px auto auto;
+    padding: 8px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    -webkit-transition: all 150ms cubic-bezier(0.420, 0.000, 1.000, 1.000); 
+    -moz-transition: all 150ms cubic-bezier(0.420, 0.000, 1.000, 1.000); 
+    -ms-transition: all 150ms cubic-bezier(0.420, 0.000, 1.000, 1.000); 
+    -o-transition: all 150ms cubic-bezier(0.420, 0.000, 1.000, 1.000); 
+    transition: all 150ms cubic-bezier(0.420, 0.000, 1.000, 1.000); /* ease-in */
+  }
+
+  .button:hover {
+    background-color: #000;
+    color: #fff;
+  }
+
+  .btn-title {
+    margin: auto;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-weight: 300;
+  }
+
+  a {
+    text-decoration: none;
+  }
+</style>
