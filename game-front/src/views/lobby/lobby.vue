@@ -2,8 +2,9 @@
   <div class="container">
     <h1>Lobby page</h1>
 
-    <div v-if="status === 'connected'">
-      <form @submit.prevent="sendMessage" action="#">
+    <!-- <div v-if="status === 'connected'"> -->
+      <div>
+      <form @submit.prevent="webSocketSend" action="#">
         <input v-model="message"><button type="submit">메세지 전송</button>
       </form>
 			<ul id="logs">
@@ -11,7 +12,8 @@
 				{{ log.event }}: {{ log.data }}
         </li>
 			</ul>
-    </div>
+      </div>
+    <!-- </div> -->
 
     <div class="gerstner-2">
       <div class="comp">
@@ -24,8 +26,8 @@
       </div>
     </div>
 
-    <button @click="disconnect" v-if="status === 'connected'">연결끊기</button>
-    <button @click="connect" v-if="status === 'disconnected'">연결</button> {{ status }}
+    <!-- <button @click="disconnect" v-if="status === 'connected'">연결끊기</button>
+    <button @click="connect" v-if="status === 'disconnected'">연결</button> {{ status }} -->
     <br /><br />
 
 
@@ -41,6 +43,8 @@ import Friends from "../../components/lobby/friends.vue";
 import Profile from "../../components/lobby/profile.vue";
 import Roomlist from "../../components/lobby/roomlist.vue";
 
+const storage = window.sessionStorage;
+
 export default {
   components: {
     Chat,
@@ -51,36 +55,59 @@ export default {
 
   data: () =>{
         return{
+          websock: null,
           message: "",
           logs: [],
           status: "disconnected"
         }
     },
 
-  methods: {
-      connect() {
-        this.socket = new WebSocket("ws://localhost:8001/chatting");
-        this.socket.onopen = () => {
-        this.status = "connected";
-        this.logs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
-        
 
-      this.socket.onmessage = ({data}) => {
-        console.log(data)
-        this.logs.push({ event: "메세지 수신", data });
-        };
-      };
-    },
-      disconnect() {
-        this.socket.close();
-        this.status = "disconnected";
-        this.logs = [];
+  mounted(){
+    this.initWebScoket();
+  },
+
+  methods: {
+      initWebScoket(){
+        const wsuri = "ws://localhost:8001/chatting?userid=" + storage.getItem('id');
+        this.websock = new WebSocket(wsuri);
+        this.websock.onmessage = this.webSocketOnMessage;
+        this.websock.onopen = this.webSocketOpen;
+        this.websock.onerror = this.webSocketOnError;
+        this.websock.onclose = this.webSocketClose;
+        console.log(this.websock)
+        this.webSocketOpen();
+        console.log(this.websock.sessionId)
       },
-      sendMessage(e) {
-        console.log("메시지 전송")
-        this.logs.push({ event: "메시지 전송", data: this.message });
-        this.socket.send(this.message);
-        this.message = "";
+
+      webSocketOpen(){
+        let temp_id = storage.getItem("id");
+        console.log(temp_id);
+        const msg = {'userId': 'eogma77'};
+        this.websock.onopen = () =>{
+          this.webSocketSend(JSON.stringify(msg));
+        }
+      },
+      webSocketOnError(){
+        this.initWebScoket();
+      },
+
+      webSokcetOnMessage(e){
+        const redata = JSON.stringify(e.data);
+        // this.arr
+      },
+
+      webSocketSend(Data){
+        console.log("메시지 전송");
+        this.websock.send(Data);
+        console.log('1:' + Data)
+        console.log('2:' + this.websock)
+        console.log(this.websock.sessionId)
+      },
+
+      webSocketClose(e){
+        console.log("소켓 닫기");
+        this.websock.close();
       }
   }
 }
