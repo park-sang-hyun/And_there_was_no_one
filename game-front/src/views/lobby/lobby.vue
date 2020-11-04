@@ -108,3 +108,5 @@ export default {
   .chat { 
     background-color: #77aa24; 
   }
+
+</style>
