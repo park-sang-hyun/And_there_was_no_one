@@ -30,7 +30,24 @@ public class RoomController {
 	private RoomService roomService;
 	@Autowired
 	private UserService userService;
-
+	
+	@GetMapping("/listcount")
+	public int listCount() {
+		List<Room> list = new ArrayList<Room>();
+		int listcount = 0;
+		
+		try {
+			list = roomService.findAll();
+			
+			listcount = list.size();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return listcount;
+	}
+	
 	@GetMapping("/list/{page}")
 	public List<Room> showList(@PathVariable int page) {
 		List<Room> list = new ArrayList<Room>();
@@ -112,8 +129,11 @@ public class RoomController {
 			// 게임방에 들어가고, 방의 현재 인원수 1증가
 			roomService.enterRoom(userroom);
 		}catch(SQLException e){
+			result.status = false;
+	        result.data = "이미 없어진 방입니다.";
+	        return new ResponseEntity<>(result, HttpStatus.OK);
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		result.status = true;
