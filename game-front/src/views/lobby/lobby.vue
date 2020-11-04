@@ -34,15 +34,23 @@ export default {
 <style scoped>
   .gerstner-2 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 3fr;
     /* grid-column-gap: 1em; */
   }
   .comp {
     display: grid;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr .5fr;
   }
-  .profile { background-color: #ba68c8; }
-  .friends { background-color: #245eaa; }
-  .roomlist{ background-color: #aca002; }
-  .chat { background-color: #77aa24; }
+  .profile { 
+    background-color: #ba68c8; 
+  }
+  .friends { 
+    background-color: #245eaa; 
+  }
+  .roomlist{ 
+    background-color: #aca002; 
+  }
+  .chat { 
+    background-color: #77aa24; 
+  }
 </style>
