@@ -95,6 +95,7 @@ export default {
   .comp {
     display: grid;
     grid-template-rows: 1fr .5fr;
+    min-width: 100px;
   }
   .profile { 
     background-color: #ba68c8; 

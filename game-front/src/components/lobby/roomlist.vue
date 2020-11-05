@@ -24,7 +24,7 @@
 export default {
     data: () =>{
       return {
-        list: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        list: [0, 1, 2, 3, 4, 5, 6, 7],
         pageLen: 0,
         pageNow: 1,
       }
@@ -43,7 +43,7 @@ export default {
         this.pageNow = ((this.pageNow - 1) < 1) ? 1 : (this.pageNow - 1)
         console.log(this.pageLen)
       }
-    }
+    },
 }
 
 
