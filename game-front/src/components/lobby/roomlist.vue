@@ -35,6 +35,7 @@ import http from "../../util/http-common.js";
 export default {
     data: () =>{
       return {
+<<<<<<< HEAD
         // 받아온 방 정보 8개 객체를 받아옴
         roomList: [
             {no: 0, roomname: 0, mode: 0, people: 0},
@@ -49,6 +50,9 @@ export default {
         // totalRoom은 생성된 룸 개수
         totalRoom: 12,
         // 페이지 총 길이
+=======
+        list: [0, 1, 2, 3, 4, 5, 6, 7],
+>>>>>>> 8d1ff45bd179905b134e20ef0ee1f22d6eb8cf4d
         pageLen: 0,
         // 현재 페이지
         pageNow: 1,
@@ -105,6 +109,7 @@ export default {
 
       prevPage() {
         this.pageNow = ((this.pageNow - 1) < 1) ? 1 : (this.pageNow - 1)
+<<<<<<< HEAD
         console.log("pageNow: "+this.pageNow);
         this.getRoomList();
       },
@@ -141,6 +146,10 @@ export default {
         // Room 들어가기 요청 보내기
         console.log("Enter enterRoom: " + roomNo);
       },
+=======
+        console.log(this.pageLen)
+      }
+>>>>>>> 8d1ff45bd179905b134e20ef0ee1f22d6eb8cf4d
     },
 }
 
