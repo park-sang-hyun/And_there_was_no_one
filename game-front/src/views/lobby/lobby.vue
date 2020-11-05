@@ -94,7 +94,8 @@ export default {
   }
   .comp {
     display: grid;
-    grid-template-rows: 1fr .5fr;
+    grid-template-rows: .8fr .2fr;
+    min-width: 300px;
   }
   .profile { 
     background-color: #ba68c8; 
