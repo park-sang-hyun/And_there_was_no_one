@@ -1,4 +1,5 @@
 <template>
+    <!-- 대기 방 User가 들어오지 않았을 때 -->
     <div id="NoneUser">
         <div class="user__part d-flex justify-content-center align-items-center">
             <div style="display: none;">{{ nowWindow }}</div>

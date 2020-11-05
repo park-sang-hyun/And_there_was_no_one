@@ -1,8 +1,10 @@
 <template>
+    <!-- 게임 실행 화면 User -->
     <div id="PlayUser" class="container p-0">
         <div class="user__part row">
             <div style="display: none;">{{ nowWindow }}</div>
             <div class="user__left col-4 d-flex justify-content-center align-items-center p-0">
+                <!-- user 래더 or 프로필 -->
                 <div class="user__image"></div>
             </div>
             <div class="col-8 p-0">
@@ -35,8 +37,6 @@ export default {
         }
     },
 
- 
-    
     created() {
         this.layoutCal();
     },

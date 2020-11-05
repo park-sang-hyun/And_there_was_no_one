@@ -1,8 +1,11 @@
 <template>
+    <!-- 대기 방 User -->
     <div id="WaitUser container">
+
         <div class="user__part row">
             <div style="display: none;">{{ nowWindow }}</div>
             <div class="user__left col-5 d-flex justify-content-center align-items-center p-0">
+                <!-- user 왼편 래더 or 프로필? -->
                 <div class="user__image"></div>
             </div>
             <div class="user__right col-7">

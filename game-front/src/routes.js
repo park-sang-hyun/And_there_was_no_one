@@ -3,7 +3,7 @@ import Signup from './views/user/Signup.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import Lobby from './views/lobby/lobby.vue'
-import LoadingOne from './views/game/LoadingOne.vue'
+import check from './views/game/check.vue'
 import Test from './views/user/tmp.vue'
 
 export default [
@@ -48,7 +48,7 @@ export default [
     // LoadingOne
     {
         path: '/loading',
-        name: 'LoadingOne',
-        component: LoadingOne
+        name: 'check',
+        component: check
     },
 ]

@@ -1,7 +1,8 @@
 <template>
+    <!-- 게임 세팅 난이도 -->
     <div id="difficultySetting">
-
         <div class="radio__header">난이도</div>
+
         <div class="toggle_radio">
 
             <input :disabled="!isLeader" type="radio" class="toggle_option" id="first_toggle" name="toggle_option" value="1" v-model="difficultySelect">

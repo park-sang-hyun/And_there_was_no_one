@@ -1,82 +1,98 @@
 <template>
     <div id="PlayGame">
-        <!-- 자유 그리기 모드 -->
-        <div v-if="checkMode" class="row">
-            <div class="col-8 p-0">
+        <!-- 제시어 확인 -->
+        <div v-if="checkRoll">
+            <roll :room="room" :game="game" />
+        </div> 
 
-                <!-- 화면 왼쪽 상단 -->
-                <div class="row screen__left__top d-flex justify-content-center align-content-center">
-                    <div class="room__title">
-                        <span>주제: 과일</span>
-                        <span class="ml-4">제시어: ●●</span>
+        <!-- 게임 화면 -->
+        <div v-else>
+            <!-- 자유 그리기 모드 -->
+            <div v-if="isMode" class="row">
+                <div class="col-8 p-0">
+
+                    <!-- 화면 왼쪽 상단 -->
+                    <div class="row screen__left__top d-flex justify-content-center align-content-center">
+                        <!-- 게임 주제, 제시어 -->
+                        <div class="room__title">
+                            <span>주제: 과일</span>
+                            <span class="ml-4">제시어: ●●</span>
+                        </div>
+                        <!-- 게임 모드, 난이도 -->
+                        <div class="room__mode">
+                            <span>{{ output.mode }}</span>
+                            <span class="ml-2">{{ output.difficulty }}</span>
+                        </div>
                     </div>
-                    <div class="room__mode">
-                        <span>{{ output.mode }}</span>
-                        <span class="ml-2">{{ output.difficulty }}</span>
+
+                    <!-- 화면 왼쪽 하단 -->
+                    <div class="row screen__left__bottom d-flex justify-content-center align-items-center">
+                        <div class="col-12 d-flex justify-content-center align-items-center">
+                            <!-- canvas(그림 그리기) -->
+                            <draw :window="windowScreen"/>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 화면 왼쪽 하단 -->
-                <div class="row screen__left__bottom d-flex justify-content-center align-items-center">
-                    <div class="col-12 d-flex justify-content-center align-items-center">
-                        <!-- canvas(그림 그리기) -->
-                        <draw :window="windowScreen"/>
+                <!-- 화면 오른쪽 -->
+                <div class="col-4 p-0 m-0">
+                    <!-- 유저 리스트 -->
+                    <div class="row screen__right">
+                        <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;"/>
                     </div>
                 </div>
             </div>
+                
 
-            <!-- 화면 오른쪽 -->
-            <div class="col-4 p-0 m-0">
-                <div class="row screen__right">
-                    <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;"/>
+            <!-- 이어그리기 모드 -->
+            <div v-else class="row">
+                <div class="col-9 p-0 m-0">
+
+                    <!-- 화면 왼쪽 상단 -->
+                    <div class="row screen__left__top d-flex justify-content-center">
+                        <!-- 게임 주제, 제시어 -->
+                        <div class="room__title">
+                            <span>주제: 과일</span>
+                            <span class="ml-4">제시어: ●●</span>
+                        </div>
+                        <!-- 게임 모드, 난이도 -->
+                        <div class="room__mode">
+                            <span>{{ output.mode }}</span>
+                            <span class="ml-2">{{ output.difficulty }}</span>
+                        </div>
+                    </div>
+
+                    <!-- 화면 왼쪽 하단 -->
+                    <div class="row screen__left__bottom">
+                        <div class="col-12 d-flex justify-content-center align-items-center">
+                            <!-- canvas(그림 그리기) -->
+                            <draw :window="windowScreen"/>
+                        </div>
+                    </div>
+
                 </div>
+
+                <!-- 화면 오른쪽 -->
+                <div class="col-3 p-0 m-0">
+                    <!-- 유저 리스트 -->
+                    <div class="row screen__right">
+                        <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;"/>
+                        <div class="exit__button d-flex justify-content-center align-items-center">
+                            <button>방 나가기</button>
+                        </div> 
+                    </div>
+                </div>
+
             </div>
         </div>
-            
 
-        <!-- 이어그리기 모드 -->
-        <div v-else class="row">
-            <div class="col-9 p-0 m-0">
-
-                <!-- 화면 왼쪽 상단 -->
-                <div class="row screen__left__top d-flex justify-content-center">
-                    <div class="room__title">
-                        <span>주제: 과일</span>
-                        <span class="ml-4">제시어: ●●</span>
-                    </div>
-                    <div class="room__mode">
-                        <span>{{ output.mode }}</span>
-                        <span class="ml-2">{{ output.difficulty }}</span>
-                    </div>
-                </div>
-
-                <!-- 화면 왼쪽 하단 -->
-                <div class="row screen__left__bottom">
-                    <div class="col-12 d-flex justify-content-center align-items-center">
-                        <!-- canvas(그림 그리기) -->
-                        <draw :window="windowScreen"/>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- 화면 오른쪽 -->
-            <div class="col-3 p-0 m-0">
-                <div class="row screen__right">
-                    <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;"/>
-                    <div class="exit__button d-flex justify-content-center align-items-center">
-                        <button>방 나가기</button>
-                    </div> 
-                </div>
-            </div>
-
-        </div>
     </div>
 </template>
 
 <script>
 import draw from '@/components/game/GameDraw.vue'
 import user from '@/components/game/PlayUser.vue'
+import roll from '@/components/game/GameRoll.vue'
 
 export default {
     name: "PlayGame",
@@ -84,16 +100,17 @@ export default {
     components: {
         draw,
         user,
+        roll,
     },
 
     data() {
         return {
-            room: {},
-            window: {
+            room: {},                           // room 데이터 받아서 넣기 (이후 보고 아예 props로 받기)
+            window: {                           // 현재 보이는 창 너비
                 width: 0,
                 height: 0,
             },
-            defaultRoom: {
+            defaultRoom: {                      // 테스트용 default 값
                 title: "테스트 중입니다.",
                 mode: 2,
                 difficulty: 1,
@@ -143,6 +160,7 @@ export default {
                     },
                 ],
             },
+            // 각 데이터 별로 맞는 설정 이름/숫자 매칭을 위한 리스트
             checkName: {
                 mode: [
                 '',
@@ -159,13 +177,20 @@ export default {
                     0, 5, 10, 15
                 ],
             },
+            // 위 checkName에서 매칭된 값 넣기
             output: {
                 mode: '',
                 difficulty: '',
                 sec: 0,
             },
-            checkMode: true,
+            isMode: true,                       // 현재 게임 모드 확인 (true: 자유그리기 | false: 이어그리기)
+            checkRoll: false,                   // 제시어 확인 페이지 여부
             turn: 0,
+            game: { },
+            defaultgame: {
+                subject: '과일',
+                word: '사과',
+            },
         }
     },
 
@@ -173,14 +198,23 @@ export default {
         // 이후 넘기는 걸로 받아올 것
         this.room = this.defaultRoom;
         if ( this.room.mode === 1 ) {
-            this.checkMode = true;
+            this.isMode = true;
         } else {
-            this.checkMode = false;
+            this.isMode = false;
         }
+
+        // 게임 정보 받아오기
+        this.game = this.defaultgame;
 
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
+
+        // 역할 확인 부분
+        this.checkRoll = true;
+        var timer = setTimeout( this.goGame , 10000);
+
+        // 설정 값 별로 매칭되는 이름/숫자 넣어주기
         this.output.mode = this.checkName.mode[this.room.mode];
         this.output.difficulty = this.checkName.difficulty[this.room.difficulty];
         this.output.sec = this.checkName.sec[this.room.difficulty];
@@ -213,16 +247,13 @@ export default {
             var leftSize = 100;
             var rightSize = 100;
             // 자유그리기 | 이어그리기
-            if (this.checkMode) {
+            if (this.isMode) {
                 leftSize = this.window.width * (8 / 12);
                 rightSize = this.window.width * (4 / 12);
             } else {
                 leftSize = this.window.width * (9 / 12);
                 rightSize = this.window.width * (3 / 12);
             }
-            console.log('왼', leftSize);
-            console.log('오', rightSize);
-            
 
             document.documentElement.style.setProperty('--leftSize', leftSize + suffix);
             document.documentElement.style.setProperty('--rightSize', rightSize + suffix);
@@ -231,6 +262,10 @@ export default {
             document.documentElement.style.setProperty('--rightTopSize', (this.window.height - 40) + suffix);
             document.documentElement.style.setProperty('--leftTopSize', (this.window.height * 0.1) + suffix);
             document.documentElement.style.setProperty('--leftBottomSize', (this.window.height * 0.9) + suffix);
+        },
+
+        goGame() {
+            this.checkRoll = false;
         },
 
     },

@@ -1,6 +1,6 @@
 <template>
+    <!-- 게임 세팅 모드 -->
     <div id="modeSetting">
-
         <div class="mode__header">게임 모드</div>
         <div class="mode_radio">
 
