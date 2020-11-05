@@ -18,6 +18,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		System.out.println("세션아이디[" + session.getId() + "] 입장.");
 
+		Map<String, Object> map = session.getAttributes();
+		String id = (String) map.get("userId");
+		System.out.println(id);
+		
 		Iterator<String> sessionIds = sessions.keySet().iterator();
 
 		String sessionId = "";
@@ -29,7 +33,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 		sessions.put(session.getId(), session);
 	}
-	
+
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		System.out.println("세션아이디[" + session.getId() + "] 퇴장.");
@@ -45,13 +49,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
 			sessions.get(sessionId).sendMessage(new TextMessage("[" + session.getId() + "] 퇴장."));
 		}
 	}
-	
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		
+
 		System.out.println(session.getId() + "이(가) 메세지전송.");
-		
+
 		Iterator<String> sessionIds = sessions.keySet().iterator();
 
 		String sessionId = "";
