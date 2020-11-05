@@ -121,13 +121,8 @@ export default {
   }
   .comp {
     display: grid;
-<<<<<<< HEAD
     grid-template-rows: .8fr .2fr;
     min-width: 300px;
-=======
-    grid-template-rows: 1fr .5fr;
-    min-width: 100px;
->>>>>>> 8d1ff45bd179905b134e20ef0ee1f22d6eb8cf4d
   }
   .profile { 
     background-color: #ba68c8; 
