@@ -1,17 +1,16 @@
 <template>
-    <!-- 대기 방 막아놓은 칸 -->
-    <div id="NoneUser">
+    <!-- 대기 방 User가 들어오지 않았을 때 -->
+    <div id="EmptyUser">
         <div class="user__part d-flex justify-content-center align-items-center">
             <div style="display: none;">{{ nowWindow }}</div>
-            <div class="left__border"></div>
-            <div class="right__border"></div>
+            유저가 들어오지 않았습니다
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    name: "NoneUser",
+    name: "EmptyUser",
 
     props: {
         window: {
@@ -64,11 +63,10 @@ export default {
     /* background-color: rgba(0, 0, 0, 0.3); */
     margin: 10px 20px;
     border-radius: 30px;
-    background: linear-gradient(to top right, rgba(66, 66, 66, 0.5) calc(50% - 1px), rgba(255, 255, 255, 0.5), rgba(66, 66, 66, 0.5) calc(50% + 1px) );
+    background-color: rgba(66, 66, 66, 0.5);
+    color: rgba(255, 255, 255, 0.2);
     font-size: 0.8rem;
-    overflow: hidden;
 }
-
 
 
 </style>

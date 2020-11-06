@@ -15,6 +15,7 @@
                 <!-- 입장한 유저 목록 -->
                 <div class="user__part">
                     <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;" />
+                    <empty v-for="n in EmptyCount" :key="n + 'Emptykey'" :window="windowScreen" style="display: inline-block;"/>
                     <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block;"/>
                 </div>
                 <!-- 채팅 (상용구) -->
@@ -38,7 +39,7 @@
                     <mode :mode="room.mode" :isLeader="room.members[user].leader" style="margin-bottom: 20px;"/>
                     <difficulty :difficulty="room.difficulty" :isLeader="room.members[user].leader"/>
                     <div v-if="room.members[user].leader" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
-                        <button>게임 모드 수정</button>
+                        <button @click="roomUpdate">게임 모드 수정</button>
                     </div>
                 </div>
 
@@ -71,6 +72,7 @@
 
 <script>
 import user from '@/components/room/WaitUser.vue'
+import empty from '@/components/room/EmptyUser.vue'
 import none from '@/components/room/NoneUser.vue'
 import mode from '@/components/room/modeSetting.vue';
 import difficulty from '@/components/room/difficultySetting.vue';
@@ -82,6 +84,7 @@ export default {
     
     components: {
         user,
+        empty,
         none,
         difficulty,
         mode,
@@ -96,7 +99,7 @@ export default {
                 title: '스겜',
                 id: 1,
                 mode: 2,
-                count: 8,
+                count: 6,
                 difficulty: 2,
                 start: false,
                 members: [
@@ -123,7 +126,8 @@ export default {
                 ],
             },
             user: 0,            // 현재 본인 위치
-            NoneCount: 0,       // 들어오지 않은 유저 수
+            EmptyCount: 0,       // 들어오지 않은 유저 수
+            NoneCount: 0,        // 방에 설정된 유저 수가 8 이하일 때, 들어올 수 없는 칸
             isMode: true,       // 현재 모드가 무엇인지 확인 (true: 자유그리기 | false: 이어그리기)
             delayMode: false,   // 로딩 화면 띄울건지 여부 (true: LoadingModeOne or Two | false: 현재 방)
             
@@ -147,8 +151,12 @@ export default {
         this.room = this.defaultroom;
 
         // 빈자리 출력을 위해 인원 확인
-        if (this.room.members.length < 8) {
-            this.NoneCount = 8 - this.room.members.length;
+        if (this.room.members.length < this.room.count) {
+            this.EmptyCount = this.room.count - this.room.members.length;
+        }
+        // 막아둘 자리 출력을 위한 인원 확인
+        if (this.room.count < 8) {
+            this.NoneCount = 8 - this.room.count;
         }
 
         // 본인 위치 확인 (1 대신에 쿠키에서 본인 pk값 받아올 것)
@@ -185,6 +193,21 @@ export default {
 
     methods: {
 
+        // 방 업데이트
+        roomUpdate() {
+            
+            // http
+            // .get('', formData)
+            // .then((res) => {
+            //     console.log(res);
+            //     console.log(res.data);
+            //     this.room = res.data;
+            // })
+            // .catch((err) => {
+            //     console.log(err)
+            // })
+        },
+
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
@@ -219,22 +242,34 @@ export default {
         // 우측 하단 버튼
         // 게임 시작(팀장만)
         GameStart() {
-            console.log('게임을 시작합니다.');
-            // 현재 게임 모드를 확인해서 어떤 로딩 화면을 띄울 건지 결정
-            if (this.room.mode == 1) {
-                this.isMode = true;
-            } else {
-                this.isMode = false;
-            }
-            // 로딩화면 띄우기
-            this.delayMode = true;
 
-            var timer1 = setTimeout(this.goPlayGame, 5000);
+            if (this.room.members.length < 5) {
+                alert('인원 수가 5명보다 적어 게임을 시작할 수 없습니다.');
+            } else {
+                // 현재 게임 모드를 확인해서 어떤 로딩 화면을 띄울 건지 결정
+                if (this.room.mode == 1) {
+                    this.isMode = true;
+                } else {
+                    this.isMode = false;
+                }
+                // 로딩화면 띄우기
+                this.delayMode = true;
+
+                var timer1 = setTimeout(this.goPlayGame, 5000);
+            }
         },
 
         // 방 나가기
         ExitRoom() {
             console.log('방을 나갑니다.');
+            // http
+            // .delete('')
+            // .then((res) => {
+            //     console.log('방 나오기');
+            // })
+            // .catch((err) => {
+            //     console.log(err);
+            // })
         },
 
         // playgame으로 보내기

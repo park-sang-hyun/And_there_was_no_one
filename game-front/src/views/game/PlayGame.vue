@@ -112,7 +112,7 @@ export default {
             },
             defaultRoom: {                      // 테스트용 default 값
                 title: "테스트 중입니다.",
-                mode: 2,
+                mode: 1,
                 difficulty: 1,
                 id: 1,
                 count: 8,

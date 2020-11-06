@@ -21,11 +21,11 @@
             <h1>[경고] 버그로 인해 AI가 폭주합니다.</h1>
             <p>개발자들 사이에 숨어있던 코드네임 <span class="bold__part">Shadow</span>가 AI에 버그를 심었습니다.</p>
             <strong style="margin: 40px; color: white;"><p>버그로 인해 Canvas가 초기화되지 않습니다.</p></strong>
-            <p>Shadow는 현재 탐정들 사이에 숨어있습니다.</p>
+            <!-- <p>Shadow는 현재 탐정들 사이에 숨어있습니다.</p>
             <p>다른 개발자들이 남긴 제시어를 이용해서 Shadow를 찾아내십시오.</p>
             <strong style="margin: 40px;"><p>AI가 제시어를 알아선 안됩니다.</p>
             <p style="color: white;">제시어를 알아낸 AI에 의해 사망할 수 있습니다.</p></strong>
-            <p>Shadow는 현재 탐정들 사이에 숨어있습니다.</p>
+            <p>Shadow는 현재 탐정들 사이에 숨어있습니다.</p> -->
             <p class="bold__part" style="font-size: 1.8rem;">Shadow를 찾아내고 AI를 피해 이 곳을 탈출하십시오.</p>
         </div>
         <div class="countdown"></div>
