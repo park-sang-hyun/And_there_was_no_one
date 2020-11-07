@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h2>프로필</h2>
-    <div class="wrap">
+    
+    <div class="profile-wrapper">
+      프로필
       <!-- 프로필 이미지 불러오기 -->
       <div class="box" style="background: #BDBDBD;">
         <img class="profile" src="https://pbs.twimg.com/profile_images/1184827741884973057/V0F3blnl.jpg">
@@ -62,11 +63,15 @@ export default {
     object-fit: cover;
 }
 .info {
-  background-color: hotpink;
-  margin: 20px;
+  /* background-color: rgba(255, 255, 255, 0.6); */
   padding: 20px;
 }
-.wrap {
-
+.profile-wrapper {
+  background-color: rgba(248, 93, 170, 0.7);
+  border-radius: 20px;
+  margin: 20px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 </style>

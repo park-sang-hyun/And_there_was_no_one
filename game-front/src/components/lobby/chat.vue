@@ -22,13 +22,22 @@
 
 <script>
 export default {
+  props: {
+    websocket: Object,
+  }, 
+
   data: () =>{
-        return{
-          message: "",
-          logs: [],
-          status: "connected"
-        }
-    },
+    return{
+      
+      message: "",
+      logs: [],
+      status: "connected"
+    }
+  },
+
+  // created() {
+  //   console.log("webSocket: "+this.websocket)
+  // },
 
   methods: {
     connect() {
@@ -77,10 +86,11 @@ export default {
   .chatbox {
     border-radius: 20px;
     background-color: rgba(0, 41, 0, 0.6);
-    height: 70%;
-    width: 90%;
-    margin: 15px auto;
+    height: 80%;
+    width: 100%;
+    margin-top: 15px;
     padding-top: 15px;
+    margin-bottom: 15px;
     padding-bottom: 15px;
   }
   form{
