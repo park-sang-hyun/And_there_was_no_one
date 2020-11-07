@@ -10,6 +10,10 @@
         </div>
       </div>
     
+
+      <transition name="fade" appear>
+        <div v-if="showCreateModal" @click="showCreateModal = false" class="modal-overlay"></div>
+      </transition>
       <!-- 방 만들기 버튼 눌렀을 때 생기는 모달 -->
       <transition name="pop" appear>
         <div class="modal" 
@@ -107,12 +111,13 @@ export default {
       }
     },
     created(){
-      // 처음에 totalRoom 데이터를 받아옴
+      // 처음에 totalRoom 개수를 받아옴
       this.getRoomInfo();      
-      // 해당 페이지의 방 정보를 받아옴
+      // 현재 페이지의 방 정보를 받아옴
       this.getRoomList();
     },
     methods: {
+      // 룸 개수 받아오는 메서드
       getRoomInfo() {
         // Room Read lobby 서버에 요청하기 룸 개수
 
@@ -125,12 +130,16 @@ export default {
         // })
 
 
+
+
+
         this.pageLen = Math.ceil(this.totalRoom / 8);  // 소수점 올림
         this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
         console.log("pageLen: "+this.pageLen);
         console.log("Enter getRoomInfo");
       },
 
+      // 현재 페이지의 룸 정보 받아오는 메서드
       getRoomList() {
         // Room Read lobby서버에 요청하기 현재 페이지의 룸 정보
         // pageNow 변수에 현재 페이지가 들어있음
@@ -143,6 +152,9 @@ export default {
         //   // 받아온 데이터에 따라 위 template 출력 내용도 수정하기
         //   this.roomList = res.data
         // })
+
+
+
 
 
 
@@ -178,8 +190,16 @@ export default {
           //   enterRoom(res.roomNo)
           // })
 
+
+
+
+
+
           // 임시로 1번방으로 들어가는 느낌으로 해놓음
           this.enterRoom(1)
+
+
+
           this.showCreateModal = false;
           this.roomName = "";
         }
@@ -378,7 +398,7 @@ html {background: #88bfd4; text-align: center}
   bottom: 0;
   left: 0;
   z-index: 998;
-  background: #2c3e50;
+  background: #414141;
   opacity: 0.6;
   cursor: pointer;
 }

@@ -8,6 +8,11 @@
         <button @click="showModal = true" class="button" style="margin:10px">+</button>
       </div>
 
+      
+      <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
+      <transition name="fade" appear>
+        <div v-if="showModal" @click="cancel" class="modal-overlay"></div>
+      </transition>
       <!-- 친구추가 버튼을 눌렀을 때 생기는 모달 -->
       <transition name="pop" appear>
         <div class="modal" 
@@ -15,7 +20,7 @@
             v-if="showModal"
             >
           <div class="container">
-            <button @click="showModal=false, friendReqStatus='요청전'" class="button">X</button>
+            <button @click="cancel" class="button">X</button>
           </div>
           
           <h1>친구 추가</h1>
@@ -33,6 +38,7 @@
           </div>
 
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
+          <!-- 이 상태에서 x 버튼을 누르면 요청 취소라고 상대방한테도 전달해야할텐데... -->
           <div v-else-if="friendReqStatus==='응답기다림'">
               <p>친구의 응답을 기다리는 중입니다. </p>
               <button @click="getSockMsg()">임시 버튼</button>
@@ -47,6 +53,10 @@
         </div>
       </transition>
 
+      <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
+      <transition name="fade" appear>
+        <div v-if="getFriendReqModal" @click="getFriendReqModal = false, friendAns('no')" class="modal-overlay"></div>
+      </transition>
       <!-- 친구 추가 요청을 받았을 때 popup되는 모달  -->
       <transition name="pop" appear>
         <div class="modal" 
@@ -55,7 +65,7 @@
           >
 
           <div class="container">
-            <button @click="getFriendReqModal = false" class="button">X</button>
+            <button @click="getFriendReqModal = false, friendAns('no')" class="button">X</button>
           </div>
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div>
@@ -74,7 +84,9 @@
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
           <div v-for="friend in friends" :key="friend + 'key'" class="friend">
-            <p style="margin: 5px">{{ friend }}: "friend name"</p>
+            <p style="margin: 5px">
+              {{ friend.isLogin }}: {{ friend.nickname }}
+            </p>
           </div>
         </div> 
       </div>
@@ -98,7 +110,23 @@ export default {
   }, 
   data: () =>{
         return{
-          friends: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          friends: [
+            {no: 1, isLogin: true, nickname:"1 번 친구"},
+            {no: 2, isLogin: true, nickname:"2 번 친구"},
+            {no: 3, isLogin: true, nickname:"3 번 친구"},
+            {no: 4, isLogin: true, nickname:"4 번 친구"},
+            {no: 5, isLogin: true, nickname:"5 번 친구"},
+            {no: 6, isLogin: true, nickname:"6 번 친구"},
+            {no: 7, isLogin: true, nickname:"7 번 친구"},
+            {no: 8, isLogin: true, nickname:"8 번 친구"},
+            {no: 9, isLogin: true, nickname:"9 번 친구"},
+            {no: 10, isLogin: true, nickname:"10 번 친구"},
+            {no: 11, isLogin: true, nickname:"11 번 친구"},
+            {no: 12, isLogin: true, nickname:"12 번 친구"},
+            {no: 13, isLogin: true, nickname:"13 번 친구"},
+            {no: 14, isLogin: true, nickname:"14 번 친구"},
+            {no: 15, isLogin: true, nickname:"15 번 친구"},
+          ],
           // 친구 추가 요청을 보낼 때 보이는 모달을 보여줄 것인지
           showModal: false,
           friendReqStatus: "요청전",
@@ -113,39 +141,80 @@ export default {
   },
   methods: {
     getFriendsList() {
-      // lobby 서버에서 내 친구 목록 가져오기.
-      // 친구가 로그인되어있는지 정보도 들어있음
-
-
-
+      // lobby 서버에서 http로? 혹은 소켓으로 내 친구 목록 가져오기.
+      // 대흠님이 소켓으로 가능하면 다 보내보고 안되면 http랑 섞을께요라고함
+      // 친구가 로그인되어있는지 정보도 들어있어야함
 
       // http
       // .get("/accounts/getFriendsList/")
       // .then((res) => {
       //   // 아래 내용은 서버 기능 만들고 수정하기 
+      //   // this.friends 변수에 친구 목록 데이터 넣기
       //   this.friends = res.data;
       // })
+
+
+
+
+
+
+
     },
 
     // 소켓 메시지를 받아옴
     getSockMsg() {
+      // 소켓으로 메시지 받아오는 기능 여기에 구현하기
+
+
+
+
+
+
+
+      // 소켓으로 친구 로그인 상태 변화 응답을 받았을 때.
+      // this.friends 안의 친구 정보 isLogin부분 수정
+      // 서버에서 리스트로 보낼거면 내가 가진 친구 리스트에서 몇번째 친구인지도 알려주거나
+      // 아니면 친구 목록 통째로 새로 넘겨주거나 둘 중 하나로 구현하면 될듯 
+      // 아니면 key:value 형태로...하면 for문 가능한가?
+
+
+
+      // 소켓으로 친구 추가 요청을 받았을 때
+      // 친구요청응답 매개변수로 담아서 friendAns()함수 호출하기
+
+
+
+      // 소켓으로 친구 추가 요청에 대한 응답을 받았을 때 수락 or 거절
       this.friendReqStatus='상대방이 요청을 수락했습니다.'
+      // this.friendReqStatus='상대방이 요청을 거절했습니다.'
+
+
+      
+      // 친구 추가 요청자와 응답자 모두 서버에서 상대 친구 정보를 받아서
+      // this.friends 리스트에 데이터 추가하기 
+
+
+
+      // 요청 당사자가 친구 추가 요청을 취소했을 때
+      // this.getFriendReqModal = false;
+
+
+
     },
+
 
     // 친구 추가 요청을 보낼 때
     addFriend() {
-      
       this.friendReqStatus = '응답기다림'
-      // 소켓으로 친구 닉네임 넘겨서 찾기 
       // console.log("friend Name:"+this.friendName)
+      // 소켓으로 친구 닉네임 넘겨서 친구추가요청 여기에 구현하기
+      
 
-      // get Massage함수 만들어서 메시지가 친구 요청 관련 내용일 때, 
-      // 요청 결과 출력 하고 응답받은 메시지를 모달에 출력한 후 this.delayModal(); 호출하기
 
-      // 일단 메시지 안받아도 자동으로 꺼지도록 여기서 처리해줌
-      // this.getFriendAns = true;
-      // this.showModal = false;
-      // this.delayModal();
+
+
+      
+
       this.friendName = "";
     },
 
@@ -153,20 +222,36 @@ export default {
     friendAns(ans) {
       console.log("Ans: "+ans)
 
-      // 서버로 친구 추가 요청 응답(ans 매개변수) 보내기 -> 로비로 할거야? Auth로 할거야?
-      // 어차피 Auth로 해도 lobby로 응답했다는 결과는 보내줘야하나? 
-      // 상대방이 수락했는지 거절했는지 다시 보내주려면 로비서버로 보내야지 
-      // 그럼 로비서버에서 user 테이블 안에 있는 친구 정보 수정하든지해야할듯
+      // 로비서버에 소켓으로 친구 추가 요청 응답(ans 매개변수) 보내기 
+      // 로비서버에서 user 테이블 안에 있는 친구 정보 수정
       // 친구가 로그아웃이거나 게임중이면 바로 친구추가 불가 메시지를 요청자가 받아야함
 
-      // 이 부분은 로비 서버에 소켓으로 요청 보내는게 맞을 것 같음 
       
+
+
+
+
+
       
       this.getFriendReqModal = false;
     },
 
+    cancel() {
+      if(this.friendReqStatus==='응답기다림') {
+        // 서버에 소켓으로 상대방이 요청 취소했다고 전달하기. 
+
+
+
+
+
+      }
+      this.showModal=false;
+      this.friendReqStatus='요청전';
+    }
+
 
     // 딜레이 함수. 이거 쓰면 그냥 폴링방식으로 계속 기다림 주의
+    // setTimeOut?은 다를까..? 한번 시도해보자 
     // delayModal() {
     //   // 1.5초 뒤에 변수를 바꿔서 응답 메시지 확인히 가능하게
     //   var gap = 1500;
@@ -298,10 +383,11 @@ export default {
     bottom: 0;
     left: 0;
     z-index: 998;
-    background: #2c3e50;
+    background: #414141;
     opacity: 0.6;
     cursor: pointer;
   }
+
 
   /* ---------------------------------- */
   .fade-enter-active,
