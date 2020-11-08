@@ -36,17 +36,12 @@
             >
 
             <p>{{ roomCreateErr }}</p>
-            <br>
-            <br>
-            <br>
-            <br>
-            여기 안에 난이도 설정, 게임 모드 등을 넣을 예정 <br>
-            -> 수정언니 폼에서 가져오기
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
+            <!-- 수정언니 난이도 조절 부분 가져옴 -->
+            <!-- 최대인원도 설정해야함 -->
+            <!-- https://codepen.io/viestursm/pen/mdJeKVw 여기 코드 참고해보자-->
+            <!-- <mode :mode="1" :isLeader="true" style="margin-bottom: 20px;"/>
+            <difficulty :difficulty="1" :isLeader="true"/> -->
+
             <button type="button" @click="createRoom" class="button">방 생성하기</button>
           </div>
         
@@ -65,6 +60,7 @@
         </div>
       </div>
 
+      <!-- 페이지네이션 -->
       <ul class="pagination" id="menu">
         <li class="page-item"><a class="page-link" @click="prevPage">Prev</a></li>
         <li class="page-item"><a class="page-link" href="#">{{ pageNow }} of {{ pageLen }}</a></li>
@@ -81,19 +77,31 @@
 // js 파일 하나 더 만들든지 해서 아래 부분 처리하고 넘어가기
 import http from "../../util/http-common.js";
 
+// import mode from '@/components/room/modeSetting.vue';
+// import difficulty from '@/components/room/difficultySetting.vue';
+
+
 export default {
+
+    name: 'Roomlist',
+
+    // components: {
+    //     difficulty,
+    //     mode,
+    // },
+
     data: () =>{
       return {
         // 받아온 방 정보 8개 객체를 받아옴
         roomList: [
-            {no: 0, roomname: 0, mode: 0, people: 0},
-            {no: 1, roomname: 1, mode: 1, people: 1},
-            {no: 2, roomname: 2, mode: 2, people: 2},
-            {no: 3, roomname: 3, mode: 3, people: 3},
-            {no: 4, roomname: 4, mode: 4, people: 4},
-            {no: 5, roomname: 5, mode: 5, people: 5},
-            {no: 6, roomname: 6, mode: 6, people: 6},
-            {no: 7, roomname: 7, mode: 7, people: 7},
+            {no: 0, roomname: 0, mode: 0, people: 0, difficulty: 1, start: false},
+            {no: 1, roomname: 1, mode: 1, people: 1, difficulty: 1, start: false},
+            {no: 2, roomname: 2, mode: 2, people: 2, difficulty: 1, start: false},
+            {no: 3, roomname: 3, mode: 3, people: 3, difficulty: 1, start: false},
+            {no: 4, roomname: 4, mode: 4, people: 4, difficulty: 1, start: false},
+            {no: 5, roomname: 5, mode: 5, people: 5, difficulty: 1, start: false},
+            {no: 6, roomname: 6, mode: 6, people: 6, difficulty: 1, start: false},
+            {no: 7, roomname: 7, mode: 7, people: 7, difficulty: 1, start: false},
           ],
         // totalRoom은 생성된 룸 개수
         totalRoom: 12,
