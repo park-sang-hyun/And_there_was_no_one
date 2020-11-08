@@ -8,7 +8,8 @@
             @mouseup="stopPainting"
             @mouseleave="stopPainting"
             @click="handleCanvasClick"
-            @contextmenu="handleCM">
+            @contextmenu="handleCM"
+            :disabled="!turnOff">
         </canvas>
         
         <!--<span>{{x}}, {{y}}</span>-->
@@ -49,7 +50,10 @@ export default {
     props: {
         window: {
             type: Object,
-        }
+        },
+        turnOff: {
+            type: Boolean,
+        },
     },
 
     data: () =>{

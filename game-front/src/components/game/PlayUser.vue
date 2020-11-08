@@ -1,7 +1,7 @@
 <template>
     <!-- 게임 실행 화면 User -->
     <div id="PlayUser" class="container p-0">
-        <div class="user__part row">
+        <div class="user__part row d-flex-justify-content-center align-items-center">
             <div style="display: none;">{{ nowWindow }}</div>
             <div class="user__left col-4 d-flex justify-content-center align-items-center p-0">
                 <!-- user 래더 or 프로필 -->
@@ -28,6 +28,9 @@ export default {
         window: {
             type: Object
         },
+        isMode: {
+            type: Boolean
+        },
     },
 
     data() {
@@ -53,7 +56,12 @@ export default {
         // 넓이 계산해서 style 안에 계산해서 넣어주기
         layoutCal() {
             let suffix = 'px';
-            var userWidth = (this.window.width * (3/12)) - 40;
+            var userWidth = 0;
+            if (this.isMode) {
+                userWidth = ((this.window.width * (4/12)) - 40) / 2;
+            } else {
+                userWidth = (this.window.width * (3/12)) - 40;
+            }
             var userHeight = ((this.window.height - 40 - 80) * 0.125) - 20;
             document.documentElement.style.setProperty('--userWidth', userWidth + suffix);
             document.documentElement.style.setProperty('--userHeight', userHeight + suffix);
@@ -77,13 +85,14 @@ export default {
 }
 
 #PlayUser {
+    position: relative;
 }
 
 .user__part {
     width: var(--userWidth);
     height: var(--userHeight);
     /* background-color: rgba(0, 0, 0, 0.3); */
-    margin: 10px 20px;
+    margin: 10px auto;
     border-radius: 30px;
     border: 2px solid white;
 }
