@@ -37,10 +37,10 @@ export default {
 
     props: {
         mode: {
-            object: Number,
+            type: Number,
         },
         isLeader: {
-            object: Boolean,
+            type: Boolean,
         },
     },
 

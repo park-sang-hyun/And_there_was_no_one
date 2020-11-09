@@ -38,11 +38,11 @@ export default {
 
     props: {
         difficulty: {
-            object: Number,
+            type: Number,
             default: 2,
         },
         isLeader: {
-            object: Boolean,
+            type: Boolean,
         },
     },
 
