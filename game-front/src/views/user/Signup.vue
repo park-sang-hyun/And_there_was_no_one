@@ -51,6 +51,11 @@
         :class="{disabled : !isSubmit}"
       >Signup</button>
 
+      <div class="add-option mt-4">
+          <div class="wrap">
+            <router-link to="/" class="btn--text">Login</router-link>
+          </div>
+      </div>
     </form>
   </div>
 </template>

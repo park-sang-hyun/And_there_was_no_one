@@ -17,19 +17,20 @@
 
     <div class="gerstner-2">
       <div class="comp">
-        <Profile :component="component" class="profile"/>
-        <Friends :component="component" class="friends"/>
+        <Profile class="profile"/>
+        <!-- 소켓 props -->
+        <Friends v-bind:websocket="websock" v-if="websock" class="friends"></Friends>
       </div>
       <div class="comp">
-        <Roomlist :component="component" class="roomlist"/>
-        <Chat :component="component" class="chat"/>
+        <Roomlist class="roomlist"/>
+        <!-- 소켓 props -->
+        <Chat v-bind:websocket="websock" v-if="websock" class="chat"></Chat>
       </div>
     </div>
 
     <!-- <button @click="disconnect" v-if="status === 'connected'">연결끊기</button>
     <button @click="connect" v-if="status === 'disconnected'">연결</button> {{ status }} -->
     <br /><br />
-
 
   </div>
 
@@ -62,7 +63,7 @@ export default {
         }
     },
 
-
+  
   mounted(){
     this.initWebScoket();
   },
@@ -71,13 +72,14 @@ export default {
       initWebScoket(){
         const wsuri = "ws://localhost:8001/chatting?userid=" + storage.getItem('id');
         this.websock = new WebSocket(wsuri);
+        console.log("lobby websocket: "+this.websock)
         this.websock.onmessage = this.webSocketOnMessage;
         this.websock.onopen = this.webSocketOpen;
         this.websock.onerror = this.webSocketOnError;
         this.websock.onclose = this.webSocketClose;
         console.log(this.websock)
         this.webSocketOpen();
-        console.log(this.websock.sessionId)
+        console.log("websocksessionId: " + this.websock.sessionId)
       },
 
       webSocketOpen(){
@@ -116,12 +118,14 @@ export default {
 <style scoped>
   .gerstner-2 {
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 2.5fr;
     /* grid-column-gap: 1em; */
+    background-color: black;
   }
   .comp {
     display: grid;
-    grid-template-rows: 1fr .5fr;
+    grid-template-rows: .8fr .2fr;
+    min-width: 300px;
   }
   .profile { 
     background-color: #ba68c8; 

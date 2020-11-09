@@ -1,12 +1,22 @@
 <template>
     <div>
-        <canvas id="jsCanvas" class="canvas" @mousedown="startPainting" @mousemove="onMouseMove" @mouseup="stopPainting" @mouseleave="stopPainting" @click="handleCanvasClick" @contextmenu="handleCM"></canvas>
+        <canvas
+            id="jsCanvas"
+            class="canvas" 
+            @mousedown="startPainting"
+            @mousemove="onMouseMove"
+            @mouseup="stopPainting"
+            @mouseleave="stopPainting"
+            @click="handleCanvasClick"
+            @contextmenu="handleCM"
+            :disabled="!turnOff">
+        </canvas>
         
         <!--<span>{{x}}, {{y}}</span>-->
         <div class="controls">
             <div class="controls__range">
-                <p style="float:left;">PEN 크기 : </p>
-                <input type="range" style="margin-top:21px;" id="jsRange" min="0.1" max="5.0" value="2.5" step="0.1" @input="handleRangeChange"/>
+                <p style="float:left;">펜 크기 : </p>
+                <input type="range" style="margin-top:21px;" id="jsRange" min="0.2" max="10.0" value="5.0" step="0.2" @input="handleRangeChange"/>
             </div>
             <div class="controls__btns">
                 <button id="jsMode" @click="handleModeClick">그리기</button>
@@ -28,15 +38,24 @@
 </template>
 
 <script>
-import "../../assets/css/draw.css"
+import "@/assets/css/draw.css"
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
-import http from "../../util/http-common.js";
+import http from "@/util/http-common.js";
 
 export default {
     components:{
 
     },
+    props: {
+        window: {
+            type: Object,
+        },
+        turnOff: {
+            type: Boolean,
+        },
+    },
+
     data: () =>{
         return{
             x: 0,
