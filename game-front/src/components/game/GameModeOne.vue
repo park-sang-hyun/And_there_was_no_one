@@ -1,4 +1,5 @@
 <template>
+    <!-- 자유그리기 -->
     <div id="GameModeOne" class="row">
         <div class="col-8 p-0">
             <!-- 화면 왼쪽 상단 -->

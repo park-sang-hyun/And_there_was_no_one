@@ -30,14 +30,16 @@ export default [
         path: '/room',
         // path: '/room/:roomId',
         name: 'WaitRoom',
-        component: WaitRoom
+        component: WaitRoom,
+        props: true,
     },
     // PlayGame
     {
         path: '/playing',
         // path: '/playing/:roomId',
         name: 'PlayGame',
-        component: PlayGame
+        component: PlayGame,
+        props: true,
     },
     // Lobby
     {

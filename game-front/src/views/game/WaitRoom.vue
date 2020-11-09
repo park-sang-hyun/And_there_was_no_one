@@ -36,8 +36,8 @@
             <div class="screen__right">
                 <!-- 게임 설정 출력 (상중하 / 모드) 방장인 경우에 클릭 가능 -->
                 <div class="setting__part">
-                    <mode :mode="room.mode" :isLeader="room.members[user].leader" style="margin-bottom: 20px;"/>
-                    <difficulty :difficulty="room.difficulty" :isLeader="room.members[user].leader"/>
+                    <mode :mode="room.mode" :isLeader="room.members[user].leader" @modeChange="modeChange" style="margin-bottom: 20px;"/>
+                    <difficulty :difficulty="room.difficulty" :isLeader="room.members[user].leader" @difficultyChange="difficultyChange"/>
                     <div v-if="room.members[user].leader" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
                         <button @click="roomUpdate">게임 모드 수정</button>
                     </div>
@@ -59,12 +59,16 @@
         <!-- game 화면 이전에 로딩 화면 -->
         <div v-else>
             <!-- 자유그리기 모드일 때 -->
-            <div v-if="isMode">
+            <div v-if="isMode[0]">
                 <loadingOne/>
             </div>
             <!-- 이어그리기 모드일 때 -->
-            <div v-else>
+            <div v-if="isMode[1]">
                 <loadingTwo/>
+            </div>
+            <!-- NO AI 모드일 때 -->
+            <div v-if="isMode[2]">
+                <loadingThree/>
             </div>
         </div>
     </div>
@@ -78,6 +82,7 @@ import mode from '@/components/room/modeSetting.vue';
 import difficulty from '@/components/room/difficultySetting.vue';
 import loadingOne from '@/components/room/LoadingModeOne.vue';
 import loadingTwo from '@/components/room/LoadingModeTwo.vue';
+import loadingThree from '@/components/room/LoadingModeThree.vue';
 
 export default {
     name: 'WaitRoom',
@@ -90,15 +95,16 @@ export default {
         mode,
         loadingOne,
         loadingTwo,
+        loadingThree,
     },
 
     data() {
         return {
-            room: {},           // room 데이터 받아서 넣기
-            defaultroom: {      // 개발용 default 값
+            room: {},               // room 데이터 받아서 넣기
+            defaultroom: {          // 개발용 default 값
                 title: '스겜',
                 id: 1,
-                mode: 2,
+                mode: 3,
                 count: 6,
                 difficulty: 2,
                 start: false,
@@ -125,23 +131,31 @@ export default {
                     },
                 ],
             },
-            user: 0,            // 현재 본인 위치
-            EmptyCount: 0,       // 들어오지 않은 유저 수
-            NoneCount: 0,        // 방에 설정된 유저 수가 8 이하일 때, 들어올 수 없는 칸
-            isMode: true,       // 현재 모드가 무엇인지 확인 (true: 자유그리기 | false: 이어그리기)
-            delayMode: false,   // 로딩 화면 띄울건지 여부 (true: LoadingModeOne or Two | false: 현재 방)
+            user: 0,                // 현재 본인 위치
+            EmptyCount: 0,          // 들어오지 않은 유저 수
+            NoneCount: 0,           // 방에 설정된 유저 수가 8 이하일 때, 들어올 수 없는 칸
+            isMode: [
+                false, false, false
+                ],                  // 현재 모드가 무엇인지 확인 (true: 자유그리기 | false: 이어그리기)
+            delayMode: false,       // 로딩 화면 띄울건지 여부 (true: LoadingModeOne or Two | false: 현재 방)
             
-            window: {           // 현재 창 너비
+            window: {               // 현재 창 너비
                 width: 0,
                 height: 0,
             },
             
-            chatList: [         // 채팅에 쓸 상용구
+            chatList: [             // 채팅에 쓸 상용구
                 'Ready',
                 '시작합시다',
                 '잠시만요',
                 'ㅇㅇ',
             ],
+
+            // 받아온 모드 값
+            checked: {
+                mode: 1,
+                difficulty: 1,
+            },
         }
     },
 
@@ -195,9 +209,16 @@ export default {
 
         // 방 업데이트
         roomUpdate() {
-            
+            // 현재 유저가 리더인지 확인
+
+            // 필요한 데이터 넣어서 보내기
+            let formData = new FormData();
+            formData.append('roomId', this.room.id);
+            formData.append('mode', this.checked.mode);
+            formData.append('difficulty', this.checked.difficulty);
+
             // http
-            // .get('', formData)
+            // .post('', formData)
             // .then((res) => {
             //     console.log(res);
             //     console.log(res.data);
@@ -243,19 +264,26 @@ export default {
         // 게임 시작(팀장만)
         GameStart() {
 
-            if (this.room.members.length < 5) {
+            if (this.room.members.length < 2) {
                 alert('인원 수가 5명보다 적어 게임을 시작할 수 없습니다.');
             } else {
                 // 현재 게임 모드를 확인해서 어떤 로딩 화면을 띄울 건지 결정
-                if (this.room.mode == 1) {
-                    this.isMode = true;
-                } else {
-                    this.isMode = false;
-                }
+                this.isMode = [false, false, false];        // 초기화
+                this.isMode[this.room.mode - 1] = true;     // mode에 맞는 것만 true
                 // 로딩화면 띄우기
                 this.delayMode = true;
 
-                var timer1 = setTimeout(this.goPlayGame, 5000);
+                var timer1 = setTimeout(this.goPlayGame, 10000);
+                // http
+                // .get('')
+                // .then((res) => {
+                //     clearTimeout(timer1);
+                //     this.goPlayGame(res.data);
+                // })
+                // .catch((err) => {
+                //     clearTimeout(timer1);
+                //     console.log(err);
+                // })
             }
         },
 
@@ -273,8 +301,16 @@ export default {
         },
 
         // playgame으로 보내기
-        goPlayGame() {
-            this.$router.push({ name: 'PlayGame' });
+        goPlayGame(data) {
+            this.$router.replace({ name: 'PlayGame' , params: { sendGame: data }});
+        },
+
+        // 선택한 설정값 변경 (모드 | 난이도)
+        modeChange(mode) {
+            this.checked.mode = mode;
+        },
+        difficultyChange(difficulty) {
+            this.checked.difficulty = difficulty;
         },
     },
 

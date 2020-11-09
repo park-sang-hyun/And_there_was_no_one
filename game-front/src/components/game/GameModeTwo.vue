@@ -1,4 +1,5 @@
 <template>
+    <!-- 이어그리기 -->
     <div id="GameModeTwo" class="row">
         <div class="col-9 p-0 m-0">
 

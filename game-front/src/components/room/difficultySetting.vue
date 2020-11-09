@@ -28,6 +28,7 @@
             </div>
 
         </div>
+        <div style="display: none">{{ callSelect }}</div> 
     </div>
 </template>
 
@@ -38,6 +39,7 @@ export default {
     props: {
         difficulty: {
             object: Number,
+            default: 2,
         },
         isLeader: {
             object: Boolean,
@@ -55,11 +57,18 @@ export default {
     },
     
     computed: {
-        
+        callSelect() {
+            this.sendDifficulty();
+            return this.difficultySelect
+        }
+
     },
 
     methods: {
-        
+        sendDifficulty() {
+            this.$emit('difficultyChange', this.difficultySelect);
+        }
+
     },
 }
 </script>

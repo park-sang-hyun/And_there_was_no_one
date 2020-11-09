@@ -15,6 +15,9 @@
             <div class="image01"></div>
             <div class="image02"></div>
         </div>
+        
+        <!-- 중앙 정렬위한 빈 공간 -->
+        <div id="floater"></div>
 
         <!-- 스토리 -->
         <div class="main__story">
@@ -86,9 +89,17 @@ export default {
     overflow: inherit; 
 }
 
-// story 부분
 
+// 중앙 정렬 위한 floater
+#floater {
+    float: left; 
+    height: 50%; 
+    margin-bottom: -120px;
+}
+
+// story 부분
 .main__story {
+    clear: both; 
     position: sticky;
     color: rgb(165, 165, 165);
     font-size:20px;

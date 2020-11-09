@@ -51,6 +51,12 @@ export default {
         ModeTwo,
     },
 
+    props: {
+        sendGame: {
+            type: undefined,
+        },
+    },
+
     data() {
         return {
             room: {},                           // room 데이터 받아서 넣기 (이후 보고 아예 props로 받기)
