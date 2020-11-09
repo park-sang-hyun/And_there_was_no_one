@@ -31,7 +31,12 @@
         <div class="col-3 p-0 m-0">
             <!-- 유저 리스트 -->
             <div class="row screen__right">
-                <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" :isMode="isMode" style="display: inline-block;"/>
+                <div v-for="n in 8" :key="'user' + n + 'key'" style="display: inline-block;" class="d-flex justify-content-center">
+                    <user v-if="n < room.members.length + 1" :userData="room.members[n-1]" :window="windowScreen" :isMode="isMode" :isTurn="isYourTurn" :memNo="n"/>
+                    <empty v-else-if="n < room.members.length + memCount.EmptyCount + 1"  :window="windowScreen" :isMode="isMode" />
+                    <none v-else :window="windowScreen" :isMode="isMode" />
+                </div>
+
                 <div class="exit__button d-flex justify-content-center align-items-center">
                     <button @click="exitRoom">방 나가기</button>
                 </div> 
@@ -43,6 +48,8 @@
 <script>
 import draw from '@/components/game/GameDraw.vue';
 import user from '@/components/game/PlayUser.vue';
+import empty from '@/components/game/EmptyUser.vue';
+import none from '@/components/game/NoneUser.vue';
 
 export default {
     name: "GameModeTwo",
@@ -62,12 +69,20 @@ export default {
             type: Boolean,
             default: false,
         },
+        isTurn: {
+            type: Number,
+            default: 1,
+        },
+        memCount: {
+            type: Object
+        },
     },
 
     components: {
         draw,
         user,
-
+        empty,
+        none,
     },
 
     data() {
@@ -76,7 +91,6 @@ export default {
                 width: 0,
                 height: 0,
             },
-
         }
     },
 
@@ -96,6 +110,9 @@ export default {
     computed: {
         windowScreen() {
             return this.window
+        },
+        isYourTurn() {
+            return this.isTurn
         },
     },
 

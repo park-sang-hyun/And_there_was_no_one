@@ -14,6 +14,7 @@
                 </div>
             </div>
         </div>
+        <div style="display: none">{{ isYourTurn }}</div>
     </div>
 </template>
 
@@ -31,6 +32,12 @@ export default {
         isMode: {
             type: Boolean
         },
+        yourTurn: {
+            type: Number
+        },
+        memNo: {
+            type: Number
+        },
     },
 
     data() {
@@ -42,6 +49,8 @@ export default {
 
     created() {
         this.layoutCal();
+        console.log('턴', this.yourTurn);
+        console.log('순서', this.memNo);
     },
 
     computed: {
@@ -50,6 +59,10 @@ export default {
             this.layoutCal();
             return this.window
         },
+        isYourTurn() {
+            this.checkTurn();
+            return this.yourTurn
+        }
     },
 
     methods: {
@@ -57,18 +70,27 @@ export default {
         layoutCal() {
             let suffix = 'px';
             var userWidth = 0;
+            var userHeight = 0;
             if (this.isMode) {
-                userWidth = ((this.window.width * (4/12)) - 40) / 2;
+                userWidth = (this.window.width * (4/12) * 0.5);
+                userHeight = ((this.window.height - 40 - 100) * 0.5 * 0.25) - 20;
             } else {
                 userWidth = (this.window.width * (3/12)) - 40;
+                userHeight = ((this.window.height - 40 - 80) * 0.125) - 20;
             }
-            var userHeight = ((this.window.height - 40 - 80) * 0.125) - 20;
             document.documentElement.style.setProperty('--userWidth', userWidth + suffix);
             document.documentElement.style.setProperty('--userHeight', userHeight + suffix);
             document.documentElement.style.setProperty('--userLeft', (userWidth * (4/12)) + suffix);
             document.documentElement.style.setProperty('--userRight', ((userWidth * (8/12))) + suffix);
             document.documentElement.style.setProperty('--userImage', ((userWidth * 0.21) - 10) + suffix);
 
+        },
+        checkTurn() {
+            if (this.yourTurn == this.momNo + 1) {
+                document.documentElement.style.setProperty('--yourTurn', 'yellow');
+            } else {
+                document.documentElement.style.setProperty('--yourTurn', 'white');
+            }
         },
 
     }
@@ -82,6 +104,7 @@ export default {
     --userLeft: 100px;
     --userRigth: 200px;
     --userImage: 50px;
+    --yourTurn: white;
 }
 
 #PlayUser {
@@ -94,7 +117,7 @@ export default {
     /* background-color: rgba(0, 0, 0, 0.3); */
     margin: 10px auto;
     border-radius: 30px;
-    border: 2px solid white;
+    border: 2px solid var(--yourTurn);
 }
 
 .user__left {

@@ -1,12 +1,12 @@
 <template>
-    <!-- 자유그리기 -->
+    <!-- 자유그리기 | NO AI -->
     <div id="GameModeOne" class="row">
         <div class="col-8 p-0">
             <!-- 화면 왼쪽 상단 -->
             <div class="row screen__left__top d-flex justify-content-center align-content-center">
                 <!-- 게임 주제, 제시어 -->
                 <div class="room__title">
-                    <span>주제: 과일</span>
+                    <span>주제: 과일 {{ isYourTurn }}</span>
                     <span class="ml-4">제시어: ●●</span>
                 </div>
                 <!-- 게임 모드, 난이도 -->
@@ -28,17 +28,29 @@
         <!-- 화면 오른쪽 -->
         <!-- 유저 리스트 -->
         <div class="col-4 p-0 screen__right"> 
-            <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" :isMode="isMode" style="display: inline-block;"/>
+            <div class="screen__right__top" style="border: 1px solid white;">
+                그림 나올 공간
+            </div>
+            <div class="screen__right__bottom">
+                <div v-for="n in 8" :key="'user' + n + 'key'" style="display: inline-block;">
+                    <user v-if="n < room.members.length + 1" :userData="room.members[n-1]" :window="windowScreen" :isMode="isMode" :isTurn="isYourTurn" :memNo="n" style="float: left;"/>
+                    <empty v-else-if="n < room.members.length + memCount.EmptyCount + 1"  :window="windowScreen" :isMode="isMode" style="float: left;"/>
+                    <none v-else :window="windowScreen" :isMode="isMode" style="float: left;"/>
+                </div>
+            </div>
             <div class="exit__button d-flex justify-content-center align-items-center">
                 <button @click="exitRoom">방 나가기</button>
             </div> 
         </div>
+        <div style="display:none;">{{ isYourTurn }}</div> 
     </div>
 </template>
 
 <script>
 import draw from '@/components/game/GameDraw.vue';
 import user from '@/components/game/PlayUser.vue';
+import empty from '@/components/game/EmptyUser.vue';
+import none from '@/components/game/NoneUser.vue';
 
 export default {
     name: "GameModeOne",
@@ -58,12 +70,20 @@ export default {
             type: Boolean,
             default: true,
         },
+        isTurn: {
+            type: Number,
+            default: 1,
+        },
+        memCount: {
+            type: Object
+        },
     },
 
     components: {
         draw,
         user,
-
+        empty,
+        none,
     },
 
     data() {
@@ -101,10 +121,12 @@ export default {
 
         checkScreen() {
             return this.screen
-        }
+        },
+
+        isYourTurn() {
+            return this.isTurn
+        },
     },
-
-
 
     methods: {
         // 현재 보이는 화면 크기 계산
@@ -126,7 +148,7 @@ export default {
             document.documentElement.style.setProperty('--rightSize', rightSize + suffix);
             document.documentElement.style.setProperty('--widthtSize', (this.window.width) + suffix);
             document.documentElement.style.setProperty('--heightSize', (this.window.height) + suffix);
-            document.documentElement.style.setProperty('--rightTopSize', (this.window.height - 40) + suffix);
+            document.documentElement.style.setProperty('--rightTopSize', ((this.window.height - 40 - 100) / 2) + suffix);
             document.documentElement.style.setProperty('--leftTopSize', (this.window.height * 0.1) + suffix);
             document.documentElement.style.setProperty('--leftBottomSize', (this.window.height * 0.9) + suffix);
         },
@@ -174,7 +196,7 @@ export default {
     /* background-color: rgba(62, 62, 62, 0.5); */
 }
 
-/* 이어그리기 우측 */
+/* 우측 전체 사이즈 */
 .screen__right {
     display: block;
     width: var(--rightSize);
@@ -182,10 +204,19 @@ export default {
     margin: 40px 0px 0px 0px;
     /* background-color: skyblue; */
 }
+
+/* 우측 상단 */
 .screen__right__top {
     display: inline-block;
     width: 100%;
-    width: var(--rightSize);
+    height: var(--rightTopSize);
+    /* background-color: skyblue; */
+}
+
+/* 우측 하단 */
+.screen__right__bottom {
+    display: inline-block;
+    width: 100%;
     height: var(--rightTopSize);
     /* background-color: skyblue; */
 }

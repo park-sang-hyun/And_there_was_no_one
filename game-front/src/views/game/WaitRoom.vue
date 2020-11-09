@@ -217,6 +217,8 @@ export default {
             formData.append('mode', this.checked.mode);
             formData.append('difficulty', this.checked.difficulty);
 
+            console.log('room update');
+
             // http
             // .post('', formData)
             // .then((res) => {
