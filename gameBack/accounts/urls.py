@@ -5,6 +5,8 @@ from . import views
 app_name = 'accounts'
 
 urlpatterns = [
+    path('read/<int:id>/', views.read),
+    path('nickname/<str:nickname>/', views.nickname),
     path('update/', views.update),
     path('delete/', views.delete),
     url(r'^$', views.index, name='index'),
