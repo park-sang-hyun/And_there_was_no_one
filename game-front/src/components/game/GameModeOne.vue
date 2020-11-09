@@ -6,7 +6,7 @@
             <div class="row screen__left__top d-flex justify-content-center align-content-center">
                 <!-- 게임 주제, 제시어 -->
                 <div class="room__title">
-                    <span>주제: 과일 {{ isYourTurn }}</span>
+                    <span>주제: 과일</span>
                     <span class="ml-4">제시어: ●●</span>
                 </div>
                 <!-- 게임 모드, 난이도 -->
@@ -23,12 +23,13 @@
                     <draw :window="windowScreen" :turnOff="turnOff"/>
                 </div>
             </div>
+            <div v-if="selectCanvas" class="screen__left__block"></div>
         </div>
 
         <!-- 화면 오른쪽 -->
         <!-- 유저 리스트 -->
         <div class="col-4 p-0 screen__right"> 
-            <div class="screen__right__top" style="border: 1px solid white;">
+            <div class="screen__right__top">
                 그림 나올 공간
             </div>
             <div class="screen__right__bottom">
@@ -96,6 +97,7 @@ export default {
                 left: 0,
                 right: 0,
             },
+            selectCanvas: false,
         }
     },
 
@@ -124,6 +126,7 @@ export default {
         },
 
         isYourTurn() {
+            // this.yourTurn();
             return this.isTurn
         },
     },
@@ -153,6 +156,15 @@ export default {
             document.documentElement.style.setProperty('--leftBottomSize', (this.window.height * 0.9) + suffix);
         },
 
+        // 본인의 턴이면 그림 그리기를 할 수 있도록, 아니면 못하도록 막기
+        yourTurn() {
+            if (this.room.members[this.turn - 1].id == 4 ) {
+                this.selectCanvas = false;
+            } else {
+                this.selectCanvas = true;
+            }
+        },
+
         exitRoom() {
             console.log('방 나가기');
         },
@@ -173,6 +185,10 @@ export default {
     --leftTopSize: 400px;
     --leftBottomSize: 400px;
     --rightTopSize: 760px;
+}
+
+#GameModeOne {
+    position: relative;
 }
 
 /* 전체 영역 3부분으로 나눔 왼상단 | 왼하단 | 오 */
@@ -196,6 +212,15 @@ export default {
     /* background-color: rgba(62, 62, 62, 0.5); */
 }
 
+.screen__left__block {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: var(--leftSize);
+    height: var(--leftBottomSize);
+    z-index: 50;
+}
+
 /* 우측 전체 사이즈 */
 .screen__right {
     display: block;
@@ -210,7 +235,7 @@ export default {
     display: inline-block;
     width: 100%;
     height: var(--rightTopSize);
-    /* background-color: skyblue; */
+    background-color: rgba(61, 61, 61, 0.5);
 }
 
 /* 우측 하단 */

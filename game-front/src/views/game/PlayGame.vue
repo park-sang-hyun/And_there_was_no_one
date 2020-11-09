@@ -60,7 +60,7 @@ export default {
     data() {
         return {
             game: { },
-            turn: 3,                            // 현재 턴
+            turn: 2,                            // 현재 턴
             isMode: true,                       // 현재 게임 모드 확인 (true: 자유그리기 | false: 이어그리기)
             checkRoll: false,                   // 제시어 확인 페이지 여부
             defaultgame: {
@@ -71,7 +71,7 @@ export default {
             room: {},                           // room 데이터 받아서 넣기 (이후 보고 아예 props로 받기)
             defaultRoom: {                      // 테스트용 default 값
                 title: "테스트 중입니다.",
-                mode: 2,
+                mode: 1,
                 difficulty: 1,
                 id: 1,
                 count: 7,

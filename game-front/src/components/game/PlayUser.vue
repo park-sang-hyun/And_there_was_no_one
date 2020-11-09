@@ -13,6 +13,7 @@
                     </div>
                 </div>
             </div>
+            <div v-if="showColor" class="user__border"></div>
         </div>
         <div style="display: none">{{ isYourTurn }}</div>
     </div>
@@ -32,7 +33,7 @@ export default {
         isMode: {
             type: Boolean
         },
-        yourTurn: {
+        isTurn: {
             type: Number
         },
         memNo: {
@@ -44,13 +45,12 @@ export default {
         return {
             width: 0,
             height: 0,
+            showColor: false,
         }
     },
 
     created() {
         this.layoutCal();
-        console.log('턴', this.yourTurn);
-        console.log('순서', this.memNo);
     },
 
     computed: {
@@ -61,7 +61,7 @@ export default {
         },
         isYourTurn() {
             this.checkTurn();
-            return this.yourTurn
+            return this.isTurn
         }
     },
 
@@ -86,10 +86,10 @@ export default {
 
         },
         checkTurn() {
-            if (this.yourTurn == this.momNo + 1) {
-                document.documentElement.style.setProperty('--yourTurn', 'yellow');
+            if (this.isTurn == this.memNo) {
+                this.showColor = true;
             } else {
-                document.documentElement.style.setProperty('--yourTurn', 'white');
+                this.showColor = false;
             }
         },
 
@@ -104,7 +104,6 @@ export default {
     --userLeft: 100px;
     --userRigth: 200px;
     --userImage: 50px;
-    --yourTurn: white;
 }
 
 #PlayUser {
@@ -117,7 +116,7 @@ export default {
     /* background-color: rgba(0, 0, 0, 0.3); */
     margin: 10px auto;
     border-radius: 30px;
-    border: 2px solid var(--yourTurn);
+    border: 2px solid white;
 }
 
 .user__left {
@@ -137,6 +136,17 @@ export default {
     max-height: 50px;
     border-radius: 50%;
     background-color: black;
+}
+
+.user__border {
+    position: absolute;
+    width: var(--userWidth);
+    height: var(--userHeight);
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+    border-radius: 30px;
+    border: 2px solid yellow;
 }
 
 
