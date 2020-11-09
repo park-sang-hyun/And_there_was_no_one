@@ -13,7 +13,9 @@
                     </div>
                 </div>
             </div>
+            <div v-if="showColor" class="user__border"></div>
         </div>
+        <div style="display: none">{{ isYourTurn }}</div>
     </div>
 </template>
 
@@ -31,12 +33,19 @@ export default {
         isMode: {
             type: Boolean
         },
+        isTurn: {
+            type: Number
+        },
+        memNo: {
+            type: Number
+        },
     },
 
     data() {
         return {
             width: 0,
             height: 0,
+            showColor: false,
         }
     },
 
@@ -50,6 +59,10 @@ export default {
             this.layoutCal();
             return this.window
         },
+        isYourTurn() {
+            this.checkTurn();
+            return this.isTurn
+        }
     },
 
     methods: {
@@ -57,18 +70,27 @@ export default {
         layoutCal() {
             let suffix = 'px';
             var userWidth = 0;
+            var userHeight = 0;
             if (this.isMode) {
-                userWidth = ((this.window.width * (4/12)) - 40) / 2;
+                userWidth = (this.window.width * (4/12) * 0.5);
+                userHeight = ((this.window.height - 40 - 100) * 0.5 * 0.25) - 20;
             } else {
                 userWidth = (this.window.width * (3/12)) - 40;
+                userHeight = ((this.window.height - 40 - 80) * 0.125) - 20;
             }
-            var userHeight = ((this.window.height - 40 - 80) * 0.125) - 20;
             document.documentElement.style.setProperty('--userWidth', userWidth + suffix);
             document.documentElement.style.setProperty('--userHeight', userHeight + suffix);
             document.documentElement.style.setProperty('--userLeft', (userWidth * (4/12)) + suffix);
             document.documentElement.style.setProperty('--userRight', ((userWidth * (8/12))) + suffix);
             document.documentElement.style.setProperty('--userImage', ((userWidth * 0.21) - 10) + suffix);
 
+        },
+        checkTurn() {
+            if (this.isTurn == this.memNo) {
+                this.showColor = true;
+            } else {
+                this.showColor = false;
+            }
         },
 
     }
@@ -114,6 +136,17 @@ export default {
     max-height: 50px;
     border-radius: 50%;
     background-color: black;
+}
+
+.user__border {
+    position: absolute;
+    width: var(--userWidth);
+    height: var(--userHeight);
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+    border-radius: 30px;
+    border: 2px solid yellow;
 }
 
 

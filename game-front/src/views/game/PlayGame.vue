@@ -9,12 +9,12 @@
         <div v-else>
             <!-- 자유 그리기 모드 -->
             <div v-if="isMode">
-                <ModeOne :room="room" :output="output" :isMode="isMode" />
+                <ModeOne :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" />
             </div>
                 
             <!-- 이어그리기 모드 -->
             <div v-else>
-                <ModeTwo :room="room" :output="output" :isMode="isMode" />
+                <ModeTwo :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" />
             </div>
 
             <div class="chat__part">
@@ -51,15 +51,30 @@ export default {
         ModeTwo,
     },
 
+    props: {
+        sendGame: {
+            type: undefined,
+        },
+    },
+
     data() {
         return {
+            game: { },
+            turn: 2,                            // 현재 턴
+            isMode: true,                       // 현재 게임 모드 확인 (true: 자유그리기 | false: 이어그리기)
+            checkRoll: false,                   // 제시어 확인 페이지 여부
+            defaultgame: {
+                subject: '과일',
+                word: '사과',
+            },
+            show: false,                        // modal 등 전체 영역
             room: {},                           // room 데이터 받아서 넣기 (이후 보고 아예 props로 받기)
             defaultRoom: {                      // 테스트용 default 값
                 title: "테스트 중입니다.",
                 mode: 1,
                 difficulty: 1,
                 id: 1,
-                count: 8,
+                count: 7,
                 start: false,
                 members: [
                     {
@@ -87,21 +102,21 @@ export default {
                         id: 5,
                         leader: false,
                     },
-                    {
-                        nickname: '6번사람',
-                        id: 6,
-                        leader: false,
-                    },
-                    {
-                        nickname: '7번사람',
-                        id: 7,
-                        leader: false,
-                    },
-                    {
-                        nickname: '8번사람',
-                        id: 8,
-                        leader: false,
-                    },
+                    // {
+                    //     nickname: '6번사람',
+                    //     id: 6,
+                    //     leader: false,
+                    // },
+                    // {
+                    //     nickname: '7번사람',
+                    //     id: 7,
+                    //     leader: false,
+                    // },
+                    // {
+                    //     nickname: '8번사람',
+                    //     id: 8,
+                    //     leader: false,
+                    // },
                 ],
             },
             // 각 데이터 별로 맞는 설정 이름/숫자 매칭을 위한 리스트
@@ -110,6 +125,7 @@ export default {
                 '',
                 '자유그리기',
                 '이어그리기',
+                'NO AI',
                 ],
                 difficulty: [
                     '',
@@ -127,15 +143,6 @@ export default {
                 difficulty: '',
                 sec: 0,
             },
-            isMode: true,                       // 현재 게임 모드 확인 (true: 자유그리기 | false: 이어그리기)
-            checkRoll: false,                   // 제시어 확인 페이지 여부
-            turn: 3,
-            game: { },
-            defaultgame: {
-                subject: '과일',
-                word: '사과',
-            },
-            show: false,
             chatList: [         // 채팅에 쓸 상용구
                 '???',
                 '이건 아니지',
@@ -145,20 +152,36 @@ export default {
             chat: {
                 logs: [],
             },
+            memCount: {
+                EmptyCount: 0,          // 들어오지 않은 유저 수
+                NoneCount: 0,           // 방에 설정된 유저 수가 8 이하일 때, 들어올 수 없는 칸
+            }
         }
     },
 
     created() {
         // 이후 넘기는 걸로 받아올 것
         this.room = this.defaultRoom;
-        if ( this.room.mode === 1 ) {
-            this.isMode = true;
-        } else {
+        if ( this.room.mode === 2 ) {
             this.isMode = false;
+        } else {
+            this.isMode = true;
         }
+
+        // 빈자리 출력을 위해 인원 확인
+        if (this.room.members.length < this.room.count) {
+            this.memCount.EmptyCount = this.room.count - this.room.members.length;
+        }
+        // 막아둘 자리 출력을 위한 인원 확인
+        if (this.room.count < 8) {
+            this.memCount.NoneCount = 8 - this.room.count;
+        }
+
 
         // 게임 정보 받아오기
         this.game = this.defaultgame;
+
+        
 
         // 역할 확인 부분
         // this.checkRoll = true;
@@ -170,7 +193,18 @@ export default {
         this.output.difficulty = this.checkName.difficulty[this.room.difficulty];
         this.output.sec = this.checkName.sec[this.room.difficulty];
 
-        this.yourTurn();
+    },
+
+    computed: {
+        // 현재 턴을 보내준다.
+        isTurn() {
+            this.yourTurn();
+            return this.turn
+        },
+
+        sendMemCount() {
+            return this.memCount
+        },
     },
 
     methods: {
@@ -187,15 +221,20 @@ export default {
             }
         },
 
+        // 게임 시작
+        goGame() {
+            this.checkRoll = false;
+        },
+
+        // 본인의 턴이면 채팅창의 우선도를 뒤로, 아니면 앞으로
         yourTurn() {
-            if (this.room.members[this.turn - 1].id == 1 ) {
+            if (this.room.members[this.turn - 1].id == 4 ) {
                 document.documentElement.style.setProperty('--indexNum', -1);
             } else {
         
                 document.documentElement.style.setProperty('--indexNum', 99);
             }
         }
-
 
     },
 }

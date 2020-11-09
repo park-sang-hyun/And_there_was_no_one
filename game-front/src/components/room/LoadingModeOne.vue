@@ -1,17 +1,19 @@
 <template>
     <!-- 게임 로딩 화면 (자유그리기 모드) -->
     <div id="LoadingModeOne">
-
+        <!-- 중앙 정렬위한 빈 공간 -->
+        <div id="floater"></div>
+        
         <!-- 스토리 -->
         <div class="main__story">
             <h1>[주의] 지금부터 당신의 기억을 AI와 공유합니다.</h1>
             <p>당신들 중 하나는 제시어를 알지 못하는 Shadow로 임명됩니다.</p>
             <strong style="margin: 40px; color: white;"><p>Shadow를 찾으면 AI와의 연결을 해제할 수 있습니다.</p></strong>
-            <p>Shadow는 당신들 사이에 숨어있습니다.</p>
+            <!-- <p>Shadow는 당신들 사이에 숨어있습니다.</p>
             <p>제시어를 사용해서 Shadow를 찾아내세요.</p>
             <strong style="margin: 40px;"><p>AI가 제시어를 알게 되면 불이익이 있습니다.</p>
             <p style="color: white;">Shadow에게 Hint를 주지 않도록 조심하세요.</p></strong>
-            <p>Shadow가 제시어를 알게되면 Shadow를 제외한 사람들이 패배합니다.</p>
+            <p>Shadow가 제시어를 알게되면 Shadow를 제외한 사람들이 패배합니다.</p> -->
             <p class="bold__part" style="font-size: 1.8rem;">동료들과 함께 Shadow를 찾아 접속을 해제하세요.</p>
         </div>
         
@@ -132,10 +134,19 @@ export default {
     overflow: inherit; 
 }
 
+// 중앙 정렬 위한 floater
+#floater {
+    float: left; 
+    height: 50%; 
+    margin-bottom: -120px;
+}
+
 // story 부분
 
 .main__story {
+    clear: both; 
     position: sticky;
+    margin: auto;
     color: rgb(165, 165, 165);
     font-size:20px;
     line-height:1.6em;
@@ -155,7 +166,6 @@ export default {
 h1 {
     font-family: sans-serif;
     color: rgb(54, 181, 12);
-    margin: 50px auto;
     font-weight: bold;
 }
 

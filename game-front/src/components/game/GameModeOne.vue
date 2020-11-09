@@ -1,4 +1,5 @@
 <template>
+    <!-- 자유그리기 | NO AI -->
     <div id="GameModeOne" class="row">
         <div class="col-8 p-0">
             <!-- 화면 왼쪽 상단 -->
@@ -22,22 +23,35 @@
                     <draw :window="windowScreen" :turnOff="turnOff"/>
                 </div>
             </div>
+            <div v-if="selectCanvas" class="screen__left__block"></div>
         </div>
 
         <!-- 화면 오른쪽 -->
         <!-- 유저 리스트 -->
         <div class="col-4 p-0 screen__right"> 
-            <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" :isMode="isMode" style="display: inline-block;"/>
+            <div class="screen__right__top">
+                그림 나올 공간
+            </div>
+            <div class="screen__right__bottom">
+                <div v-for="n in 8" :key="'user' + n + 'key'" style="display: inline-block;">
+                    <user v-if="n < room.members.length + 1" :userData="room.members[n-1]" :window="windowScreen" :isMode="isMode" :isTurn="isYourTurn" :memNo="n" style="float: left;"/>
+                    <empty v-else-if="n < room.members.length + memCount.EmptyCount + 1"  :window="windowScreen" :isMode="isMode" style="float: left;"/>
+                    <none v-else :window="windowScreen" :isMode="isMode" style="float: left;"/>
+                </div>
+            </div>
             <div class="exit__button d-flex justify-content-center align-items-center">
                 <button @click="exitRoom">방 나가기</button>
             </div> 
         </div>
+        <div style="display:none;">{{ isYourTurn }}</div> 
     </div>
 </template>
 
 <script>
 import draw from '@/components/game/GameDraw.vue';
 import user from '@/components/game/PlayUser.vue';
+import empty from '@/components/game/EmptyUser.vue';
+import none from '@/components/game/NoneUser.vue';
 
 export default {
     name: "GameModeOne",
@@ -57,12 +71,20 @@ export default {
             type: Boolean,
             default: true,
         },
+        isTurn: {
+            type: Number,
+            default: 1,
+        },
+        memCount: {
+            type: Object
+        },
     },
 
     components: {
         draw,
         user,
-
+        empty,
+        none,
     },
 
     data() {
@@ -75,6 +97,7 @@ export default {
                 left: 0,
                 right: 0,
             },
+            selectCanvas: false,
         }
     },
 
@@ -100,10 +123,13 @@ export default {
 
         checkScreen() {
             return this.screen
-        }
+        },
+
+        isYourTurn() {
+            // this.yourTurn();
+            return this.isTurn
+        },
     },
-
-
 
     methods: {
         // 현재 보이는 화면 크기 계산
@@ -125,9 +151,18 @@ export default {
             document.documentElement.style.setProperty('--rightSize', rightSize + suffix);
             document.documentElement.style.setProperty('--widthtSize', (this.window.width) + suffix);
             document.documentElement.style.setProperty('--heightSize', (this.window.height) + suffix);
-            document.documentElement.style.setProperty('--rightTopSize', (this.window.height - 40) + suffix);
+            document.documentElement.style.setProperty('--rightTopSize', ((this.window.height - 40 - 100) / 2) + suffix);
             document.documentElement.style.setProperty('--leftTopSize', (this.window.height * 0.1) + suffix);
             document.documentElement.style.setProperty('--leftBottomSize', (this.window.height * 0.9) + suffix);
+        },
+
+        // 본인의 턴이면 그림 그리기를 할 수 있도록, 아니면 못하도록 막기
+        yourTurn() {
+            if (this.room.members[this.turn - 1].id == 4 ) {
+                this.selectCanvas = false;
+            } else {
+                this.selectCanvas = true;
+            }
         },
 
         exitRoom() {
@@ -152,6 +187,10 @@ export default {
     --rightTopSize: 760px;
 }
 
+#GameModeOne {
+    position: relative;
+}
+
 /* 전체 영역 3부분으로 나눔 왼상단 | 왼하단 | 오 */
 .screen__left__top {
     display: inline-block;
@@ -173,7 +212,16 @@ export default {
     /* background-color: rgba(62, 62, 62, 0.5); */
 }
 
-/* 이어그리기 우측 */
+.screen__left__block {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: var(--leftSize);
+    height: var(--leftBottomSize);
+    z-index: 50;
+}
+
+/* 우측 전체 사이즈 */
 .screen__right {
     display: block;
     width: var(--rightSize);
@@ -181,10 +229,19 @@ export default {
     margin: 40px 0px 0px 0px;
     /* background-color: skyblue; */
 }
+
+/* 우측 상단 */
 .screen__right__top {
     display: inline-block;
     width: 100%;
-    width: var(--rightSize);
+    height: var(--rightTopSize);
+    background-color: rgba(61, 61, 61, 0.5);
+}
+
+/* 우측 하단 */
+.screen__right__bottom {
+    display: inline-block;
+    width: 100%;
     height: var(--rightTopSize);
     /* background-color: skyblue; */
 }

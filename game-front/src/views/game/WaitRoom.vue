@@ -1,70 +1,78 @@
 <template>
     <div id="waitRoom">
+        <div v-if="!isSend">
+        </div>
 
-        <div v-if="!delayMode">
-            <!-- 화면 상단 -->
-            <div class="screen__top">
-                <!-- 방제목 -->
-                <div class="room__title">
-                    [{{ room.id }}]번방 {{ room.title }} 
+        <div v-else>
+            <div v-if="!delayMode">
+                <!-- 화면 상단 -->
+                <div class="screen__top">
+                    <!-- 방제목 -->
+                    <div class="room__title">
+                        [{{ room.id }}]번방 {{ sendTitle }} 
+                    </div>
                 </div>
-            </div>
 
-            <!-- 화면 왼쪽 -->
-            <div class="screen__left">
-                <!-- 입장한 유저 목록 -->
-                <div class="user__part">
-                    <user v-for="mem in room.members" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block;" />
-                    <empty v-for="n in EmptyCount" :key="n + 'Emptykey'" :window="windowScreen" style="display: inline-block;"/>
-                    <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block;"/>
-                </div>
-                <!-- 채팅 (상용구) -->
-                <div class="chat__part d-flex justify-content-center">
-                    <div class="input-group">
-                        <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
-                            <option selected style="color:black;">채팅 문구 선택</option>
-                            <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
-                        </select>
-                        <div class="input-group-append">
-                            <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
+                <!-- 화면 왼쪽 -->
+                <div class="screen__left">
+                    <!-- 입장한 유저 목록 -->
+                    <div class="user__part">
+                        <user v-for="mem in room.userList" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block; float:left;" />
+                        <empty v-for="n in EmptyCount" :key="n + 'Emptykey'" :window="windowScreen" style="display: inline-block; float:left;"/>
+                        <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block; float:left;"/>
+                    </div>
+                    <!-- 채팅 (상용구) -->
+                    <div class="chat__part d-flex justify-content-center">
+                        <div class="input-group">
+                            <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
+                                <option selected style="color:black;">채팅 문구 선택</option>
+                                <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
+                            </select>
+                            <div class="input-group-append">
+                                <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 화면 오른쪽 -->
-            <div class="screen__right">
-                <!-- 게임 설정 출력 (상중하 / 모드) 방장인 경우에 클릭 가능 -->
-                <div class="setting__part">
-                    <mode :mode="room.mode" :isLeader="room.members[user].leader" style="margin-bottom: 20px;"/>
-                    <difficulty :difficulty="room.difficulty" :isLeader="room.members[user].leader"/>
-                    <div v-if="room.members[user].leader" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
-                        <button @click="roomUpdate">게임 모드 수정</button>
+                <!-- 화면 오른쪽 -->
+                <div class="screen__right">
+                    <!-- 게임 설정 출력 (상중하 / 모드) 방장인 경우에 클릭 가능 -->
+                    <div class="setting__part">
+                        <mode :mode="room.mode" :isLeader="leader" @modeChange="modeChange" style="margin-bottom: 20px;"/>
+                        <difficulty :difficulty="room.difficulty" :isLeader="leader" @difficultyChange="difficultyChange"/>
+                        <div v-if="leader" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
+                            <button @click="roomUpdate">게임 모드 수정</button>
+                        </div>
+                    </div>
+
+                    <!-- 채팅 부분 -->
+                    <div class="room__chatting d-flex justify-content-center">
+                        <div class="chatting__area">채팅 내용이 나올 부분</div>
+                    </div>
+
+                    <!-- 게임 시작 버튼 -->
+                    <div class="game__start d-flex justify-content-center align-items-center">
+                        <button @click="GameStart" :disabled="!leader">게임 시작</button>
+                        <button @click="ExitRoom">방 나가기</button>
                     </div>
                 </div>
-
-                <!-- 채팅 부분 -->
-                <div class="room__chatting d-flex justify-content-center">
-                    <div class="chatting__area">채팅 내용이 나올 부분</div>
-                </div>
-
-                <!-- 게임 시작 버튼 -->
-                <div class="game__start d-flex justify-content-center align-items-center">
-                    <button @click="GameStart" :disabled="!room.members[user].leader">게임 시작</button>
-                    <button @click="ExitRoom">방 나가기</button>
-                </div>
             </div>
-        </div>
 
-        <!-- game 화면 이전에 로딩 화면 -->
-        <div v-else>
-            <!-- 자유그리기 모드일 때 -->
-            <div v-if="isMode">
-                <loadingOne/>
-            </div>
-            <!-- 이어그리기 모드일 때 -->
+            <!-- game 화면 이전에 로딩 화면 -->
             <div v-else>
-                <loadingTwo/>
+                <!-- 자유그리기 모드일 때 -->
+                <div v-if="isMode[0]">
+                    <loadingOne/>
+                </div>
+                <!-- 이어그리기 모드일 때 -->
+                <div v-if="isMode[1]">
+                    <loadingTwo/>
+                </div>
+                <!-- NO AI 모드일 때 -->
+                <div v-if="isMode[2]">
+                    <loadingThree/>
+                </div>
             </div>
         </div>
     </div>
@@ -78,6 +86,8 @@ import mode from '@/components/room/modeSetting.vue';
 import difficulty from '@/components/room/difficultySetting.vue';
 import loadingOne from '@/components/room/LoadingModeOne.vue';
 import loadingTwo from '@/components/room/LoadingModeTwo.vue';
+import loadingThree from '@/components/room/LoadingModeThree.vue';
+import http from '@/util/http-common.js';
 
 export default {
     name: 'WaitRoom',
@@ -90,81 +100,109 @@ export default {
         mode,
         loadingOne,
         loadingTwo,
+        loadingThree,
     },
 
     data() {
         return {
-            room: {},           // room 데이터 받아서 넣기
-            defaultroom: {      // 개발용 default 값
+            room: {},               // room 데이터 받아서 넣기
+            defaultroom: {          // 개발용 default 값
                 title: '스겜',
                 id: 1,
-                mode: 2,
-                count: 6,
-                difficulty: 2,
+                mode: 1,
+                cur_count: 1,
+                max_count: 6,
+                difficulty: 1,
                 start: false,
-                members: [
+                userList: [
                     {
                         nickname: '1번사람',
                         id: 1,
-                        leader: true,
                     },
                     {
                         nickname: '2번사람',
                         id: 2,
-                        leader: false,
                     },
                     {
                         nickname: '3번사람',
                         id: 3,
-                        leader: false,
                     },
                     {
                         nickname: '4번사람',
                         id: 4,
-                        leader: false,
                     },
                 ],
+                leader: {
+                    id: 1,
+                    nickname: '1번사람',
+                },
             },
-            user: 0,            // 현재 본인 위치
-            EmptyCount: 0,       // 들어오지 않은 유저 수
-            NoneCount: 0,        // 방에 설정된 유저 수가 8 이하일 때, 들어올 수 없는 칸
-            isMode: true,       // 현재 모드가 무엇인지 확인 (true: 자유그리기 | false: 이어그리기)
-            delayMode: false,   // 로딩 화면 띄울건지 여부 (true: LoadingModeOne or Two | false: 현재 방)
+            user: 0,                // 현재 본인 위치
+            EmptyCount: 0,          // 들어오지 않은 유저 수
+            NoneCount: 0,           // 방에 설정된 유저 수가 8 이하일 때, 들어올 수 없는 칸
+            isMode: [
+                false, false, false
+                ],                  // 현재 모드가 무엇인지 확인 (true: 자유그리기 | false: 이어그리기)
+            delayMode: false,       // 로딩 화면 띄울건지 여부 (true: LoadingModeOne or Two | false: 현재 방)
             
-            window: {           // 현재 창 너비
+            window: {               // 현재 창 너비
                 width: 0,
                 height: 0,
             },
             
-            chatList: [         // 채팅에 쓸 상용구
+            chatList: [             // 채팅에 쓸 상용구
                 'Ready',
                 '시작합시다',
                 '잠시만요',
                 'ㅇㅇ',
             ],
+
+            // 받아온 모드 값
+            checked: {
+                mode: 1,
+                difficulty: 1,
+            },
+            leader: false,
+            isSend: false,
         }
     },
 
 
     created() {
         // 이후엔 요청 보내서 받아올 것
-        this.room = this.defaultroom;
+        // this.room = this.defaultroom;
 
-        // 빈자리 출력을 위해 인원 확인
-        if (this.room.members.length < this.room.count) {
-            this.EmptyCount = this.room.count - this.room.members.length;
-        }
-        // 막아둘 자리 출력을 위한 인원 확인
-        if (this.room.count < 8) {
-            this.NoneCount = 8 - this.room.count;
-        }
+        http
+        .get('game/waitroom/3')
+        .then((res) => {
+            this.isSend = true;
+            this.room = res.data;
+                
+            // 빈자리 출력을 위해 인원 확인
+            if (this.room.cur_count < this.room.max_count) {
+                this.EmptyCount = this.room.max_count - this.room.cur_count;
+            }
+            // 막아둘 자리 출력을 위한 인원 확인
+            if (this.room.max_count < 8) {
+                this.NoneCount = 8 - this.room.max_count;
+            }
+            
+            if (this.room.leader.id == 5) {
+                this.leader = true;
+            } else {
+                this.leader = false;
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 
         // 본인 위치 확인 (1 대신에 쿠키에서 본인 pk값 받아올 것)
-        for (let i=0; i < this.room.members.length; i++) {
-            if (this.room.members[i].id === 1) {
-                this.user = i;
-            }
-        }
+        // for (let i=0; i < this.room.userList.length; i++) {
+        //     if (this.room.userList[i].id === 1) {
+        //         this.user = i;
+        //     }
+        // }
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -172,6 +210,7 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
+
     },
 
     computed: {
@@ -180,7 +219,11 @@ export default {
         },
 
         userData(index) {
-            return this.room.members[index]
+            return this.room.userList[index]
+        },
+
+        sendTitle() {
+            return this.room.title
         },
     },
 
@@ -195,17 +238,27 @@ export default {
 
         // 방 업데이트
         roomUpdate() {
-            
-            // http
-            // .get('', formData)
-            // .then((res) => {
-            //     console.log(res);
-            //     console.log(res.data);
-            //     this.room = res.data;
-            // })
-            // .catch((err) => {
-            //     console.log(err)
-            // })
+            // 현재 유저가 리더인지 확인
+
+            // 필요한 데이터 넣어서 보내기
+            let formData = new FormData();
+            // formData.append('roomId', this.room.id);
+            formData.append('title', this.room.title);
+            formData.append('mode', this.checked.mode);
+            formData.append('max_count', this.room.max_count);
+            formData.append('difficulty', this.checked.difficulty);
+
+            http
+            .put('game/modify/3', formData)
+            .then((res) => {
+                console.log(res.data);
+                this.room.mode = this.checked.mode;
+                this.room.difficulty = this.checked.difficulty;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
         },
 
         // 현재 보이는 화면 크기 계산
@@ -243,38 +296,61 @@ export default {
         // 게임 시작(팀장만)
         GameStart() {
 
-            if (this.room.members.length < 5) {
-                alert('인원 수가 5명보다 적어 게임을 시작할 수 없습니다.');
+            if (this.room.cur_count < 3) {
+                alert('인원 수가 3명보다 적어 게임을 시작할 수 없습니다.');
             } else {
                 // 현재 게임 모드를 확인해서 어떤 로딩 화면을 띄울 건지 결정
-                if (this.room.mode == 1) {
-                    this.isMode = true;
-                } else {
-                    this.isMode = false;
-                }
+                this.isMode = [false, false, false];        // 초기화
+                this.isMode[this.room.mode - 1] = true;     // mode에 맞는 것만 true
                 // 로딩화면 띄우기
                 this.delayMode = true;
 
-                var timer1 = setTimeout(this.goPlayGame, 5000);
+                
+
+                http
+                .get('game/ingame/3')
+                .then((res) => {
+                    console.log(res.data);
+                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data }}), 7000);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
             }
         },
 
         // 방 나가기
         ExitRoom() {
-            console.log('방을 나갑니다.');
-            // http
-            // .delete('')
-            // .then((res) => {
-            //     console.log('방 나오기');
-            // })
-            // .catch((err) => {
-            //     console.log(err);
-            // })
+            let user_id = 4;
+            http
+            .delete(`game/leave/${user_id}`)
+            .then((res) => {
+                console.log(res.data);
+                if (res.data.object != null) {
+                    this.room.leader = res.data.object;
+                    if (this.room.leader.id == 5) {
+                        this.leader = true;
+                    } else {
+                        this.leader = false;
+                    }
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         },
 
         // playgame으로 보내기
-        goPlayGame() {
-            this.$router.push({ name: 'PlayGame' });
+        goPlayGame(data) {
+            this.$router.replace({ name: 'PlayGame' , params: { sendGame: data }});
+        },
+
+        // 선택한 설정값 변경 (모드 | 난이도)
+        modeChange(mode) {
+            this.checked.mode = Number(mode);
+        },
+        difficultyChange(difficulty) {
+            this.checked.difficulty = Number(difficulty);
         },
     },
 

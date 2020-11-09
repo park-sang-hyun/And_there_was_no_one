@@ -5,7 +5,8 @@
         <div class="mode_radio">
 
             <input :disabled="!isLeader" type="radio" class="mode_option" id="first_mode" name="mode_option" value="1" v-model="modeSelect">
-            <input :disabled="!isLeader" type="radio" class="mode_option" id="second_mode" name="mode_option" value="2" v-model="modeSelect">
+            <input :disabled="!isLeader" type="radio" checked class="mode_option" id="second_mode" name="mode_option" value="2" v-model="modeSelect">
+            <input :disabled="!isLeader" type="radio" class="mode_option" id="third_mode" name="mode_option" value="3" v-model="modeSelect">
 
             <label for="first_mode">
                 <span class="description">새 보드에</span>
@@ -17,10 +18,16 @@
                 <p class="day">이어그리기</p>
             </label>
             
+            <label for="third_mode">
+                <span class="description">자유그리기+</span>
+                <p class="day">No AI</p>
+            </label>
+            
             <div class="mode_option_slider">
             </div>
 
         </div>
+        <div style="display: none">{{ callSelect }}</div> 
     </div>
 </template>
 
@@ -30,10 +37,10 @@ export default {
 
     props: {
         mode: {
-            object: Number,
+            type: Number,
         },
         isLeader: {
-            object: Boolean,
+            type: Boolean,
         },
     },
 
@@ -48,10 +55,17 @@ export default {
     },
 
     computed: {
+        callSelect() {
+            this.sendMode();
+            return this.modeSelect
+        }
 
     },
 
     methods: {
+        sendMode() {
+            this.$emit('modeChange', this.modeSelect);
+        }
 
     },
 }
@@ -85,7 +99,7 @@ export default {
     border-radius: 5px;
     position: relative;
     height: 70px;
-    width: 312px;
+    width: 378px;
 }
 .mode_radio > * {
     float: left;
@@ -98,7 +112,7 @@ export default {
     color: white;
     z-index: 0;
     display: block;
-    width: 150px;
+    width: 120px;
     height: 70px;
     margin: 3px 3px;
     -webkit-border-radius: 50px;
@@ -110,7 +124,7 @@ export default {
 }
 
 .mode_option_slider{
-    width: 152px;
+    width: 126px;
     height: 73px;
     position: absolute;
     top: 0px;
@@ -130,7 +144,11 @@ export default {
 }
 #second_mode:checked ~ .mode_option_slider{
     background: rgba(255,255,255,.15);
-    left: 159px;
+    left: 126px;
+}
+#third_mode:checked ~ .mode_option_slider{
+    background: rgba(255,255,255,.15);
+    left: 252px;
 }
 
 span.description{
@@ -140,7 +158,7 @@ span.description{
 
 p.day {
     line-height: 40px;
-    font-size: 1.5em;
+    font-size: 1.2em;
 }
 
 </style>

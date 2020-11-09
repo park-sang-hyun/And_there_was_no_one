@@ -40,7 +40,6 @@ export default {
     created() {
         this.layoutCal();
         if (this.userData.id === 1) {
-            console.log(this.userData.id);
             document.documentElement.style.setProperty('--myColor', 'yellow');
         } else {
             document.documentElement.style.setProperty('--myColor', 'white');
