@@ -4,7 +4,8 @@
       <div class="container" style="justify-content: space-between;">
         게임방 목록
         <div>
-          <button type="button" class="button" @click="showCreateModal = true">방 만들기</button>
+          <!--<button type="button" class="button" @click="showCreateModal = true">방 만들기</button>-->
+          <button type="button" class="button" @click="createRoom">방 만들기</button>
           <button type="button" class="button" @click="random">빠른 입장</button>  
           <!-- <button>게임 설명</button> -->
         </div>
@@ -94,14 +95,14 @@ export default {
       return {
         // 받아온 방 정보 8개 객체를 받아옴
         roomList: [
-            {no: 0, roomname: 0, mode: 0, people: 0, difficulty: 1, start: false},
-            {no: 1, roomname: 1, mode: 1, people: 1, difficulty: 1, start: false},
-            {no: 2, roomname: 2, mode: 2, people: 2, difficulty: 1, start: false},
-            {no: 3, roomname: 3, mode: 3, people: 3, difficulty: 1, start: false},
-            {no: 4, roomname: 4, mode: 4, people: 4, difficulty: 1, start: false},
-            {no: 5, roomname: 5, mode: 5, people: 5, difficulty: 1, start: false},
-            {no: 6, roomname: 6, mode: 6, people: 6, difficulty: 1, start: false},
-            {no: 7, roomname: 7, mode: 7, people: 7, difficulty: 1, start: false},
+            {no: 0, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 1, roomname: 1, mode: 1, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 2, roomname: 2, mode: 2, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 3, roomname: 3, mode: 3, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 4, roomname: 4, mode: 4, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 5, roomname: 5, mode: 5, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 6, roomname: 6, mode: 6, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 7, roomname: 7, mode: 7, cur_people : 0, max_people: 1, difficulty: 1, start: false},
           ],
         // totalRoom은 생성된 룸 개수
         totalRoom: 12,
@@ -128,18 +129,16 @@ export default {
       // 룸 개수 받아오는 메서드
       getRoomInfo() {
         // Room Read lobby 서버에 요청하기 룸 개수
-
-
-        // http
-        // .get("")
-        // .then((res) => {
-        //   // 받아온 데이터 출력해보고 아래 수정하기
-        //   this.total.Room = res.data 
-        // })
-
-
-
-
+        
+         http
+        .get("room/listcount/")
+        .then((res) => {
+          //console.log("listcount : " + res.data);
+          this.totalRoom = res.data;
+        })
+        .catch(err => {
+          console.log(err)
+        })
 
         this.pageLen = Math.ceil(this.totalRoom / 8);  // 소수점 올림
         this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
@@ -152,19 +151,37 @@ export default {
         // Room Read lobby서버에 요청하기 현재 페이지의 룸 정보
         // pageNow 변수에 현재 페이지가 들어있음
 
+        http
+        .get("room/list/"+this.pageNow)
+        .then((res) => {
+          // 받아온 데이터 출력해보고 아래 수정하기
 
-        // http
-        // .get("")
-        // .then((res) => {
-        //   // 받아온 데이터 출력해보고 아래 수정하기
-        //   // 받아온 데이터에 따라 위 template 출력 내용도 수정하기
-        //   this.roomList = res.data
-        // })
+          //받아온 데이터 roomList에 집어넣기
+          for(let i=0; i<8; i++){
+            this.roomList[i].no = res.data[i].id;
+            this.roomList[i].roomname = res.data[i].title;
+            this.roomList[i].mode = res.data[i].mode;
+            this.roomList[i].cur_people = res.data[i].cur_count;
+            this.roomList[i].max_people = res.data[i].max_count;
+            this.roomList[i].difficulty = res.data[i].difficulty;
+            this.roomList[i].start = res.data[i].start;
+          }
 
+          // 결과 찍어보기
+          //  for(let i=0; i<8; i++){
+          //   console.log(i + "번째 no : " + this.roomList[i].no);
+          //   console.log(i + "번째 roomname : " + this.roomList[i].roomname);
+          //   console.log(i + "번째 mode : " + this.roomList[i].mode);
+          //   console.log(i + "번째 cur_people : " + this.roomList[i].cur_people);
+          //   console.log(i + "번째 max_people : " + this.roomList[i].max_people);
+          //   console.log(i + "번째 difficulty : " + this.roomList[i].difficulty);
+          //   console.log(i + "번째 start : " + this.roomList[i].start);
+          //  }
 
-
-
-
+        })
+        .catch(err => {
+          console.log(err)
+        })
 
         console.log("Enter getRoomList");
       },
@@ -184,24 +201,41 @@ export default {
       createRoom() {
         console.log("Enter createRoom");
 
+        this.roomName = "parksanghyun";
         // 방 이름이 기입되면 Room Create 요청 보내기
         if (this.roomName) {
           console.log("roomname: "+this.roomName)
           
-          // http
-          // .post("", {
+          //임의로 정의
+          let username = sessionStorage.getItem("id");
+          let title=this.roomName;
+          let cur_count = 1;
+          let max_count = 6;
+          let mode = 1;
+          let difficulty = 1;
+          let start = false;
 
-          // },
-          // )
-          // .then((res) => {
-          //   //Create요청 후 받은 방 번호로 페이지 이동
-          //   enterRoom(res.roomNo)
-          // })
+          //formData안에 값 넣기
+          let formData = new FormData();
+          formData.append("title", title);
+          formData.append("cur_count", cur_count);
+          formData.append("max_count", max_count);
+          formData.append("mode", mode);
+          formData.append("difficulty", difficulty);
+          formData.append("start", start);
+          formData.append("username", username);
 
+          http
+          .post("room/create", formData)
+          .then((res) => {
+            //Create요청 후 받은 방 번호로 페이지 이동
 
-
-
-
+            console.log("방생성 완료");
+            this.enterRoom(res.roomNo)
+          })
+          .catch(err => {
+            console.log(err)
+          })
 
           // 임시로 1번방으로 들어가는 느낌으로 해놓음
           this.enterRoom(1)
