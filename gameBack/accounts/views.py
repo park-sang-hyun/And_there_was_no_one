@@ -4,9 +4,31 @@ from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from .models import User
+from .serializers import UserSerializer
 
 from django.http import JsonResponse
 import json
+
+@api_view(['GET']) # read
+def read(request, id):
+    user = get_object_or_404(User, id=id)
+    serializer = UserSerializer(user)
+    context = {
+        'nickname': user.nickname,
+        'score' : user.score
+    }
+    return JsonResponse(context)
+
+
+@api_view(['GET']) # read
+def nickname(request, nickname):
+    print(nickname)
+
+    try:
+        get_object_or_404(User, nickname=nickname)
+        return JsonResponse({'message':'exist'})
+    except:
+        return JsonResponse({'message':'ok'})
 
 
 @api_view(['PUT']) # update
