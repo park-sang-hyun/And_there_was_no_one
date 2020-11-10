@@ -10,12 +10,12 @@
         <div v-else>
             <!-- 자유 그리기 모드 -->
             <div v-if="isMode">
-                <ModeOne :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" />
+                <ModeOne :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" @imgFile="sendAI" ref="modeOne" />
             </div>
                 
             <!-- 이어그리기 모드 -->
             <div v-else>
-                <ModeTwo :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" />
+                <ModeTwo :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" @imgFile="sendAI" ref="modeTwo" />
             </div>
 
             <div class="chat__part">
@@ -48,6 +48,8 @@
 import roll from '@/components/game/GameRoll.vue';
 import ModeOne from '@/components/game/GameModeOne.vue';
 import ModeTwo from '@/components/game/GameModeTwo.vue';
+import http from '@/util/http-game.js';
+import aihttp from '@/util/http-ai.js';
 
 export default {
     name: "PlayGame",
@@ -79,7 +81,7 @@ export default {
             defaultRoom: {                      // 테스트용 default 값
                 title: "테스트 중입니다.",
                 mode: 2,
-                difficulty: 3,
+                difficulty: 1,
                 id: 1,
                 count: 7,
                 start: false,
@@ -194,12 +196,11 @@ export default {
         this.game = this.defaultgame;
 
         
-
         // 역할 확인 부분
-        this.checkRoll = true;
-        console.log(this.sendGame);
-        var roll = setTimeout( this.goGame , 10000);
-        // this.checkRoll = false;
+        // this.checkRoll = true;
+        // console.log(this.sendGame);
+        // var roll = setTimeout( this.goGame , 10000);
+        this.checkRoll = false;
 
         // var timeCheck = setTimeout( this.startTimer, 10000);
         this.startTimer();
@@ -273,10 +274,35 @@ export default {
             } else {
                 clearInterval(this.interval);
                 this.counter = false;
-                this.showTimer = "0";
+                this.showTimer = 0;
+                if (this.room.mode == 1) {
+                    this.$refs.modeOne.$refs.draw.handleSaveClick();
+                } else if (this.room.mode == 2) {
+                    this.$refs.modeTwo.$refs.draw.handleSaveClick();
+                }
                 this.timer = this.output.sec;
             }
         },
+
+        // ai로 보내기
+        sendAI(image) {
+            let formData = new FormData;
+            formData.append('image', image);
+            console.log(image);
+
+            console.log('ai 호출');
+
+            // ai로 이미지보내기
+            // aihttp
+            // .post('', formData)
+            // .then((res) => {
+            //     console.log(res);
+            //     console.log(res.data);
+            // })
+            // .catch((err) => {
+            //     console.log(err);
+            // })
+        }
 
     },
 }

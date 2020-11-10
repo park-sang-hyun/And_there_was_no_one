@@ -20,7 +20,7 @@
             <div class="screen__left__bottom d-flex justify-content-center align-items-center">
                 <div class="p-0 d-flex justify-content-center align-items-center">
                     <!-- canvas(그림 그리기) -->
-                    <draw :window="windowScreen" :turnOff="turnOff"/>
+                    <draw :window="windowScreen" :turnOff="turnOff" @imgFile="imgFile" ref="draw" />
                 </div>
             </div>
             <div v-if="selectCanvas" class="screen__left__block"></div>
@@ -167,6 +167,10 @@ export default {
 
         exitRoom() {
             console.log('방 나가기');
+        },
+
+        imgFile(image) {
+            this.$emit('imgFile', image);
         },
 
 
