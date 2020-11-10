@@ -8,5 +8,6 @@
 	<mappers>	  
 		<mapper resource="mappers/room.xml" />
 		<mapper resource="mappers/user.xml" />
+		<mapper resource="mappers/alarm.xml" />
 	</mappers>
 </configuration>
