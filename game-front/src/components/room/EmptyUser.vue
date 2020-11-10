@@ -48,7 +48,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 :root {
     --userWidth: 300px;
     --userHeight: 200px;

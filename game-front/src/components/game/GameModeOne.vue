@@ -175,7 +175,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 /* 가상 선택자, 우선 순위가 제일 높음 */
 :root {
     --widthSize: 1000px;
