@@ -10,7 +10,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 /* 일단 테스트용 임시방편 */
   /* .app{
     background-color: black;

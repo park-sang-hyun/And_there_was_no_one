@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <h1>Lobby page</h1>
 
     <!-- <div v-if="status === 'connected'"> -->
@@ -33,7 +33,6 @@
     <br /><br />
 
   </div>
-
 </template>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
@@ -115,7 +114,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .gerstner-2 {
     display: grid;
     grid-template-columns: 1fr 2.5fr;

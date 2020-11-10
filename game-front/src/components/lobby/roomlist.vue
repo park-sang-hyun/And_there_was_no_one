@@ -42,6 +42,7 @@
             <!-- <mode :mode="1" :isLeader="true" style="margin-bottom: 20px;"/>
             <difficulty :difficulty="1" :isLeader="true"/> -->
 
+
             <button type="button" @click="createRoom" class="button">방 생성하기</button>
           </div>
         
@@ -82,7 +83,7 @@ import http from "../../util/http-common.js";
 
 
 export default {
-
+  
     name: 'Roomlist',
 
     // components: {

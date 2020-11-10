@@ -34,13 +34,12 @@ export default {
       //django 서버에서 유저 프로필 가져오기
 
 
-      // http
-      // .get("accoounts/read/")
-      // .then((res) => {
-      //   // 데이터 받아와서 아래 내용 수정하기 
-      //   this.nickname = res.data.nickname
-      //   this.score = res.data.score
-      // })
+      http
+      .get("accounts/read/" + sessionStorage.getItem("id")+"/")
+      .then((res) => {
+        this.nickname = res.data.nickname
+        this.score = res.data.score
+      })
 
 
       console.log("Enter getProfile");
@@ -49,7 +48,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .box {
     width: 250px;
     height: 250px; 

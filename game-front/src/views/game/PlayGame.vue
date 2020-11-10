@@ -240,7 +240,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300');
 
 /* 가상 선택자, 우선 순위가 제일 높음 */
