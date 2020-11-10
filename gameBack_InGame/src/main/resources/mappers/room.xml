@@ -69,5 +69,16 @@
     	update room set start=false
     	where id=#{room_id}
     </update>
+    
+    <select id="getTopic" resultType="com.ssafy.pjt3.dto.Topic">
+		select id, name
+		from topic
+     </select>
+     
+     <select id="getWord" resultType="String">
+		select name
+		from word
+		where topic_id=#{topic_id}
+     </select>
  
 </mapper>
