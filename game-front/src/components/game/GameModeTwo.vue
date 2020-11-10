@@ -140,6 +140,7 @@ export default {
 
         exitRoom() {
             console.log('방 나가기');
+            alert('게임 중에는 나갈 수 없습니다.');
         },
 
 

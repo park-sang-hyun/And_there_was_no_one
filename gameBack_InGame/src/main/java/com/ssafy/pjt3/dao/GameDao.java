@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.Topic;
 import com.ssafy.pjt3.dto.User;
 
 public interface GameDao {
@@ -18,4 +19,6 @@ public interface GameDao {
 	public void kickoutUser(int user_id) throws SQLException;
 	public void startGame(int room_id) throws SQLException;
 	public void endGame(int room_id) throws SQLException;
+	public List<Topic> getTopic() throws SQLException;
+	public List<String> getWord(int topic_id) throws SQLException;
 }

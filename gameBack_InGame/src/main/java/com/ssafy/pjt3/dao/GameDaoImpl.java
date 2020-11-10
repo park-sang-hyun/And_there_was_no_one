@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.Topic;
 import com.ssafy.pjt3.dto.User;
 
 @Repository
@@ -71,5 +72,15 @@ public class GameDaoImpl implements GameDao {
 	@Override
 	public void endGame(int room_id) throws SQLException {
 		session.update("room_mapper.endGame", room_id);	
+	}
+
+	@Override
+	public List<Topic> getTopic() throws SQLException {
+		return session.selectList("room_mapper.getTopic");
+	}
+
+	@Override
+	public List<String> getWord(int topic_id) throws SQLException {
+		return session.selectList("room_mapper.getWord", topic_id);
 	}
 }

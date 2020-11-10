@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.Topic;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.model.BasicResponse;
 import com.ssafy.pjt3.model.GameData;
@@ -84,6 +85,10 @@ public class GameController {
 		List<User> userList = new ArrayList<>();
 		List<User> userListSuffle = new ArrayList<>();
 		List<Integer> suffleNumber = new ArrayList<Integer>();
+		List<Topic> topicList = new ArrayList<>();
+		List<String> wordList = new ArrayList<>();
+		Topic topic = new Topic();
+		String word;
 		User shadow = new User();
 		GameData gamedata = new GameData();
 		
@@ -94,9 +99,27 @@ public class GameController {
 			room = gameService.findRoomWithRoomid(room_id);
 			userList = gameService.findUserInRoom(room_id);
 			
-			// 그림자 뽑기
+			// 주제 뽑기
+			topicList = gameService.getTopic();
 			Random rand = new Random();
-			int shadowIndex = rand.nextInt(userList.size());
+			
+			int topicIndex = 0;
+			if(topicList.size() > 0) topicIndex = rand.nextInt(topicList.size());
+			topic = topicList.get(topicIndex);
+			
+			// 제시어 뽑기
+			wordList = gameService.getWord(topic.getId());
+			rand = new Random();
+			
+			int wordIndex = 0;
+			if(wordList.size() > 0)  wordIndex = rand.nextInt(wordList.size());
+			word = wordList.get(wordIndex);
+			
+			// 그림자 뽑기
+			rand = new Random();
+			
+			int shadowIndex = 0;
+			if(userList.size() > 0) shadowIndex = rand.nextInt(userList.size());
 			shadow = userList.get(shadowIndex);
 			
 			// 그리기 순서 정하기
@@ -118,6 +141,9 @@ public class GameController {
 			gamedata.setDifficulty(room.getDifficulty());
 			gamedata.setMode(room.getMode());
 			gamedata.setStart(room.isStart());
+			
+			gamedata.setTopic(topic.getName());
+			gamedata.setWord(word);
 			
 			gamedata.setShadow(shadow);
 			gamedata.setUserList(userListSuffle);

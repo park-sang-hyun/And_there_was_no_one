@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.pjt3.dao.GameDao;
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.Topic;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.dto.UserRoom;
 
@@ -69,5 +70,15 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public void endGame(int room_id) throws SQLException {
 		roomDao.endGame(room_id);
+	}
+
+	@Override
+	public List<Topic> getTopic() throws SQLException {
+		return roomDao.getTopic();
+	}
+
+	@Override
+	public List<String> getWord(int topic_id) throws SQLException {
+		return roomDao.getWord(topic_id);
 	}
 }

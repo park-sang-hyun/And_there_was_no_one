@@ -2,6 +2,7 @@
     <div id="PlayGame">
         <!-- 제시어 확인 -->
         <div v-if="checkRoll">
+            {{ sendGame }}
             <roll :room="room" :game="game" />
         </div> 
 
@@ -26,6 +27,12 @@
                     <div class="input-group-append">
                         <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
                     </div>
+                </div>
+            </div>
+
+            <div class="timer__part">
+                <div class="text__part">
+                    {{ sendTimer }}
                 </div>
             </div>
 
@@ -73,7 +80,7 @@ export default {
             defaultRoom: {                      // 테스트용 default 값
                 title: "테스트 중입니다.",
                 mode: 2,
-                difficulty: 1,
+                difficulty: 3,
                 id: 1,
                 count: 7,
                 start: false,
@@ -156,7 +163,12 @@ export default {
             memCount: {
                 EmptyCount: 0,          // 들어오지 않은 유저 수
                 NoneCount: 0,           // 방에 설정된 유저 수가 8 이하일 때, 들어올 수 없는 칸
-            }
+            },
+            counter: false,
+            interval: '',
+            showTimer: '',
+            timer: 0,
+            
         }
     },
 
@@ -185,15 +197,19 @@ export default {
         
 
         // 역할 확인 부분
-        // this.checkRoll = true;
-        // var timer = setTimeout( this.goGame , 10000);
-        this.checkRoll = false;
+        this.checkRoll = true;
+        console.log(this.sendGame);
+        var roll = setTimeout( this.goGame , 10000);
+        // this.checkRoll = false;
+
+        // var timeCheck = setTimeout( this.startTimer, 10000);
+        this.startTimer();
 
         // 설정 값 별로 매칭되는 이름/숫자 넣어주기
         this.output.mode = this.checkName.mode[this.room.mode];
         this.output.difficulty = this.checkName.difficulty[this.room.difficulty];
         this.output.sec = this.checkName.sec[this.room.difficulty];
-
+        this.timer = this.output.sec;
     },
 
     computed: {
@@ -206,6 +222,10 @@ export default {
         sendMemCount() {
             return this.memCount
         },
+
+        sendTimer() {
+            return this.showTimer
+        }
     },
 
     methods: {
@@ -235,7 +255,29 @@ export default {
         
                 document.documentElement.style.setProperty('--indexNum', 99);
             }
-        }
+        },
+
+        // timer
+        startTimer() {
+            this.interval = setInterval(this.countDown, 1000);
+        },
+
+        countDown() {
+            var n = this.timer;
+            if (!this.counter) {
+                this.counter = true;   
+                this.showTimer = n;     
+            } else if (n > 1) {
+                n = n - 1;
+                this.showTimer = n;
+                this.timer = n;
+            } else {
+                clearInterval(this.interval);
+                this.counter = false;
+                this.showTimer = "0";
+                this.timer = this.output.sec;
+            }
+        },
 
     },
 }
@@ -243,6 +285,7 @@ export default {
 
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300');
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Montserrat&family=Open+Sans&display=swap');
 
 /* 가상 선택자, 우선 순위가 제일 높음 */
 :root {
@@ -284,6 +327,22 @@ export default {
     left: 0;
     width: 300px;
     height: 40px;
+}
+
+.timer__part {
+    position: fixed;
+    left: 5%;
+    top: 10%;
+    // transform: translateY(-50%);
+}
+
+.text__part {
+    width: 60px;
+    height: 60px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: 'Montserrat', 'Open Sans', sans-serif;
 }
 
 /* 투표 등 배경 흐리기 해야할 때 */

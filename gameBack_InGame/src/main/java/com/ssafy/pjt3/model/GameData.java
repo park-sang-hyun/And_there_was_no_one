@@ -13,13 +13,16 @@ public class GameData {
 	int difficulty;
 	boolean start;
 	
+	String topic;
+	String word;
+	
 	User shadow;
 	List<User> userList;
 
 	public GameData() {}
 
 	public GameData(int id, String title, int max_count, int cur_count, int mode, int difficulty, boolean start,
-			User shadow, List<User> userList) {
+			String topic, String word, User shadow, List<User> userList) {
 		this.id = id;
 		this.title = title;
 		this.max_count = max_count;
@@ -27,6 +30,8 @@ public class GameData {
 		this.mode = mode;
 		this.difficulty = difficulty;
 		this.start = start;
+		this.topic = topic;
+		this.word = word;
 		this.shadow = shadow;
 		this.userList = userList;
 	}
@@ -85,6 +90,22 @@ public class GameData {
 
 	public void setStart(boolean start) {
 		this.start = start;
+	}
+
+	public String getTopic() {
+		return topic;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+
+	public String getWord() {
+		return word;
+	}
+
+	public void setWord(String word) {
+		this.word = word;
 	}
 
 	public User getShadow() {
