@@ -102,18 +102,24 @@ public class GameController {
 			// 주제 뽑기
 			topicList = gameService.getTopic();
 			Random rand = new Random();
-			int topicIndex = rand.nextInt(topicList.size());
+			
+			int topicIndex = 0;
+			if(topicList.size() > 0) topicIndex = rand.nextInt(topicList.size());
 			topic = topicList.get(topicIndex);
 			
 			// 제시어 뽑기
 			wordList = gameService.getWord(topic.getId());
 			rand = new Random();
-			int wordIndex = rand.nextInt(wordList.size());
+			
+			int wordIndex = 0;
+			if(wordList.size() > 0)  wordIndex = rand.nextInt(wordList.size());
 			word = wordList.get(wordIndex);
 			
 			// 그림자 뽑기
 			rand = new Random();
-			int shadowIndex = rand.nextInt(userList.size());
+			
+			int shadowIndex = 0;
+			if(userList.size() > 0) shadowIndex = rand.nextInt(userList.size());
 			shadow = userList.get(shadowIndex);
 			
 			// 그리기 순서 정하기
