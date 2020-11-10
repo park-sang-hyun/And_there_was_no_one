@@ -140,6 +140,7 @@ export default {
 
         exitRoom() {
             console.log('방 나가기');
+            alert('게임 중에는 나갈 수 없습니다.');
         },
 
 
@@ -248,7 +249,7 @@ export default {
     width: 80%;
     font-size: 1.2rem;
     text-decoration: none;
-    color: rgba(0, 0, 0, 0, .4);
+    color: rgba(0, 0, 0, 0.4);
     font-weight: bold;
     position: relative;
     display: inline-block;

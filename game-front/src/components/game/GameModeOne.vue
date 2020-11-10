@@ -295,7 +295,7 @@ export default {
     width: 80%;
     font-size: 1.2rem;
     text-decoration: none;
-    color: rgba(0, 0, 0, 0, .4);
+    color: rgba(0, 0, 0, 0.4);
     font-weight: bold;
     position: relative;
     display: inline-block;

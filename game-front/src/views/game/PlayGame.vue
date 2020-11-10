@@ -71,7 +71,7 @@ export default {
             room: {},                           // room 데이터 받아서 넣기 (이후 보고 아예 props로 받기)
             defaultRoom: {                      // 테스트용 default 값
                 title: "테스트 중입니다.",
-                mode: 1,
+                mode: 2,
                 difficulty: 1,
                 id: 1,
                 count: 7,

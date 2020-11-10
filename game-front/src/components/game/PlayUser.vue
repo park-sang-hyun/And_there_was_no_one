@@ -78,11 +78,16 @@ export default {
                 userWidth = (this.window.width * (3/12)) - 40;
                 userHeight = ((this.window.height - 40 - 80) * 0.125) - 20;
             }
+            var userImage = ((userWidth * 0.21) - 10);
+            if (((userHeight * 0.5) - 10) < userImage) {
+                userImage = (userHeight * 0.9) - 10; 
+            }
+
             document.documentElement.style.setProperty('--userWidth', userWidth + suffix);
             document.documentElement.style.setProperty('--userHeight', userHeight + suffix);
             document.documentElement.style.setProperty('--userLeft', (userWidth * (4/12)) + suffix);
             document.documentElement.style.setProperty('--userRight', ((userWidth * (8/12))) + suffix);
-            document.documentElement.style.setProperty('--userImage', ((userWidth * 0.21) - 10) + suffix);
+            document.documentElement.style.setProperty('--userImage', userImage + suffix);
 
         },
         checkTurn() {
