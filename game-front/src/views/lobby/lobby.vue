@@ -19,12 +19,12 @@
       <div class="comp">
         <Profile class="profile"/>
         <!-- 소켓 props -->
-        <Friends v-bind:websocket="websock" v-if="websock" class="friends"></Friends>
+        <Friends class="friends"></Friends>
       </div>
       <div class="comp">
         <Roomlist class="roomlist"/>
         <!-- 소켓 props -->
-        <Chat v-bind:websocket="websock" v-if="websock" class="chat"></Chat>
+        <Chat  class="chat"></Chat>
       </div>
     </div>
 
@@ -55,7 +55,6 @@ export default {
 
   data: () =>{
         return{
-          websock: null,
           message: "",
           logs: [],
           status: "disconnected"
@@ -64,52 +63,9 @@ export default {
 
   
   mounted(){
-    this.initWebScoket();
   },
 
   methods: {
-      initWebScoket(){
-        const wsuri = "ws://localhost:8001/chatting?userid=" + storage.getItem('id');
-        this.websock = new WebSocket(wsuri);
-        console.log("lobby websocket: "+this.websock)
-        this.websock.onmessage = this.webSocketOnMessage;
-        this.websock.onopen = this.webSocketOpen;
-        this.websock.onerror = this.webSocketOnError;
-        this.websock.onclose = this.webSocketClose;
-        console.log(this.websock)
-        this.webSocketOpen();
-        console.log("websocksessionId: " + this.websock.sessionId)
-      },
-
-      webSocketOpen(){
-        let temp_id = storage.getItem("id");
-        console.log(temp_id);
-        const msg = {'userId': 'eogma77'};
-        this.websock.onopen = () =>{
-          this.webSocketSend(JSON.stringify(msg));
-        }
-      },
-      webSocketOnError(){
-        this.initWebScoket();
-      },
-
-      webSokcetOnMessage(e){
-        const redata = JSON.stringify(e.data);
-        // this.arr
-      },
-
-      webSocketSend(Data){
-        console.log("메시지 전송");
-        this.websock.send(Data);
-        console.log('1:' + Data)
-        console.log('2:' + this.websock)
-        console.log(this.websock.sessionId)
-      },
-
-      webSocketClose(e){
-        console.log("소켓 닫기");
-        this.websock.close();
-      }
   }
 }
 </script>
