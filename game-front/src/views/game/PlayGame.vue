@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div id="PlayGame">
         <!-- 제시어 확인 -->
         <div v-if="checkRoll">
@@ -50,6 +50,7 @@ import ModeOne from '@/components/game/GameModeOne.vue';
 import ModeTwo from '@/components/game/GameModeTwo.vue';
 import http from '@/util/http-game.js';
 import aihttp from '@/util/http-ai.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default {
     name: "PlayGame",
