@@ -1,7 +1,9 @@
 import Login from './views/user/Login.vue'
 import Signup from './views/user/Signup.vue'
-import GameMain from './views/game/GameMain.vue'
+import WaitRoom from './views/game/WaitRoom.vue'
+import PlayGame from './views/game/PlayGame.vue'
 import Lobby from './views/lobby/lobby.vue'
+import check from './views/game/check.vue'
 import Test from './views/user/tmp.vue'
 
 export default [
@@ -23,16 +25,32 @@ export default [
         name : 'Signup',
         component : Signup
     },
-    // GameMain
+    // WaitRoom
     {
-        path : '/GameMain',
-        name : 'GameMain',
-        component : GameMain
+        path: '/room',
+        // path: '/room/:roomId',
+        name: 'WaitRoom',
+        component: WaitRoom,
+        props: true,
+    },
+    // PlayGame
+    {
+        path: '/playing',
+        // path: '/playing/:roomId',
+        name: 'PlayGame',
+        component: PlayGame,
+        props: true,
     },
     // Lobby
     {
         path : '/lobby',
         name : 'Lobby',
         component : Lobby
+    },
+    // LoadingOne
+    {
+        path: '/loading',
+        name: 'check',
+        component: check
     },
 ]

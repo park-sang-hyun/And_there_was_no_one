@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.pjt3.dao.UserDao;
+import com.ssafy.pjt3.dto.User;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -22,4 +23,8 @@ public class UserServiceImpl implements UserService{
 		return userDao.isLeader(user_id);
 	}
 
+	@Override
+	public User getLeader(int room_id) throws SQLException {
+		return userDao.getLeader(room_id);
+	}
 }

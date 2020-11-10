@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.Topic;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.model.BasicResponse;
 import com.ssafy.pjt3.model.GameData;
+import com.ssafy.pjt3.model.WaitRoomData;
 import com.ssafy.pjt3.service.GameService;
 import com.ssafy.pjt3.service.UserService;
 
@@ -45,6 +47,37 @@ public class GameController {
 	@Autowired
 	private UserService userService;
 	
+	@GetMapping("waitroom/{room_id}")
+	@ApiOperation(value = "게임방 내용 조회", notes = "게임이 시작했을 때 필요한 정보들을 넘겨줌")
+	public WaitRoomData wait(@PathVariable int room_id) {
+		Room room = new Room();
+		List<User> userList = new ArrayList<>();
+		User leader = new User();
+		WaitRoomData waitroomdata = new WaitRoomData();
+		
+		try {
+			room = gameService.findRoomWithRoomid(room_id);
+			userList = gameService.findUserInRoom(room_id);
+			leader = userService.getLeader(room_id);
+			
+			waitroomdata.setId(room.getId());
+			waitroomdata.setTitle(room.getTitle());
+			waitroomdata.setCur_count(room.getCur_count());
+			waitroomdata.setMax_count(room.getMax_count());
+			waitroomdata.setDifficulty(room.getDifficulty());
+			waitroomdata.setMode(room.getMode());
+			waitroomdata.setStart(room.isStart());
+			waitroomdata.setLeader(leader);
+			
+			waitroomdata.setUserList(userList);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return waitroomdata;
+	}
+	
 	@GetMapping("ingame/{room_id}")
 	@ApiOperation(value = "게임 시작", notes = "게임이 시작했을 때 필요한 정보들을 넘겨줌")
 	public Object ingame(@PathVariable int room_id) {
@@ -52,6 +85,10 @@ public class GameController {
 		List<User> userList = new ArrayList<>();
 		List<User> userListSuffle = new ArrayList<>();
 		List<Integer> suffleNumber = new ArrayList<Integer>();
+		List<Topic> topicList = new ArrayList<>();
+		List<String> wordList = new ArrayList<>();
+		Topic topic = new Topic();
+		String word;
 		User shadow = new User();
 		GameData gamedata = new GameData();
 		
@@ -62,8 +99,20 @@ public class GameController {
 			room = gameService.findRoomWithRoomid(room_id);
 			userList = gameService.findUserInRoom(room_id);
 			
-			// 그림자 뽑기
+			// 주제 뽑기
+			topicList = gameService.getTopic();
 			Random rand = new Random();
+			int topicIndex = rand.nextInt(topicList.size());
+			topic = topicList.get(topicIndex);
+			
+			// 제시어 뽑기
+			wordList = gameService.getWord(topic.getId());
+			rand = new Random();
+			int wordIndex = rand.nextInt(wordList.size());
+			word = wordList.get(wordIndex);
+			
+			// 그림자 뽑기
+			rand = new Random();
 			int shadowIndex = rand.nextInt(userList.size());
 			shadow = userList.get(shadowIndex);
 			
@@ -86,6 +135,9 @@ public class GameController {
 			gamedata.setDifficulty(room.getDifficulty());
 			gamedata.setMode(room.getMode());
 			gamedata.setStart(room.isStart());
+			
+			gamedata.setTopic(topic.getName());
+			gamedata.setWord(word);
 			
 			gamedata.setShadow(shadow);
 			gamedata.setUserList(userListSuffle);
@@ -115,11 +167,12 @@ public class GameController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/leave/{username}")
+	@DeleteMapping("/leave/{user_id}")
 	@ApiOperation(value = "방 나가기", notes = "방 나가기 기능을 구현(방장일 때 1. 유저가 있으면 방장 위임하고 나가기 2. 없으면 방 제거 / 일반유저일 때 나가기)")
-	public void leave(@PathVariable String username) {
+	public Object leave(@PathVariable int user_id) {
+		final BasicResponse result = new BasicResponse();
+		
 		try {
-			int user_id = userService.findPkId(username);
 			boolean isLeader = userService.isLeader(user_id);
 			int room_id = gameService.findRoomPkId(user_id);
 			
@@ -141,32 +194,43 @@ public class GameController {
 					
 					//게임방 퇴장하기
 					gameService.leaveRoom(user_id);
+					
+					result.status = true;
+			        result.data = "방장이 방장권한을 위임하고 나가기 완료";
+			        result.object = mandateUser;
 				}else {
 					//게임방 퇴장하기
 					gameService.leaveRoom(user_id);
 					
 					//게임방 삭제하기
 					gameService.deleteRoom(room_id);
+					
+					result.status = true;
+			        result.data = "방이 없어지고 방장이 나가기 완료";
 				}		
 			}else {
 				//게임방 퇴장하기
 				gameService.leaveRoom(user_id);
+				
+				result.status = true;
+		        result.data = "일반유저 방 나가기 완료";
 			}
 			
 		}catch(SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+        return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@PutMapping("/modify/{username}")
+	@PutMapping("/modify/{room_id}")
 	@ApiOperation(value = "방 수정", notes = "방 정보를 수정하는 기능 구현(방 제목, 최대 인원 수, 게임 모드, 게임 난이도)")
-	public Object modify(@PathVariable String username, @RequestParam String title, int max_count, int mode, int difficulty) {
+	public Object modify(@PathVariable int room_id, @RequestParam String title, int max_count, int mode, int difficulty) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
-			int user_id = userService.findPkId(username);
-			Room room = gameService.findRoomWithUserid(user_id);
+			Room room = gameService.findRoomWithRoomid(room_id);
 
 			room.setTitle(title);
 			room.setMax_count(max_count);

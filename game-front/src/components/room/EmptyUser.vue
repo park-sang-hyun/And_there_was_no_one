@@ -1,0 +1,72 @@
+<template>
+    <!-- 대기 방 User가 들어오지 않았을 때 -->
+    <div id="EmptyUser">
+        <div class="user__part d-flex justify-content-center align-items-center">
+            <div style="display: none;">{{ nowWindow }}</div>
+            유저가 들어오지 않았습니다
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    name: "EmptyUser",
+
+    props: {
+        window: {
+            type: Object
+        },
+    },
+
+    created() {
+        this.layoutCal();
+    },
+
+    computed: {
+        // 보이는 화면 크기 변화 감지
+        nowWindow() {
+            this.layoutCal();
+            return this.window
+        },
+    },
+
+    methods: {
+        // 넓이 계산해서 style 안에 계산해서 넣어주기
+        layoutCal() {
+            let suffix = 'px';
+            var userWidth = (this.window.width * 0.6 * 0.5) - 50;
+            var userHeight = ((this.window.height - 80 - 40) * 0.25) - 30;
+            document.documentElement.style.setProperty('--userWidth', userWidth + suffix);
+            document.documentElement.style.setProperty('--userHeight', userHeight + suffix);
+            document.documentElement.style.setProperty('--userLeft', (userWidth * (5/12)) + suffix);
+            document.documentElement.style.setProperty('--userRight', ((userWidth * (7/12)) - 10) + suffix);
+            document.documentElement.style.setProperty('--userImage', ((userWidth * 0.3) - 10) + suffix);
+
+        },
+
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+:root {
+    --userWidth: 300px;
+    --userHeight: 200px;
+    --userLeft: 100px;
+    --userRigth: 200px;
+    --userImage: 50px;
+}
+
+.user__part {
+    width: var(--userWidth);
+    height: var(--userHeight);
+    /* background-color: rgba(0, 0, 0, 0.3); */
+    margin: 10px 20px;
+    border-radius: 30px;
+    background-color: rgba(66, 66, 66, 0.5);
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+}
+
+
+</style>

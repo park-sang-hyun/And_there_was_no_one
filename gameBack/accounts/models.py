@@ -10,7 +10,6 @@ class User(AbstractUser):
     email = None
     first_name = None
     last_name = None
-
     
     nickname = models.CharField(
         verbose_name=('Nickname'),

@@ -7,8 +7,15 @@
     <select id="selectPkId" parameterType="String" resultType="int">
 		select id from user where username=#{username}
     </select>
+    
 	<select id="isLeader" resultType="boolean">
 		select leader from userroom where user_id=#{user_id}
+	</select>
+	
+	<select id="getLeader" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		where id=(select user_id from userroom where room_id=#{room_id} and leader=true);
 	</select>
 	
 </mapper>

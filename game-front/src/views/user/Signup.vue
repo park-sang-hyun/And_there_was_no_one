@@ -16,8 +16,10 @@
           type="text"
           id="nickname"
           placeholder="닉네임을 입력하세요."
+          @keyup="nickCheck=false"
         />
       </div>
+      <button type="button" @click="nicknameCheck(nickname)">중복체크</button>
       <!-- 닉네임 중복체크하기  -->
       <div class="error-text" v-if="error.password1">{{error.password1}}</div>
       <div class="form-item">
@@ -51,6 +53,11 @@
         :class="{disabled : !isSubmit}"
       >Signup</button>
 
+      <div class="add-option mt-4">
+          <div class="wrap">
+            <router-link to="/" class="btn--text">Login</router-link>
+          </div>
+      </div>
     </form>
   </div>
 </template>
@@ -78,6 +85,7 @@ export default {
         password1: false
       },
       isSubmit: false,
+      nickCheck: false
     };
   },
   created() {
@@ -117,11 +125,10 @@ export default {
       });
     },
     checkPasswordsame() {
-       if (
-        this.password1 === this.password2
-      ){
+       if ( this.password1 === this.password2){
         this.error.password1 = "";
-      } else {
+      } 
+      else {
         this.error.password1 = "비밀번호와 비밀번호 확인은 동일하게 작성해주세요.";
       }
         
@@ -133,7 +140,10 @@ export default {
 
     // 로그인 요청 - 토큰 받아서 local storage에 넣기
     onSignup() {
-      if (this.isSubmit) {
+      if (this.nickCheck === false) {
+        alert("닉네임 중복체크를 해주세요.");
+      }
+      else if (this.isSubmit) {
 
         storage.setItem("token", "");
         storage.setItem("id", "");
@@ -166,18 +176,43 @@ export default {
         .catch((err) => {
           this.error.password1 = err;
         })
+      }
       
-    }
+    },
+    moveFeed(){
+        this.$router.push("/lobby");
+    },
+
+    nicknameCheck(nick) {
+      let msg = "";
+      console.log("Enter nickname check")
+      if (nick === "") {
+        alert("닉네임을 입력해주세요.");
+      }
+      else {
+        http
+          .get("accounts/nickname/" + nick + "/")
+          .then((res) => {
+            console.log(res);
+            console.log(res.data);
+            console.log(res.data.message)
+            if(res.data.message === "ok") {
+              msg = "사용 가능한 닉네임입니다.";
+              this.nickCheck = true;
+            }
+            else {
+              msg = "이미 존재하는 닉네임입니다.";
+            }
+            alert(msg);
+          })
+      }
+    },
   },
 
-  moveFeed(){
-        this.$router.push("/lobby");
-  },
-},
  
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
   @import url(http://weloveiconfonts.com/api/?family=entypo);
 
   /* entypo */

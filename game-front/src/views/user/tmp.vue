@@ -69,7 +69,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     /* scoped 적용하면 html, body에 있는게 안됨 그래서 app.vue에 임시로 해둠 테스트용*/
     @import url('https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap');
     * {
