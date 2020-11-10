@@ -293,7 +293,7 @@ export default {
 
             // ai로 이미지보내기
             aihttp
-            .put(`/english/imageupload/`, formData)
+            .post('/objects/image/', formData)
             .then((res) => {
                 console.log(res);
                 console.log(res.data);
