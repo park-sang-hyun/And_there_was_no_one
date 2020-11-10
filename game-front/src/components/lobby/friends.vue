@@ -8,7 +8,7 @@
         <button @click="showModal = true" class="button" style="margin:10px">+</button>
       </div>
 
-      
+
       <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
         <div v-if="showModal" @click="cancel" class="modal-overlay"></div>
@@ -38,7 +38,7 @@
           </div>
 
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
-          <!-- 이 상태에서 x 버튼을 누르면 요청 취소라고 상대방한테도 전달해야할텐데... -->
+          <!-- 이 상태에서 x 버튼을 누르면 요청 취소라고 상대방한테도 전달해야함... -->
           <div v-else-if="friendReqStatus==='응답기다림'">
               <p>친구의 응답을 기다리는 중입니다. </p>
               <button @click="getSockMsg()">임시 버튼</button>
@@ -52,6 +52,8 @@
         
         </div>
       </transition>
+
+
 
       <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
@@ -83,7 +85,7 @@
       <!-- scrollbar-box가 한 페이지에 두개라서 발생한 문제로 보임 뒤에 2를 붙여서 해결 -->
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
-          <div v-for="friend in friends" :key="friend + 'key'" class="friend">
+          <div v-for="friend in friends" :key="friend.no + 'key'" class="friend">
             <p style="margin: 5px">
               {{ friend.isLogin }}: {{ friend.nickname }}
             </p>
@@ -106,7 +108,7 @@ import http from "../../util/http-common.js";
 
 export default {
   props: {
-    websocket: Object,
+    websocket: undefined,
   }, 
   data: () =>{
         return{
@@ -136,6 +138,14 @@ export default {
         }
   },
   created(){
+
+    // sessionStorage에 들어있는 사용자 id 받아오는 부분! 확인용으로 나중에 삭제 예정
+    console.log("id: ");
+    console.log("id: ");
+    console.log("id: ");
+    console.log("id: ");
+    console.log(sessionStorage);
+    console.log("id: " + sessionStorage.getItem("id"));
       // 처음에 lobby 서버에서 http로 친구목록 데이터를 받아옴
       this.getFriendsList();      
   },
@@ -202,7 +212,6 @@ export default {
 
     },
 
-
     // 친구 추가 요청을 보낼 때
     addFriend() {
       this.friendReqStatus = '응답기다림'
@@ -236,6 +245,7 @@ export default {
       this.getFriendReqModal = false;
     },
 
+    // 친구 추가 요청 취소
     cancel() {
       if(this.friendReqStatus==='응답기다림') {
         // 서버에 소켓으로 상대방이 요청 취소했다고 전달하기. 
@@ -274,7 +284,7 @@ export default {
 
 
 
-<style scoped>
+<style lang="scss" scoped>
 
   .friends-wrapper {
     border-radius: 20px;

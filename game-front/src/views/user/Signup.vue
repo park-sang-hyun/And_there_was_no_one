@@ -212,7 +212,7 @@ export default {
  
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
   @import url(http://weloveiconfonts.com/api/?family=entypo);
 
   /* entypo */
