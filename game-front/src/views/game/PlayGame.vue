@@ -288,21 +288,20 @@ export default {
         // ai로 보내기
         sendAI(image) {
             let formData = new FormData;
-            formData.append('image', image);
-            console.log(image);
-
-            console.log('ai 호출');
+            formData.append('inputImage', image);
+            formData.append('turn', this.turn);
+            formData.append('roomId', this.room.id);
 
             // ai로 이미지보내기
-            // aihttp
-            // .post('', formData)
-            // .then((res) => {
-            //     console.log(res);
-            //     console.log(res.data);
-            // })
-            // .catch((err) => {
-            //     console.log(err);
-            // })
+            aihttp
+            .put(`/english/imageupload/`, formData)
+            .then((res) => {
+                console.log(res);
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         }
 
     },
