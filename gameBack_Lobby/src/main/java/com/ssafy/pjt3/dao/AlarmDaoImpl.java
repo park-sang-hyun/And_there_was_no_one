@@ -1,6 +1,7 @@
 package com.ssafy.pjt3.dao;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,11 @@ public class AlarmDaoImpl implements AlarmDao{
 
 	@Override
 	public void send(Alarm alarm) throws SQLException {
-		System.out.println("!!!!");
-		System.out.println(alarm);
 		session.insert("alarm_mapper.send", alarm);
+	}
+
+	@Override
+	public List<Alarm> receive(int user_id) throws SQLException {
+		return session.selectList("alarm_mapper.receive", user_id);
 	}
 }
