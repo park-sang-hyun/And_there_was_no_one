@@ -21,7 +21,7 @@
             <div class="row screen__left__bottom">
                 <div class="col-12 p-0 d-flex justify-content-center align-items-center">
                     <!-- canvas(그림 그리기) -->
-                    <draw :window="windowScreen" :turnOff="!turnOff"/>
+                    <draw :window="windowScreen" :turnOff="!turnOff" @imgFile="imgFile" ref="draw"/>
                 </div>
             </div>
 
@@ -143,8 +143,9 @@ export default {
             alert('게임 중에는 나갈 수 없습니다.');
         },
 
-
-
+        imgFile(image) {
+            this.$emit('imgFile', image);
+        },
     },
 
 }
