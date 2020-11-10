@@ -89,6 +89,8 @@ import loadingTwo from '@/components/room/LoadingModeTwo.vue';
 import loadingThree from '@/components/room/LoadingModeThree.vue';
 import http from '@/util/http-common.js';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 export default {
     name: 'WaitRoom',
     
