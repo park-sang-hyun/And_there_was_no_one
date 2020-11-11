@@ -62,6 +62,7 @@ import http from '@/util/http-game.js';
 import aihttp from '@/util/http-ai.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 export default {
     name: "PlayGame",
 

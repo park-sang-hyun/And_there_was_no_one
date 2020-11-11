@@ -88,8 +88,8 @@ import loadingOne from '@/components/room/LoadingModeOne.vue';
 import loadingTwo from '@/components/room/LoadingModeTwo.vue';
 import loadingThree from '@/components/room/LoadingModeThree.vue';
 import http from '@/util/http-game.js';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default {
     name: 'WaitRoom',

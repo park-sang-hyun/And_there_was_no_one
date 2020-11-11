@@ -11,7 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
-public class WebSocketHandler extends TextWebSocketHandler {
+public class ConnectSocketHandler extends TextWebSocketHandler {
 	private Map<String, WebSocketSession> sessions = new HashMap<String, WebSocketSession>();
 
 	@Override
@@ -22,14 +22,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
 		String id = (String) map.get("userId");
 		System.out.println(id);
 		
-		Iterator<String> sessionIds = sessions.keySet().iterator();
+//		Iterator<String> sessionIds = sessions.keySet().iterator();
+//
+//		String sessionId = "";
 
-		String sessionId = "";
-
-		while (sessionIds.hasNext()) {
-			sessionId = sessionIds.next();
-			sessions.get(sessionId).sendMessage(new TextMessage("[" + session.getId() + "] 입장."));
-		}
+//		while (sessionIds.hasNext()) {
+//			sessionId = sessionIds.next();
+//			sessions.get(sessionId).sendMessage(new TextMessage(session.getId() + ", login"));
+//		}
 
 		sessions.put(session.getId(), session);
 	}
@@ -40,14 +40,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
 		sessions.remove(session.getId());
 
-		Iterator<String> sessionIds = sessions.keySet().iterator();
+//		Iterator<String> sessionIds = sessions.keySet().iterator();
 
-		String sessionId = "";
-
-		while (sessionIds.hasNext()) {
-			sessionId = sessionIds.next();
-			sessions.get(sessionId).sendMessage(new TextMessage("[" + session.getId() + "] 퇴장."));
-		}
+//		String sessionId = "";
+//
+//		while (sessionIds.hasNext()) {
+//			sessionId = sessionIds.next();
+//			sessions.get(sessionId).sendMessage(new TextMessage(session.getId() + ", logout"));
+//		}
 	}
 
 	@Override
@@ -56,12 +56,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
 		System.out.println(session.getId() + "이(가) 메세지전송.");
 
 		Iterator<String> sessionIds = sessions.keySet().iterator();
+		
+		
+		String msg = message.getPayload();
+		String[] msgs = msg.split(",");
 
 		String sessionId = "";
+		
 		while (sessionIds.hasNext()) {
 			sessionId = sessionIds.next();
-			sessions.get(sessionId).sendMessage(new TextMessage(session.getId() + " : " + message.getPayload()));
+			sessions.get(sessionId).sendMessage(new TextMessage(msgs[0] +"," + msgs[1]));
 		}
 	}
-
 }

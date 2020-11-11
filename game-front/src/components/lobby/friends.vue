@@ -106,10 +106,9 @@
 <script>
 import http from "../../util/http-common.js";
 
+const storage = window.sessionStorage;
+
 export default {
-  props: {
-    websocket: undefined,
-  }, 
   data: () =>{
         return{
           friends: [
@@ -135,8 +134,10 @@ export default {
           friendName: "",
           // 소켓 getMessage 결과에 따라 아래 변수를 true로 하면 모달이 나옴
           getFriendReqModal: true,
+          websock: null,
         }
   },
+
   created(){
 
     // sessionStorage에 들어있는 사용자 id 받아오는 부분! 확인용으로 나중에 삭제 예정
@@ -147,8 +148,14 @@ export default {
     console.log(sessionStorage);
     console.log("id: " + sessionStorage.getItem("id"));
       // 처음에 lobby 서버에서 http로 친구목록 데이터를 받아옴
-      this.getFriendsList();      
+      this.getFriendsList(); 
+      this.initWebScoket();
   },
+
+  mounted(){
+    
+  },
+
   methods: {
     getFriendsList() {
       // lobby 서버에서 http로? 혹은 소켓으로 내 친구 목록 가져오기.
@@ -257,8 +264,44 @@ export default {
       }
       this.showModal=false;
       this.friendReqStatus='요청전';
-    }
+    },
 
+
+    logout() {
+
+      // 로그아웃 버튼 누르면 여기 함수 실행 잘 되는거 확인함!!!!!!1
+      // 로그아웃 장고 로그아웃 요청을 여기서 보낼지 lobby.vue로 보낼지 대흠님이랑 맞춰보기 
+      // 소켓이나 axios로 로그아웃한다고 신호 보내고 로그아웃해야함 
+      // 그 다음에 로그인 페이지로 전환
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+    },
+
+      webSocketSend(Data){
+        console.log("메시지 전송");
+        this.websock.send(Data);
+        console.log('1:' + Data)
+        console.log('2:' + this.websock)
+        console.log(this.websock.sessionId)
+      },
+
+      webSocketClose(e){
+        console.log("소켓 닫기");
+        this.websock.close();
+      },
 
     // 딜레이 함수. 이거 쓰면 그냥 폴링방식으로 계속 기다림 주의
     // setTimeOut?은 다를까..? 한번 시도해보자 
@@ -272,17 +315,10 @@ export default {
     //     now=new Date().getTime();  // 현재시간을 읽어 함수를 불러들인 시간과의 차를 이용하여 처리 
     //   } 
     // }, 
-  }
+  },
+    
 }
 </script>
-
-
-
-
-
-
-
-
 
 <style lang="scss" scoped>
 

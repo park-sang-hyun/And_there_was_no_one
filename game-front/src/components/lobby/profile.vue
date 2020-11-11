@@ -12,6 +12,7 @@
         <p>nickname: {{ nickname }}</p>
         <p>score: {{ score }}lv</p> 
       </div>
+      <button class="button" @click="logout">게임 종료</button>
     </div>
   </div>
 </template>
@@ -43,6 +44,9 @@ export default {
 
 
       console.log("Enter getProfile");
+    },
+    logout() {
+      this.$emit('logout', 'logout');
     }
   },
 }
@@ -72,5 +76,17 @@ export default {
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
+  
 }
+.button {
+    border: none;
+    color: #FFF;
+    background: #42b983;
+    appearance: none;
+    font: inherit;
+    border-radius: .3em;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+  }
 </style>
