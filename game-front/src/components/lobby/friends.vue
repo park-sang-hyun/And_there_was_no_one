@@ -97,14 +97,8 @@
   </div>
 </template>
 
-
-
-
-
-
-
 <script>
-import http from "../../util/http-common.js";
+import http from "../../util/http-lobby.js";
 
 const storage = window.sessionStorage;
 
@@ -149,7 +143,7 @@ export default {
     console.log("id: " + sessionStorage.getItem("id"));
       // 처음에 lobby 서버에서 http로 친구목록 데이터를 받아옴
       this.getFriendsList(); 
-      this.initWebScoket();
+      // this.initWebScoket();
   },
 
   mounted(){
