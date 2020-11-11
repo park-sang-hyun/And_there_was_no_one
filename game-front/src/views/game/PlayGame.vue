@@ -46,7 +46,7 @@
             </div>
 
             <div v-if="end" class="showScreen">
-                <EndScreen :isEnd="end" :endScore="score" :userList="game.userList" :isFinish="isFinish" :images="sendImage"/>
+                <EndScreen :isEnd="end" :endScore="score" :game="game" :isFinish="isFinish" :images="sendImage"/>
             </div>
         </div>
 
@@ -61,7 +61,6 @@ import EndScreen from '@/components/game/EndScreen.vue';
 import http from '@/util/http-game.js';
 import aihttp from '@/util/http-ai.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 export default {
     name: "PlayGame",
@@ -96,8 +95,8 @@ export default {
                 id: 1,
                 mode: 2,
                 difficulty: 1,
-                cur_count: 3,
-                max_count: 5,
+                cur_count: 5,
+                max_count: 7,
                 start: true,
                 topic: '과일',
                 word: '사과',
@@ -109,27 +108,22 @@ export default {
                     {
                         nickname: '1번사람',
                         id: 1,
-                        leader: true,
                     },
                     {
                         nickname: '2번사람',
                         id: 2,
-                        leader: false,
                     },
                     {
                         nickname: '3번사람',
                         id: 3,
-                        leader: false,
                     },
                     {
                         nickname: '4번사람',
                         id: 4,
-                        leader: false,
                     },
                     {
                         nickname: '5번사람',
                         id: 5,
-                        leader: false,
                     },
                 ],
                 
@@ -180,7 +174,7 @@ export default {
                 interval: '',
                 showTimer: '',
                 timer: 4,
-            }
+            },
         }
     },
 
