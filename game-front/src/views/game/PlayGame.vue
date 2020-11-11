@@ -1,21 +1,20 @@
-<template>
+﻿<template>
     <div id="PlayGame">
         <!-- 제시어 확인 -->
         <div v-if="checkRoll">
-            {{ sendGame }}
-            <roll :room="room" :game="game" />
+            <roll :sendGame="sendGame" />
         </div> 
 
         <!-- 게임 화면 -->
         <div v-else>
             <!-- 자유 그리기 모드 -->
             <div v-if="isMode">
-                <ModeOne :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" />
+                <ModeOne :game="game" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" :images="sendImage" @imgFile="sendAI" ref="modeOne" />
             </div>
                 
             <!-- 이어그리기 모드 -->
             <div v-else>
-                <ModeTwo :room="room" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" />
+                <ModeTwo :game="game" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" @imgFile="sendAI" ref="modeTwo" />
             </div>
 
             <div class="chat__part">
@@ -30,14 +29,24 @@
                 </div>
             </div>
 
-            <div class="timer__part">
+            <div v-if="timerShow" class="timer__part">
                 <div class="text__part">
-                    {{ sendTimer }}
+                    {{ showTimer }}
+                </div>
+            </div>
+
+            <div v-if="beforeShow" class="before__part">
+                <div class="text__before">
+                    {{ before.showTimer }}
                 </div>
             </div>
 
             <div v-if="show" class="showScreen">
 
+            </div>
+
+            <div v-if="end" class="showScreen">
+                <EndScreen :isEnd="end" :endScore="score" :userList="game.userList" :isFinish="isFinish" :images="sendImage"/>
             </div>
         </div>
 
@@ -48,7 +57,11 @@
 import roll from '@/components/game/GameRoll.vue';
 import ModeOne from '@/components/game/GameModeOne.vue';
 import ModeTwo from '@/components/game/GameModeTwo.vue';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import EndScreen from '@/components/game/EndScreen.vue';
+import http from '@/util/http-game.js';
+import aihttp from '@/util/http-ai.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default {
     name: "PlayGame",
@@ -57,6 +70,7 @@ export default {
         roll,
         ModeOne,
         ModeTwo,
+        EndScreen,
     },
 
     props: {
@@ -68,23 +82,30 @@ export default {
     data() {
         return {
             game: { },
-            turn: 2,                            // 현재 턴
+            turn: 0,                            // 현재 턴
             isMode: true,                       // 현재 게임 모드 확인 (true: 자유그리기 | false: 이어그리기)
             checkRoll: false,                   // 제시어 확인 페이지 여부
-            defaultgame: {
-                subject: '과일',
-                word: '사과',
-            },
+            timerShow: false,                   // timer 보여주기
+            beforeShow: false,                  // before timer 여부
             show: false,                        // modal 등 전체 영역
-            room: {},                           // room 데이터 받아서 넣기 (이후 보고 아예 props로 받기)
-            defaultRoom: {                      // 테스트용 default 값
-                title: "테스트 중입니다.",
-                mode: 2,
-                difficulty: 3,
+            score: [],                          // 각 턴의 유저 score
+            end: false,                         // 턴 종료 여부
+            finish: false,                      // 게임 종료 여부
+            images: [],                         // 이미지 넣기 위한 곳
+            defaultGame: {
                 id: 1,
-                count: 7,
-                start: false,
-                members: [
+                mode: 2,
+                difficulty: 1,
+                cur_count: 3,
+                max_count: 5,
+                start: true,
+                topic: '과일',
+                word: '사과',
+                shadow: {
+                    id: 1,
+                    nickname: 'Shadow',
+                },
+                userList: [
                     {
                         nickname: '1번사람',
                         id: 1,
@@ -110,22 +131,8 @@ export default {
                         id: 5,
                         leader: false,
                     },
-                    // {
-                    //     nickname: '6번사람',
-                    //     id: 6,
-                    //     leader: false,
-                    // },
-                    // {
-                    //     nickname: '7번사람',
-                    //     id: 7,
-                    //     leader: false,
-                    // },
-                    // {
-                    //     nickname: '8번사람',
-                    //     id: 8,
-                    //     leader: false,
-                    // },
                 ],
+                
             },
             // 각 데이터 별로 맞는 설정 이름/숫자 매칭을 위한 리스트
             checkName: {
@@ -168,47 +175,52 @@ export default {
             interval: '',
             showTimer: '',
             timer: 0,
-            
+            before: {
+                counter: false,
+                interval: '',
+                showTimer: '',
+                timer: 4,
+            }
         }
     },
 
     created() {
         // 이후 넘기는 걸로 받아올 것
-        this.room = this.defaultRoom;
-        if ( this.room.mode === 2 ) {
+        // this.game = this.defaultGame;
+        this.game = this.sendGame;
+        if ( this.game.mode === 2 ) {
             this.isMode = false;
         } else {
             this.isMode = true;
         }
 
         // 빈자리 출력을 위해 인원 확인
-        if (this.room.members.length < this.room.count) {
-            this.memCount.EmptyCount = this.room.count - this.room.members.length;
+        if (this.game.cur_count < this.game.max_count) {
+            this.memCount.EmptyCount = this.game.max_count - this.game.cur_count;
         }
         // 막아둘 자리 출력을 위한 인원 확인
-        if (this.room.count < 8) {
-            this.memCount.NoneCount = 8 - this.room.count;
+        if (this.game.max_count < 8) {
+            this.memCount.NoneCount = 8 - this.game.max_count;
         }
 
-
-        // 게임 정보 받아오기
-        this.game = this.defaultgame;
+        // 각 턴마다 점수를 위한 부분
+        for (let j=0; j < this.game.cur_count; j++) {
+            this.score.push(0);
+        }
 
         
-
         // 역할 확인 부분
         this.checkRoll = true;
-        console.log(this.sendGame);
+        // console.log(this.sendGame);
         var roll = setTimeout( this.goGame , 10000);
         // this.checkRoll = false;
 
-        // var timeCheck = setTimeout( this.startTimer, 10000);
-        this.startTimer();
+        var timeCheck = setTimeout( this.beforeStartTimer, 10000);
 
         // 설정 값 별로 매칭되는 이름/숫자 넣어주기
-        this.output.mode = this.checkName.mode[this.room.mode];
-        this.output.difficulty = this.checkName.difficulty[this.room.difficulty];
-        this.output.sec = this.checkName.sec[this.room.difficulty];
+        this.output.mode = this.checkName.mode[this.game.mode];
+        this.output.difficulty = this.checkName.difficulty[this.game.difficulty];
+        this.output.sec = this.checkName.sec[this.game.difficulty];
         this.timer = this.output.sec;
     },
 
@@ -223,9 +235,14 @@ export default {
             return this.memCount
         },
 
-        sendTimer() {
-            return this.showTimer
+        sendImage() {
+            return this.images
+        },
+
+        isFinish() {
+            return this.finish
         }
+
     },
 
     methods: {
@@ -237,7 +254,7 @@ export default {
                 alert('메시지를 선택해주세요');
             } else {
                 // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-                this.chat.logs = [...[(this.room.members[1].nickname, this.chatList[idx])], ...this.chat.logs];
+                this.chat.logs = [...[(this.game.userList[1].nickname, this.chatList[idx])], ...this.chat.logs];
                 console.log(this.chat.logs);
             }
         },
@@ -249,7 +266,7 @@ export default {
 
         // 본인의 턴이면 채팅창의 우선도를 뒤로, 아니면 앞으로
         yourTurn() {
-            if (this.room.members[this.turn - 1].id == 4 ) {
+            if (this.game.userList[this.turn].id == 4 ) {
                 document.documentElement.style.setProperty('--indexNum', -1);
             } else {
         
@@ -257,8 +274,9 @@ export default {
             }
         },
 
-        // timer
+        // 타이머
         startTimer() {
+            this.timerShow = true;
             this.interval = setInterval(this.countDown, 1000);
         },
 
@@ -266,18 +284,107 @@ export default {
             var n = this.timer;
             if (!this.counter) {
                 this.counter = true;   
-                this.showTimer = n;     
-            } else if (n > 1) {
+                this.showTimer = n;
+            } else if (n > 0) {
                 n = n - 1;
                 this.showTimer = n;
                 this.timer = n;
             } else {
                 clearInterval(this.interval);
                 this.counter = false;
-                this.showTimer = "0";
+                this.showTimer = '';
+                this.timerShow = false;
                 this.timer = this.output.sec;
+                this.show = true;
+                if (this.game.mode == 2) {
+                    this.$refs.modeTwo.$refs.draw.handleSaveClick();
+                } else {
+                    this.$refs.modeOne.$refs.draw.handleSaveClick();
+                }
             }
         },
+
+        
+        // before 타이머
+        beforeStartTimer() {
+            this.show = false;
+            this.beforeShow = true;
+            this.before.interval = setInterval(this.beforeCountDown, 1000);
+        },
+
+        beforeCountDown() {
+            var m = this.before.timer;
+            if (!this.before.counter) {
+                this.before.counter = true;
+                this.before.showTimer = `${ this.game.userList[this.turn].nickname } Turn`;     
+            } else if (m > 1) {
+                m = m - 1;
+                this.before.showTimer = `${m}`;
+                this.before.timer = m;
+            } else {
+                clearInterval(this.before.interval);
+                this.before.counter = false;
+                this.before.showTimer = '';
+                this.beforeShow = false;
+                this.before.timer = 4;
+                this.startTimer();
+            }
+        },
+
+        // mode 1,2 : 이미지 저장 후 ai로 보내기 / mode 3 : 이미지 저장 후 턴 넘기기
+        sendAI(image) {
+
+            this.images.push(image);
+
+            if (this.game.mode == 3) {
+                var time = setTimeout( this.turnChange, 1000 );
+            } else {
+                let formData = new FormData;
+                formData.append('inputImage', image);
+                formData.append('turn', this.turn);
+                formData.append('roomId', this.game.id);
+
+                // ai로 이미지보내기
+                aihttp
+                .post(`/objects/image/`, formData)
+                .then((res) => {
+                    if (res.data.message) {
+                        for (let i=0; i < res.data.result.length; i++) {
+                            if (res.data.result[i] == this.game.word) {
+                                if (this.game.mode == 1) {
+                                    this.score[this.turn] = this.score[this.turn] - 20;
+                                } else if (this.game.mode == 2) {
+                                    this.score[this.turn] = this.score[this.turn] - 100;
+                                    this.turnFinish();
+                                }
+                            }
+                        }
+                    }
+                    if (!this.finish) {
+                        var time = setTimeout( this.turnChange, 1000 );
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+            }
+        },
+
+        // 턴 넘기기
+        turnChange() {
+            if (this.turn == this.game.cur_count - 1) {
+                this.end = true;
+            } else {
+                this.turn = this.turn + 1;
+                this.beforeStartTimer();
+            }
+        },
+
+        // 게임 종료
+        turnFinish() {
+            this.end = true;
+            this.finish = true;
+        }
 
     },
 }
@@ -345,6 +452,29 @@ export default {
     font-family: 'Montserrat', 'Open Sans', sans-serif;
 }
 
+.before__part {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, .2);
+    display: table;
+    transition: opacity .3s ease;
+}
+
+.text__before {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: green;
+    font-size: 4rem;
+    font-weight: bold;
+    font-family: 'Montserrat', 'Open Sans', sans-serif;
+}
+
 /* 투표 등 배경 흐리기 해야할 때 */
 .showScreen {
     position: fixed;
@@ -353,7 +483,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, .5);
+    background-color: rgba(0, 0, 0, .7);
     display: table;
     transition: opacity .3s ease;
 }

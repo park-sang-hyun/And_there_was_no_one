@@ -5,12 +5,12 @@
             <!-- 화면 왼쪽 상단 -->
             <div class="row screen__left__top d-flex justify-content-center align-content-center">
                 <!-- 게임 주제, 제시어 -->
-                <div class="room__title">
-                    <span>주제: 과일</span>
-                    <span class="ml-4">제시어: ●●</span>
+                <div class="game__title">
+                    <span>주제: {{ game.topic }}</span>
+                    <span class="ml-4">제시어: {{ showWord }}</span>
                 </div>
                 <!-- 게임 모드, 난이도 -->
-                <div class="room__mode">
+                <div class="game__mode">
                     <span>{{ output.mode }}</span>
                     <span class="ml-2">{{ output.difficulty }}</span>
                 </div>
@@ -20,7 +20,7 @@
             <div class="screen__left__bottom d-flex justify-content-center align-items-center">
                 <div class="p-0 d-flex justify-content-center align-items-center">
                     <!-- canvas(그림 그리기) -->
-                    <draw :window="windowScreen" :turnOff="turnOff"/>
+                    <draw :window="windowScreen" :turnOff="turnOff" @imgFile="imgFile" ref="draw" />
                 </div>
             </div>
             <div v-if="selectCanvas" class="screen__left__block"></div>
@@ -30,18 +30,27 @@
         <!-- 유저 리스트 -->
         <div class="col-4 p-0 screen__right"> 
             <div class="screen__right__top">
-                그림 나올 공간
+                <div v-if="noImage" class="image__part">
+                    첫번째 턴입니다.
+                </div>
+                <div v-else>
+                    <img :src="showImage" alt="image" class="image__showpart" style="height: 100%;">
+                    <div class="image__textpart">이전 턴 그림</div>
+                </div>
             </div>
+
             <div class="screen__right__bottom">
                 <div v-for="n in 8" :key="'user' + n + 'key'" style="display: inline-block;">
-                    <user v-if="n < room.members.length + 1" :userData="room.members[n-1]" :window="windowScreen" :isMode="isMode" :isTurn="isYourTurn" :memNo="n" style="float: left;"/>
-                    <empty v-else-if="n < room.members.length + memCount.EmptyCount + 1"  :window="windowScreen" :isMode="isMode" style="float: left;"/>
+                    <user v-if="n < game.userList.length + 1" :userData="game.userList[n-1]" :window="windowScreen" :isMode="isMode" :isTurn="isYourTurn" :memNo="n" style="float: left;"/>
+                    <empty v-else-if="n < game.userList.length + memCount.EmptyCount + 1"  :window="windowScreen" :isMode="isMode" style="float: left;"/>
                     <none v-else :window="windowScreen" :isMode="isMode" style="float: left;"/>
                 </div>
             </div>
+
             <div class="exit__button d-flex justify-content-center align-items-center">
                 <button @click="exitRoom">방 나가기</button>
             </div> 
+
         </div>
         <div style="display:none;">{{ isYourTurn }}</div> 
     </div>
@@ -57,7 +66,7 @@ export default {
     name: "GameModeOne",
 
     props: {
-        room: {
+        game: {
             type: Object
         },
         output: {
@@ -76,7 +85,10 @@ export default {
             default: 1,
         },
         memCount: {
-            type: Object
+            type: Object,
+        },
+        images: {
+            type: Array,
         },
     },
 
@@ -98,6 +110,9 @@ export default {
                 right: 0,
             },
             selectCanvas: false,
+            showWord: '',
+            showImage: '',
+            noImage: false,
         }
     },
 
@@ -106,6 +121,9 @@ export default {
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
 
+        for (let i=0; i < this.game.word.length; i++) {
+            this.showWord = this.showWord + 'O';
+        }
     },
 
     watch: {
@@ -126,7 +144,7 @@ export default {
         },
 
         isYourTurn() {
-            // this.yourTurn();
+            this.checkImage();
             return this.isTurn
         },
     },
@@ -158,15 +176,29 @@ export default {
 
         // 본인의 턴이면 그림 그리기를 할 수 있도록, 아니면 못하도록 막기
         yourTurn() {
-            if (this.room.members[this.turn - 1].id == 4 ) {
+            if (this.game.userList[this.turn].id == 4 ) {
                 this.selectCanvas = false;
             } else {
                 this.selectCanvas = true;
             }
         },
 
+        // 이전 턴 그림 띄우기
+        checkImage() {
+            if (this.isTurn == 0) {
+                this.noImage = true;
+            } else {
+                this.noImage = false;
+                this.showImage = this.images[this.isTurn - 1];
+            }
+        },
+
         exitRoom() {
             console.log('방 나가기');
+        },
+
+        imgFile(image) {
+            this.$emit('imgFile', image);
         },
 
 
@@ -233,9 +265,9 @@ export default {
 /* 우측 상단 */
 .screen__right__top {
     display: inline-block;
+    position: relative;
     width: 100%;
     height: var(--rightTopSize);
-    background-color: rgba(61, 61, 61, 0.5);
 }
 
 /* 우측 하단 */
@@ -248,26 +280,52 @@ export default {
 
 /* 개별 스타일 적용 */
 /* 왼편 상단 */
-.room__title {
+.game__title {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
     line-height: var(--leftTopSize);
 }
 
-.room__mode {
+.game__mode {
     position: absolute;
     left: 20px;
     top: 50%;
     transform: translate(0, -50%);
 }
 
-.room__mode > span {
+.game__mode > span {
     padding: 5px;
     border-radius: 10px;
     background-color: rgba(250, 181, 33, 0.789);
 }
 
+.image__part {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.8rem;
+}
+
+.image__showpart {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+.image__textpart {
+    position: absolute;
+    left: 0;
+    top: 5px;
+    padding: 5px 10px;
+    font-size: 1rem;
+    color: white;
+    border-radius: 10px;
+    background: rgba(108, 108, 108, 1)
+}
 
 /* 나가기 버튼 */
 .exit__button {

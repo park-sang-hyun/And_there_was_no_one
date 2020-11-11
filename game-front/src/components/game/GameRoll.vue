@@ -17,11 +17,12 @@
                 <div class="back">
                     <div class="game__subject">
                         <h3>주제</h3>
-                        <p>{{ game.subject }}</p>
+                        <p>{{ sendGame.topic }}</p>
                     </div>
                     <div class="game__word">
                         <h3>제시어</h3>
-                        <p>{{ game.word }}</p>
+                        <p v-if="isShadow">You are Shadow</p>
+                        <p v-else>{{ sendGame.word }}</p>
                     </div>
                 </div>
             </section>
@@ -35,10 +36,7 @@ export default {
     name: "GameRoll",
 
     props: {
-        room: {
-            type: Object,
-        },
-        game: {
+        sendGame: {
             type: Object,
         }
 
@@ -47,6 +45,7 @@ export default {
     data() {
         return {
             isStart: true,
+            isShadow: false,
         }
     },
 
@@ -55,6 +54,13 @@ export default {
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
         this.isStart = true;
+
+        if ( this.sendGame.shadow.id == 1) {
+            this.isShadow = true;
+        } else {
+            this.isShadow = false;
+        }
+        
         setTimeout( this.start , 4000);
     },
 
