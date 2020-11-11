@@ -273,9 +273,9 @@ export default {
           let username = sessionStorage.getItem("id");
           let title=this.roomName;
           let cur_count = 1;
-          let max_count = 6;
-          let mode = 1;
-          let difficulty = 1;
+          let max_count = this.people;
+          let mode = this.mode;
+          let difficulty = this.difficulty;
           let start = false;
 
           //formData안에 값 넣기
@@ -292,9 +292,10 @@ export default {
           .post("room/create", formData)
           .then((res) => {
             //Create요청 후 받은 방 번호로 페이지 이동
-
+            console.log(res)  
+            console.log(res.data)  
             console.log("방생성 완료");
-            this.enterRoom(res.roomNo)
+            this.enterRoom(res.data.room_id);
           })
           .catch(err => {
             console.log(err)
@@ -364,6 +365,7 @@ export default {
         // Room 들어가기 요청 보내기
         // this.$router.push("/room????");
         console.log("Enter enterRoom: " + roomNo);
+        this.$router.replace({ name: 'WaitRoom' , params: { roomId: roomNo }});
       },
     },
 }

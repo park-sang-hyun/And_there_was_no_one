@@ -48,7 +48,7 @@
 import roll from '@/components/game/GameRoll.vue';
 import ModeOne from '@/components/game/GameModeOne.vue';
 import ModeTwo from '@/components/game/GameModeTwo.vue';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default {
     name: "PlayGame",

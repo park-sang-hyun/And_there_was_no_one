@@ -7,8 +7,10 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.ssafy.pjt3.handler.WebSocketHandler;
+import com.ssafy.pjt3.handler.ChatSocketHandler;
+import com.ssafy.pjt3.handler.ConnectSocketHandler;
 import com.ssafy.pjt3.interceptor.HandshakeInterceptor;
+import com.ssafy.pjt3.interceptor.HandshakeInterceptorTwo;
 
 
 @Configuration
@@ -16,12 +18,16 @@ import com.ssafy.pjt3.interceptor.HandshakeInterceptor;
 public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Autowired
-	WebSocketHandler webSocketHandler;
+	ChatSocketHandler chatSocketHandler;
+	
+	@Autowired
+	ConnectSocketHandler connectSocketHandler;
 	
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(webSocketHandler, "/chatting").addInterceptors(createHandshakeInterceptor()).setAllowedOrigins("*");
+		registry.addHandler(chatSocketHandler, "/chatting").addInterceptors(new HandshakeInterceptor()).setAllowedOrigins("*");
+		registry.addHandler(connectSocketHandler, "/connecting").addInterceptors(new HandshakeInterceptorTwo()).setAllowedOrigins("*");
 	}
 	
 	@Bean

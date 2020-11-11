@@ -88,6 +88,9 @@ public class RoomController {
 	@PostMapping("/create")
 	@ApiOperation(value = "방 생성", notes = "방 생성 기능을 구현")
 	public Object create(@RequestParam String title, int cur_count, int max_count, int mode, int difficulty, boolean start, String username) {
+		
+		System.out.println("room create!!!!!!!!");
+		System.out.println(username);
 		final BasicResponse result = new BasicResponse();
 		Room room = new Room();
 		room.setTitle(title);
@@ -97,12 +100,16 @@ public class RoomController {
 		room.setDifficulty(difficulty);
 		room.setStart(start);
 		
+		UserRoom userroom = new UserRoom();
+		
 		try {
 			roomService.createRoom(room);
 			int room_id = room.getId();
-			int user_id = userService.findPkId(username);
+//			int user_id = userService.findPkId(username);
 			
-			UserRoom userroom = new UserRoom();
+			int user_id = Integer.parseInt(username);
+			
+			
 			
 			userroom.setLeader(true);
 			userroom.setUser_id(user_id);
@@ -117,7 +124,8 @@ public class RoomController {
 		
 		result.status = true;
         result.data = "방 생성 완료";
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        
+        return new ResponseEntity<>(userroom, HttpStatus.OK);
 	}
 	
 	@GetMapping("/enter/{username}/{leader_username}")
