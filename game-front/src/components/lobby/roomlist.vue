@@ -38,22 +38,16 @@
             <p>{{ roomCreateErr }}</p>
             <div >
               <div>
-                <label for="mode">모드</label>
+                <label for="mode">Mode</label>
               </div>
-              <div class="number-input-container" style="margin-left: 20%">
+              <div class="number-input-container">
                 <button
                   type="button"
                   class="button-decrement"
                   @click="setMode('down')"
                 ></button>
-                <div class="number-input">
-                  <input
-                    type="number"
-                    v-model="mode"
-                    class="number-input-text-box"
-                    value="1"
-                    @keyup="setMode('str')"
-                  />
+                <div class="number-input" style="text-align: center">
+                  {{ mode }}
                 </div>
                 <button
                   type="button"
@@ -65,22 +59,16 @@
 
             <div>
               <div>
-                <label for="difficulty">난이도</label>
+                <label for="difficulty">Difficulty</label>
               </div>
-              <div class="number-input-container" style="margin-left: 20%">
+              <div class="number-input-container">
                 <button
                   type="button"
                   class="button-decrement"
                   @click="setDifficulty('down')"
                 ></button>
                 <div class="number-input">
-                  <input
-                    type="number"
-                    v-model="difficulty"
-                    class="number-input-text-box"
-                    value="1"
-                    @keyup="setDifficulty('str')"
-                  />
+                  {{ difficulty }}
                 </div>
                 <button
                   type="button"
@@ -90,24 +78,18 @@
               </div>
             </div>
 
-            <div >
+            <div>
               <div>
-                <label for="people">인원수</label>
+                <label for="people">Number of People</label>
               </div>
-              <div class="number-input-container" style="margin-left: 20%">
+              <div class="number-input-container">
                 <button
                   type="button"
                   class="button-decrement"
                   @click="setPeople('down')"
                 ></button>
                 <div class="number-input">
-                  <input
-                    type="number"
-                    v-model="people"
-                    class="number-input-text-box"
-                    value="10"
-                    @keyup="setPeople('str')"
-                  />
+                  {{ people }}
                 </div>
                 <button
                   type="button"
@@ -170,14 +152,14 @@ export default {
       return {
         // 받아온 방 정보 8개 객체를 받아옴
         roomList: [
-            {no: 0, roomname: 0, mode: 0, people: 0, difficulty: 1, start: false},
-            {no: 1, roomname: 1, mode: 1, people: 1, difficulty: 1, start: false},
-            {no: 2, roomname: 2, mode: 2, people: 2, difficulty: 1, start: false},
-            {no: 3, roomname: 3, mode: 3, people: 3, difficulty: 1, start: false},
-            {no: 4, roomname: 4, mode: 4, people: 4, difficulty: 1, start: false},
-            {no: 5, roomname: 5, mode: 5, people: 5, difficulty: 1, start: false},
-            {no: 6, roomname: 6, mode: 6, people: 6, difficulty: 1, start: false},
-            {no: 7, roomname: 7, mode: 7, people: 7, difficulty: 1, start: false},
+            {no: 0, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 1, roomname: 1, mode: 1, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 2, roomname: 2, mode: 2, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 3, roomname: 3, mode: 3, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 4, roomname: 4, mode: 4, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 5, roomname: 5, mode: 5, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 6, roomname: 6, mode: 6, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 7, roomname: 7, mode: 7, cur_people : 0, max_people: 1, difficulty: 1, start: false},
           ],
         // totalRoom은 생성된 룸 개수
         totalRoom: 12,
@@ -210,18 +192,15 @@ export default {
       // 룸 개수 받아오는 메서드
       getRoomInfo() {
         // Room Read lobby 서버에 요청하기 룸 개수
-
-
-        // http
-        // .get("")
-        // .then((res) => {
-        //   // 받아온 데이터 출력해보고 아래 수정하기
-        //   this.total.Room = res.data 
-        // })
-
-
-
-
+         http
+        .get("room/listcount/")
+        .then((res) => {
+          //console.log("listcount : " + res.data);
+          this.totalRoom = res.data;
+        })
+        .catch(err => {
+          console.log(err)
+        })
 
         this.pageLen = Math.ceil(this.totalRoom / 8);  // 소수점 올림
         this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
@@ -235,18 +214,37 @@ export default {
         // pageNow 변수에 현재 페이지가 들어있음
 
 
-        // http
-        // .get("")
-        // .then((res) => {
-        //   // 받아온 데이터 출력해보고 아래 수정하기
-        //   // 받아온 데이터에 따라 위 template 출력 내용도 수정하기
-        //   this.roomList = res.data
-        // })
+        http
+        .get("room/list/"+this.pageNow)
+        .then((res) => {
+          // 받아온 데이터 출력해보고 아래 수정하기
 
+          //받아온 데이터 roomList에 집어넣기
+          for(let i=0; i<8; i++){
+            this.roomList[i].no = res.data[i].id;
+            this.roomList[i].roomname = res.data[i].title;
+            this.roomList[i].mode = res.data[i].mode;
+            this.roomList[i].cur_people = res.data[i].cur_count;
+            this.roomList[i].max_people = res.data[i].max_count;
+            this.roomList[i].difficulty = res.data[i].difficulty;
+            this.roomList[i].start = res.data[i].start;
+          }
 
+          // 결과 찍어보기
+          //  for(let i=0; i<8; i++){
+          //   console.log(i + "번째 no : " + this.roomList[i].no);
+          //   console.log(i + "번째 roomname : " + this.roomList[i].roomname);
+          //   console.log(i + "번째 mode : " + this.roomList[i].mode);
+          //   console.log(i + "번째 cur_people : " + this.roomList[i].cur_people);
+          //   console.log(i + "번째 max_people : " + this.roomList[i].max_people);
+          //   console.log(i + "번째 difficulty : " + this.roomList[i].difficulty);
+          //   console.log(i + "번째 start : " + this.roomList[i].start);
+          //  }
 
-
-
+        })
+        .catch(err => {
+          console.log(err)
+        })
 
         console.log("Enter getRoomList");
       },
@@ -266,32 +264,51 @@ export default {
       createRoom() {
         console.log("Enter createRoom");
 
+        // this.roomName = "parksanghyun";
         // 방 이름이 기입되면 Room Create 요청 보내기
         if (this.roomName) {
           console.log("roomname: "+this.roomName)
           
-          // http
-          // .post("", {
+          //임의로 정의
+          let username = sessionStorage.getItem("id");
+          let title=this.roomName;
+          let cur_count = 1;
+          let max_count = 6;
+          let mode = 1;
+          let difficulty = 1;
+          let start = false;
 
-          // },
-          // )
-          // .then((res) => {
-          //   //Create요청 후 받은 방 번호로 페이지 이동
-          //   enterRoom(res.roomNo)
-          // })
+          //formData안에 값 넣기
+          let formData = new FormData();
+          formData.append("title", title);
+          formData.append("cur_count", cur_count);
+          formData.append("max_count", max_count);
+          formData.append("mode", mode);
+          formData.append("difficulty", difficulty);
+          formData.append("start", start);
+          formData.append("username", username);
 
+          http
+          .post("room/create", formData)
+          .then((res) => {
+            //Create요청 후 받은 방 번호로 페이지 이동
 
-
-
+            console.log("방생성 완료");
+            this.enterRoom(res.roomNo)
+          })
+          .catch(err => {
+            console.log(err)
+          })
 
 
           // 임시로 1번방으로 들어가는 느낌으로 해놓음
           this.enterRoom(1)
 
-
-
           this.showCreateModal = false;
           this.roomName = "";
+          this.mode = 1;
+          this.difficulty = 2;
+          this.people = 5;
         }
         else {
           this.roomCreateErr="방 이름을 기입하세요."
@@ -305,20 +322,31 @@ export default {
         else if (input === 'up') {
           this.mode = (this.mode >= 2) ? 3 : (this.mode + 1);
         }
-        // else {
-        //   this.mode = 
-        // }
 
         console.log("modemode:     "  + this.mode);
         
       },
 
       setDifficulty(input) {
+        if (input === 'down') {
+          this.difficulty = ((this.difficulty - 1) < 1) ? 1 : (this.difficulty - 1);
+        }
+        else if (input === 'up') {
+          this.difficulty = (this.difficulty >= 2) ? 3 : (this.difficulty + 1);
+        }
 
+        console.log("difficultydifficulty:     "  + this.difficulty);
       },
 
       setPeople(input) {
+        if (input === 'down') {
+          this.people = ((this.people - 1) < 3) ? 3 : (this.people - 1);
+        }
+        else if (input === 'up') {
+          this.people = (this.people >= 7) ? 8 : (this.people + 1);
+        }
 
+        console.log("peoplepeople:     "  + this.people);
       },
 
       random() {
@@ -544,54 +572,19 @@ html {background: #88bfd4; text-align: center}
 }
 
 
-
-
-  form {
-      width: 100%;
-      max-width: 340px;
-
-      padding: 56px 48px;
-
-      border-radius: 40px;
-
-      box-shadow: 0px 8px 40px rgba(128, 128, 128, 0.15);
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      background-color: #fffef9;
-  }
-
-  form > div {
-      margin-bottom: 32px;
-  }
-
-  form > div:last-child {
-      margin-bottom: 0;
-  }
-
   .number-input-container {
-      width: 244px;
-
+      width: 120px;
+      margin: 20px;
       display: grid;
       grid-template-columns: 48px auto 48px;
+      margin-left: 37%;
   }
 
   .number-input {
       width: 100%;
-
-      display: flex;
-      flex-direction: row;
-
-      background-color: var(--color-mustard-extra-light);
-
-      overflow: hidden;
+      text-align: center;
   }
 
-
-
-  
   button {
       position: relative;
 
