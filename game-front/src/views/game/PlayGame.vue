@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div id="PlayGame">
         <!-- 제시어 확인 -->
         <div v-if="checkRoll">
@@ -294,7 +294,7 @@ export default {
 
             // ai로 이미지보내기
             aihttp
-            .put(`/english/imageupload/`, formData)
+            .post('/objects/image/', formData)
             .then((res) => {
                 console.log(res);
                 console.log(res.data);
