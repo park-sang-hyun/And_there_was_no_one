@@ -115,7 +115,7 @@ export default {
             },
             result: false,
             show: [
-                true, false, false, false,
+                true, false, false, false, false, false,
             ],
             isClick: [],
             showNumber: 0,
