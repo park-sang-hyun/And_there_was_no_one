@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import http from "../../util/http-common.js";
+import http from "../../util/http-lobby.js";
 
 const storage = window.sessionStorage;
 
