@@ -89,6 +89,8 @@ import loadingTwo from '@/components/room/LoadingModeTwo.vue';
 import loadingThree from '@/components/room/LoadingModeThree.vue';
 import http from '@/util/http-common.js';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 export default {
     name: 'WaitRoom',
     
@@ -173,7 +175,7 @@ export default {
         // this.room = this.defaultroom;
 
         http
-        .get('game/waitroom/3')
+        .get('game/waitroom/1')
         .then((res) => {
             this.isSend = true;
             this.room = res.data;
@@ -187,7 +189,7 @@ export default {
                 this.NoneCount = 8 - this.room.max_count;
             }
             
-            if (this.room.leader.id == 5) {
+            if (this.room.leader.id == 1) {
                 this.leader = true;
             } else {
                 this.leader = false;
@@ -308,7 +310,7 @@ export default {
                 
 
                 http
-                .get('game/ingame/3')
+                .get('game/ingame/1')
                 .then((res) => {
                     console.log(res.data);
                     setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data }}), 7000);
@@ -328,7 +330,7 @@ export default {
                 console.log(res.data);
                 if (res.data.object != null) {
                     this.room.leader = res.data.object;
-                    if (this.room.leader.id == 5) {
+                    if (this.room.leader.id == 1) {
                         this.leader = true;
                     } else {
                         this.leader = false;

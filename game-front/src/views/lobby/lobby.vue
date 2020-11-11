@@ -3,23 +3,25 @@
     <h1>Lobby page</h1>
 
     <!-- <div v-if="status === 'connected'"> -->
-      <div>
+      <!-- <div>
       <form @submit.prevent="webSocketSend" action="#">
         <input v-model="message"><button type="submit">메세지 전송</button>
       </form>
-			<ul id="logs">
+            <ul id="logs">
         <li v-for="(log, index) in logs" class="log" :key="index">
-				{{ log.event }}: {{ log.data }}
+                {{ log.event }}: {{ log.data }}
         </li>
-			</ul>
-      </div>
+            </ul>
+      </div> -->
     <!-- </div> -->
 
     <div class="gerstner-2">
       <div class="comp">
-        <Profile class="profile"/>
+        
+        <Profile class="profile" @logout="logout" />
         <!-- 소켓 props -->
-        <Friends class="friends"></Friends>
+        <!-- 대흠님이 ref 메서드 멀로 해놨을까?그거에 맞춰서 ref 쓰기  -->
+        <Friends class="friends" ref="out"></Friends>
       </div>
       <div class="comp">
         <Roomlist class="roomlist"/>
@@ -53,21 +55,16 @@ export default {
     Roomlist,
   },
 
-  data: () =>{
-        return{
-          message: "",
-          logs: [],
-          status: "disconnected"
-        }
-    },
-
-  
-  mounted(){
-  },
-
   methods: {
+
+      // 로그아웃 버튼 눌렀을 때
+      logout(signal) {
+        this.$refs.out.logout()
+      }
   }
 }
+
+
 </script>
 
 <style lang="scss" scoped>

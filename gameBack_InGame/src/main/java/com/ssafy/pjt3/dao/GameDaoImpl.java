@@ -81,6 +81,6 @@ public class GameDaoImpl implements GameDao {
 
 	@Override
 	public List<String> getWord(int topic_id) throws SQLException {
-		return session.selectList("room_mapper.getTopic", topic_id);
+		return session.selectList("room_mapper.getWord", topic_id);
 	}
 }

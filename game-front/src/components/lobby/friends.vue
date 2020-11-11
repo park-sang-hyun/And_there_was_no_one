@@ -267,35 +267,28 @@ export default {
     },
 
 
+    logout() {
 
-      initWebScoket(){
-        console.log("lobby websocket: ")
-        const wsuri = "ws://localhost:8001/connecting?userid=" + storage.getItem('id');
-        this.websock = new WebSocket(wsuri);
-        this.websock.onmessage = this.webSocketOnMessage;
-        this.websock.onopen = this.webSocketOpen;
-        this.websock.onerror = this.webSocketOnError;
-        this.websock.onclose = this.webSocketClose;
-        console.log(this.websock)
-        this.webSocketOpen();
-        console.log("websocksessionId: " + this.websock.sessionId)
-      },
-
-      webSocketOpen(){
-        let temp_id = storage.getItem("id");
-        console.log(temp_id);
-        this.websock.onopen = () =>{
-          this.webSocketSend(temp_id + ",true");
-        }
-      },
-
-      webSocketOnError(){
-        this.initWebScoket();
-      },
-
-      webSokcetOnMessage(e){
-        const redata = JSON.stringify(e.data);
-      },
+      // 로그아웃 버튼 누르면 여기 함수 실행 잘 되는거 확인함!!!!!!1
+      // 로그아웃 장고 로그아웃 요청을 여기서 보낼지 lobby.vue로 보낼지 대흠님이랑 맞춰보기 
+      // 소켓이나 axios로 로그아웃한다고 신호 보내고 로그아웃해야함 
+      // 그 다음에 로그인 페이지로 전환
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+    },
 
       webSocketSend(Data){
         console.log("메시지 전송");
