@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="lobby" >
     <h1>Lobby page</h1>
 
     <!-- <div v-if="status === 'connected'"> -->
@@ -18,7 +18,7 @@
     <div class="gerstner-2">
       <div class="comp">
         
-        <Profile class="profile" @logout="logout" />
+        <Profile class="profile" @logout="logout" @bell="bell" />
         <!-- 소켓 props -->
         <!-- 대흠님이 ref 메서드 멀로 해놨을까?그거에 맞춰서 ref 쓰기  -->
         <Friends class="friends" ref="out"></Friends>
@@ -59,7 +59,11 @@ export default {
 
       // 로그아웃 버튼 눌렀을 때
       logout(signal) {
-        this.$refs.out.logout()
+        this.$refs.out.logout();
+      },
+
+      bell(signal) {
+        this.$refs.out.showAlarm();
       }
   }
 }
@@ -68,6 +72,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .lobby /deep/ { 
+    border: none;;
+  }
   .gerstner-2 {
     display: grid;
     grid-template-columns: 1fr 2.5fr;
