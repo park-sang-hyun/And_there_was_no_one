@@ -138,7 +138,7 @@
 <script>
 // http axios 요청 주소 lobby 서버로 바꿔야함 
 // js 파일 하나 더 만들든지 해서 아래 부분 처리하고 넘어가기
-import http from "../../util/http-common.js";
+import http from "../../util/http-lobby.js";
 
 // import mode from '@/components/room/modeSetting.vue';
 // import difficulty from '@/components/room/difficultySetting.vue';
