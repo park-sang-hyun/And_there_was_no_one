@@ -2,7 +2,7 @@
     <!-- 대기 방 User -->
     <div id="WaitUser container">
 
-        <div class="user__part row">
+        <div class="user__part row" @click="clickUser">
             <div style="display: none;">{{ nowWindow }}</div>
             <div class="user__left col-5 d-flex justify-content-center align-items-center p-0">
                 <!-- user 왼편 래더 or 프로필? -->
@@ -10,6 +10,17 @@
             </div>
             <div class="user__right col-7">
                 <div class="row mt-4">{{ userData.nickname }}</div>
+            </div>
+            <div v-if="isClick" class="click__part">
+                <div class="count__part">{{ userData.playcount}}게임({{ userData.wincount}}승|{{ losecount }}패)</div>
+                <div v-if="youLeader">
+                    <button v-if="!isYou" @click="changeLeader" class="leader__part">팀장 위임</button>
+                </div>
+            </div>
+            <div style="display: none">{{ isUserClick }}</div>
+            <div v-if="isLeader">
+                <div class="leader__user"></div>
+                <div class="leader__badge">방장</div>
             </div>
         </div>
     </div>
@@ -26,24 +37,46 @@ export default {
         window: {
             type: Object
         },
+        number: {
+            type: Number
+        },
+        existClick: {
+            type: Boolean,
+            defualt: false,
+        },
+        sendLeader: {
+            type: Object,
+        },
+        youLeader: {
+            type: Boolean,
+        },
     },
 
     data() {
         return {
             width: 0,
             height: 0,
+            isClick: false,
+            losecount: 0,
+            isYou: false,
+            isLeader: false,
         }
     },
 
- 
-    
     created() {
         this.layoutCal();
-        if (this.userData.id === 1) {
-            document.documentElement.style.setProperty('--myColor', 'yellow');
+        if (this.userData.id === this.sendLeader.id) {
+            this.isLeader = true;
         } else {
-            document.documentElement.style.setProperty('--myColor', 'white');
+            this.isLeader = false;
         }
+
+        // 본인 확인
+        if (this.userData.id == 1) {
+            this.isYou = true;
+        }
+
+        this.losecount = Number(this.userData.playcount) - Number(this.userData.wincount);
     },
 
     computed: {
@@ -51,6 +84,11 @@ export default {
         nowWindow() {
             this.layoutCal();
             return this.window
+        },
+
+        isUserClick() {
+            this.clickChange();
+            return this.existClick
         },
     },
 
@@ -68,6 +106,25 @@ export default {
 
         },
 
+        clickUser() {
+            this.isClick = !this.isClick;
+
+            if (this.isClick) {
+                this.$emit('clickUser', this.number);
+            } else {
+                this.$emit('noClickUser', this.number);
+            }
+        },
+        
+        clickChange() {
+            this.isClick = this.existClick;
+        },
+
+
+        changeLeader() {
+            this.$emit('changeLeader', this.number);
+        },
+
     }
 }
 </script>
@@ -79,7 +136,6 @@ export default {
     --userLeft: 100px;
     --userRigth: 200px;
     --userImage: 50px;
-    --myColor: white;
 }
 
 #WaitUser {
@@ -115,6 +171,55 @@ export default {
     background-color: black;
 }
 
+.click__part {
+    position: absolute;
+    right: 10%;
+    top: 0;
+    height: 100%;
+    width: 80%;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.count__part {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 0, 0.8);
+}
+
+.leader__part {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 101%;
+    background-color: black;
+    color: white;
+    border: none;
+}
+
+.leader__user {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--userWidth);
+    height: var(--userHeight);
+    border-radius: 30px;
+    border: 4px solid rgba(255, 255, 0, 0.8);;
+    transform: translate(-50%, -50%);
+}
+
+.leader__badge {
+    position: absolute;
+    right: 5%;
+    top: 5%;
+    padding: 5px;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    background-color: rgba(255, 255, 0, 0.8);
+}
 
 
 </style>
