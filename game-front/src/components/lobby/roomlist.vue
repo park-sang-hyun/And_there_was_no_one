@@ -113,7 +113,12 @@
       <div class="cards">
         <div class="card" v-for="room in roomList" :key="room.no + 'key'">
           <div class="card__inner" @click="pickRoom(room.no)">
-            <span>{{ room.no }} Card</span>
+            <span>No.{{ room.no }} Card</span>
+            <span>title: {{ room.roomname }}</span>
+            <span>mode: {{ room.mode }}</span>
+            <span>//{{ room.cur_people }} /// {{ room.max_people }}</span>
+            <span>difficulty: {{ room.difficulty }}</span>
+            isStart: {{ room.start }}
           </div>
         </div>
       </div>
