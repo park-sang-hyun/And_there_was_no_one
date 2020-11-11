@@ -36,12 +36,87 @@
             >
 
             <p>{{ roomCreateErr }}</p>
-            <!-- 수정언니 난이도 조절 부분 가져옴 -->
-            <!-- 최대인원도 설정해야함 -->
-            <!-- https://codepen.io/viestursm/pen/mdJeKVw 여기 코드 참고해보자-->
-            <!-- <mode :mode="1" :isLeader="true" style="margin-bottom: 20px;"/>
-            <difficulty :difficulty="1" :isLeader="true"/> -->
+            <div >
+              <div>
+                <label for="mode">모드</label>
+              </div>
+              <div class="number-input-container" style="margin-left: 20%">
+                <button
+                  type="button"
+                  class="button-decrement"
+                  @click="setMode('down')"
+                ></button>
+                <div class="number-input">
+                  <input
+                    type="number"
+                    v-model="mode"
+                    class="number-input-text-box"
+                    value="1"
+                    @keyup="setMode('str')"
+                  />
+                </div>
+                <button
+                  type="button"
+                  class="button-increment"
+                  @click="setMode('up')"
+                ></button>
+              </div>
+            </div>
 
+            <div>
+              <div>
+                <label for="difficulty">난이도</label>
+              </div>
+              <div class="number-input-container" style="margin-left: 20%">
+                <button
+                  type="button"
+                  class="button-decrement"
+                  @click="setDifficulty('down')"
+                ></button>
+                <div class="number-input">
+                  <input
+                    type="number"
+                    v-model="difficulty"
+                    class="number-input-text-box"
+                    value="1"
+                    @keyup="setDifficulty('str')"
+                  />
+                </div>
+                <button
+                  type="button"
+                  class="button-increment"
+                  @click="setDifficulty('up')"
+                ></button>
+              </div>
+            </div>
+
+            <div >
+              <div>
+                <label for="people">인원수</label>
+              </div>
+              <div class="number-input-container" style="margin-left: 20%">
+                <button
+                  type="button"
+                  class="button-decrement"
+                  @click="setPeople('down')"
+                ></button>
+                <div class="number-input">
+                  <input
+                    type="number"
+                    v-model="people"
+                    class="number-input-text-box"
+                    value="10"
+                    @keyup="setPeople('str')"
+                  />
+                </div>
+                <button
+                  type="button"
+                  class="button-increment"
+                  @click="setPeople('up')"
+                ></button>
+              </div>
+            </div>
+            
 
             <button type="button" @click="createRoom" class="button">방 생성하기</button>
           </div>
@@ -117,6 +192,12 @@ export default {
         isRoomSubmit: false,
         // 방 이름 없이 방 만들 경우 에러 메시지
         roomCreateErr: "",
+
+
+        // Room 설정값
+        mode: 1,
+        difficulty: 2,
+        people: 5,
       }
     },
     created(){
@@ -215,6 +296,29 @@ export default {
         else {
           this.roomCreateErr="방 이름을 기입하세요."
         }
+      },
+
+      setMode(input) {
+        if (input === 'down') {
+          this.mode = ((this.mode - 1) < 1) ? 1 : (this.mode - 1);
+        }
+        else if (input === 'up') {
+          this.mode = (this.mode >= 2) ? 3 : (this.mode + 1);
+        }
+        // else {
+        //   this.mode = 
+        // }
+
+        console.log("modemode:     "  + this.mode);
+        
+      },
+
+      setDifficulty(input) {
+
+      },
+
+      setPeople(input) {
+
       },
 
       random() {
@@ -438,6 +542,118 @@ html {background: #88bfd4; text-align: center}
   opacity: 0;
   transform: scale(0.3) translateY(-50%);
 }
+
+
+
+
+  form {
+      width: 100%;
+      max-width: 340px;
+
+      padding: 56px 48px;
+
+      border-radius: 40px;
+
+      box-shadow: 0px 8px 40px rgba(128, 128, 128, 0.15);
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      background-color: #fffef9;
+  }
+
+  form > div {
+      margin-bottom: 32px;
+  }
+
+  form > div:last-child {
+      margin-bottom: 0;
+  }
+
+  .number-input-container {
+      width: 244px;
+
+      display: grid;
+      grid-template-columns: 48px auto 48px;
+  }
+
+  .number-input {
+      width: 100%;
+
+      display: flex;
+      flex-direction: row;
+
+      background-color: var(--color-mustard-extra-light);
+
+      overflow: hidden;
+  }
+
+
+
+  
+  button {
+      position: relative;
+
+      height: 100%;
+
+      margin-top: 32px;
+      padding: 12px 16px;
+
+      background-color: var(--color-mustard-extra-light);
+
+      border: 1px solid var(--color-mustard-light);
+      border-radius: none;
+
+      transition: all 0.1s ease-out;
+
+      cursor: pointer;
+
+      -webkit-appearance: none;
+
+      -webkit-transform: scale(1);
+      transform: scale(1);
+  }
+
+  button {
+      margin: 0;
+
+      color: var(--color-black);
+  }
+
+  button:active,
+  button:focus {
+      outline: none;
+  }
+
+  button::after {
+      content: "";
+
+      position: absolute;
+
+      opacity: 1;
+
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+
+      transition: inherit;
+
+      background-position: center;
+      background-repeat: no-repeat;
+  }
+
+
+  .button-decrement::after {
+      background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M17 12H7' stroke='%23112C34' stroke-width='2' stroke-miterlimit='10' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+  }
+
+  .button-increment::after {
+      background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 7V17' stroke='%23112C34' stroke-width='2' stroke-miterlimit='10' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M17 12H7' stroke='%23112C34' stroke-width='2' stroke-miterlimit='10' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+  }
+
+
 
 
 </style>

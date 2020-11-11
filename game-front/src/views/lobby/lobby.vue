@@ -17,9 +17,11 @@
 
     <div class="gerstner-2">
       <div class="comp">
-        <Profile class="profile"/>
+        
+        <Profile class="profile" @logout="logout" />
         <!-- 소켓 props -->
-        <Friends v-bind:websocket="websock" v-if="websock" class="friends"></Friends>
+        <!-- 대흠님이 ref 메서드 멀로 해놨을까?그거에 맞춰서 ref 쓰기  -->
+        <Friends v-bind:websocket="websock" v-if="websock" class="friends" ref="out"></Friends>
       </div>
       <div class="comp">
         <Roomlist class="roomlist"/>
@@ -109,6 +111,12 @@ export default {
       webSocketClose(e){
         console.log("소켓 닫기");
         this.websock.close();
+      },
+
+
+      // 로그아웃 버튼 눌렀을 때
+      logout(signal) {
+        this.$refs.out.logout()
       }
   }
 }
