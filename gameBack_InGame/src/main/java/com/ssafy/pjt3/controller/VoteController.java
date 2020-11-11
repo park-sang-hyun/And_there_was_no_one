@@ -8,14 +8,16 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.pjt3.dto.Vote;
 import com.ssafy.pjt3.model.BasicResponse;
-import com.ssafy.pjt3.model.VoteData;
+import com.ssafy.pjt3.model.point;
 import com.ssafy.pjt3.service.VoteService;
 
 import io.swagger.annotations.ApiOperation;
@@ -41,46 +43,40 @@ public class VoteController {
 	public void vote(@PathVariable int room_id, @RequestParam String who) {
 		try {
 			System.out.println("insert 중~~~");
-			voteService.insertVote(room_id, who);
-			System.out.println("insert 끝!!");
+			if(!who.equals(null)) {
+				Vote v = new Vote(room_id, who);
+				voteService.insertVote(v);
+				System.out.println("insert 끝!!");
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	static class point{
-		String who;
-		int cnt;
-		public point(String who, int cnt) {
-			this.who = who;
-			this.cnt = cnt;
-		}
-	}
-	
-	@PostMapping("/voteResult/{room_id}")
+	@GetMapping("/voteResult/{room_id}")
 	@ApiOperation(value = "투표시작", notes = "투표시작")
-	public Object voteResult(@PathVariable int room_id) {
+	public List<point> voteResult(@PathVariable int room_id) {
 		
-		List<VoteData> list = new ArrayList<>();
+		List<String> list = new ArrayList<>();
 		List<point> res = new ArrayList<>();
 		List<point> res1 = new ArrayList<>();
 		
 		try {
 			System.out.println("selct 중~~~");
 			list = voteService.seletVote(room_id);
-			
+			System.out.println("ddd~~~");
 			for(int i = 0; i < list.size(); i++){
 				int f = 0;
 				end: for(int k = 0; k < res.size(); k++) {
-					if(res.get(k).who.equals(list.get(i).getWho())) {
+					if(res.get(k).getWho().equals(list.get(i))) {
 						f = 1;
-						res.get(k).cnt++;
+						res.get(k).setCnt(res.get(k).getCnt()+1);
 						break end;
 					}
 				}
 				if(f == 0) {
-					res.add(new point(list.get(i).getWho(), 1));
+					res.add(new point(list.get(i), 1));
 				}
 			}
 			
@@ -89,21 +85,20 @@ public class VoteController {
 				@Override
 				public int compare(point o1, point o2) {
 					// TODO Auto-generated method stub
-					return o2.cnt - o1.cnt;
+					return o2.getCnt() - o1.getCnt();
 				}
 			});
 			
 			res1.add(res.get(0));
 			
-			int max = res.get(0).cnt;
+			int max = res.get(0).getCnt();
 			if(res1.size() != 1) {
 				for(int i = 1; i < res.size(); i++) {
-					if(res.get(i).cnt == max) {
+					if(res.get(i).getCnt() == max) {
 						res1.add(res.get(i));
 					} else break;
 				}
 			}
-			
 			
 			System.out.println("selct 끝!!");
 			voteService.deleteVote(room_id);
@@ -113,7 +108,6 @@ public class VoteController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		
 		return res1;
 	}

@@ -157,7 +157,9 @@ export default {
             this.result = false;
         }
         //  턴 넘기기
-        this.showTimer = setInterval(this.showPage, 3000);
+        this.showNumber = 2;
+        this.showPage();
+        // this.showTimer = setInterval(this.showPage, 3000);
     },
 
     watch: {
@@ -267,35 +269,55 @@ export default {
             this.show[this.showNumber - 1] = false;
             this.show[this.showNumber] = true;
 
-            let userId = 1;
-
             var formData = new FormData;
-            formData.append('who', this.game.userList[this.selectNumber].nickname);
+            console.log(this.selectNumber);
+            if (this.selectNumber != null) {
+                formData.append('who', this.game.userList[this.selectNumber].nickname);
+                console.log('투표', this.game.userList[this.selectNumber].nickname);
+            } else {
+                formData.append('who', null);
+            }
 
-            // http
-            // .post(`game/vote/${this.game.id}`, formData)
-            // .then((res) => {
-            //     console.log(res.data);
-            //     for (let userNum; userNum < res.data.vote.length; userNum++ ) {
-            //         for (let checkNum; checkNum < this.game.userList.length; checkNum++ ) {
-            //             if (res.data.vote[userNum] == this.game.userList[checkNum].nickname) {
-            //                 this.voteUser.push(checkNum);
-            //             }
-            //         }
-            //     }
+
+            http
+            .post(`vote/vote/${this.game.id}`, formData)
+            .then((res) => {
+                setTimeout(this.voteResult, 4000);
             
-            // })            
-            // .catch((err) => {
-            //     console.log(err);
-            // })
-            setTimeout(this.nextVote, 4000);
+            })            
+            .catch((err) => {
+                console.log(err);
+            })
+            // setTimeout(this.nextVote, 4000);
+
+        },
+
+        voteResult() {
+
+            http
+            .get(`vote/voteResult/${this.game.id}`)
+            .then((res) => {
+                for (let userNum=0; userNum < res.data.length; userNum++ ) {
+                    for (let checkNum=0; checkNum < this.game.userList.length; checkNum++ ) {
+                        console.log(res.data[userNum].who);
+                        console.log(this.game.userList[checkNum].nickname);
+                        if (res.data[userNum].who == this.game.userList[checkNum].nickname) {
+                            this.voteUser.push(checkNum);
+                        }
+                    }
+                }
+                this.nextVote();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
 
         },
 
         // 연결 후에는 finishVote에서 res.data 받는 부분으로 바꿀 것
         nextVote() {
             // showNumber == 4
-            this.voteUser.push(this.selectNumber);
+            // this.voteUser.push(this.selectNumber);
             this.showNumber = this.showNumber + 1;
             this.show[this.showNumber - 1] = false;
             this.show[this.showNumber] = true;

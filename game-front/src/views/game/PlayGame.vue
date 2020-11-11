@@ -46,7 +46,7 @@
             </div>
 
             <div v-if="end" class="showScreen">
-                <EndScreen :isEnd="end" :endScore="score" :game="game" :isFinish="isFinish" :images="sendImage"/>
+                <EndScreen :isEnd="end" :isFinish="isFinish" :endScore="score" :game="game" :images="sendImage"/>
             </div>
         </div>
 
@@ -204,12 +204,14 @@ export default {
 
         
         // 역할 확인 부분
-        this.checkRoll = true;
-        // console.log(this.sendGame);
-        var roll = setTimeout( this.goGame , 10000);
-        // this.checkRoll = false;
+        
+        this.checkRoll = false;
+        this.beforeStartTimer();
+        
+        // this.checkRoll = true;
+        // var roll = setTimeout( this.goGame , 10000);
+        // var timeCheck = setTimeout( this.beforeStartTimer, 10000);
 
-        var timeCheck = setTimeout( this.beforeStartTimer, 10000);
 
         // 설정 값 별로 매칭되는 이름/숫자 넣어주기
         this.output.mode = this.checkName.mode[this.game.mode];

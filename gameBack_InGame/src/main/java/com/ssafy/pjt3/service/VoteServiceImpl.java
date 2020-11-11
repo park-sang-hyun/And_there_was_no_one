@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.pjt3.dao.VoteDao;
-import com.ssafy.pjt3.model.VoteData;
+import com.ssafy.pjt3.dto.Vote;
 
 @Service
 public class VoteServiceImpl implements VoteService{
@@ -15,13 +15,13 @@ public class VoteServiceImpl implements VoteService{
 	VoteDao voteDao;
 	
 	@Override
-	public void insertVote(int room_id, String who) throws SQLException {
+	public void insertVote(Vote v) throws SQLException {
 		// TODO Auto-generated method stub
-		voteDao.insertVote(room_id, who);
+		voteDao.insertVote(v);
 	}
 
 	@Override
-	public List<VoteData> seletVote(int room_id) throws SQLException {
+	public List<String> seletVote(int room_id) throws SQLException {
 		// TODO Auto-generated method stub
 		return voteDao.selectVote(room_id);
 	}

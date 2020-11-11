@@ -340,7 +340,7 @@ export default {
                 http
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
-                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id }}), 7000);
+                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id }}), 500);
                 })
                 .catch((err) => {
                     console.log(err);
