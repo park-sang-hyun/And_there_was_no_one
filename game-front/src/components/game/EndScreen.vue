@@ -157,9 +157,7 @@ export default {
             this.result = false;
         }
         //  턴 넘기기
-        this.showNumber = 2;
-        this.showPage();
-        // this.showTimer = setInterval(this.showPage, 3000);
+        this.showTimer = setInterval(this.showPage, 3000);
     },
 
     watch: {

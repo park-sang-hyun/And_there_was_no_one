@@ -205,12 +205,12 @@ export default {
         
         // 역할 확인 부분
         
-        this.checkRoll = false;
-        this.beforeStartTimer();
+        // this.checkRoll = false;
+        // this.beforeStartTimer();
         
-        // this.checkRoll = true;
-        // var roll = setTimeout( this.goGame , 10000);
-        // var timeCheck = setTimeout( this.beforeStartTimer, 10000);
+        this.checkRoll = true;
+        var roll = setTimeout( this.goGame , 10000);
+        var timeCheck = setTimeout( this.beforeStartTimer, 10000);
 
 
         // 설정 값 별로 매칭되는 이름/숫자 넣어주기
