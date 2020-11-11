@@ -257,7 +257,31 @@ export default {
       }
       this.showModal=false;
       this.friendReqStatus='요청전';
-    }
+    },
+
+
+    logout() {
+
+      // 로그아웃 버튼 누르면 여기 함수 실행 잘 되는거 확인함!!!!!!1
+      // 로그아웃 장고 로그아웃 요청을 여기서 보낼지 lobby.vue로 보낼지 대흠님이랑 맞춰보기 
+      // 소켓이나 axios로 로그아웃한다고 신호 보내고 로그아웃해야함 
+      // 그 다음에 로그인 페이지로 전환
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+    },
 
 
     // 딜레이 함수. 이거 쓰면 그냥 폴링방식으로 계속 기다림 주의
