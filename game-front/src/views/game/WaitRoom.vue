@@ -105,6 +105,12 @@ export default {
         loadingThree,
     },
 
+    props: {
+        roomId: {
+            type: String,
+        }
+    },
+
     data() {
         return {
             room: {},               // room 데이터 받아서 넣기
@@ -175,7 +181,7 @@ export default {
         // this.room = this.defaultroom;
 
         http
-        .get('game/waitroom/1')
+        .get(`game/waitroom/${this.roomId}`)
         .then((res) => {
             this.isSend = true;
             this.room = res.data;
@@ -251,11 +257,11 @@ export default {
             formData.append('difficulty', this.checked.difficulty);
 
             http
-            .put('game/modify/3', formData)
+            .put(`game/modify/${this.room.id}`, formData)
             .then((res) => {
-                console.log(res.data);
                 this.room.mode = this.checked.mode;
                 this.room.difficulty = this.checked.difficulty;
+                alert(`방 정보가 수정되었습니다.`)
             })
             .catch((err) => {
                 console.log(err);
@@ -307,13 +313,10 @@ export default {
                 // 로딩화면 띄우기
                 this.delayMode = true;
 
-                
-
                 http
-                .get('game/ingame/1')
+                .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
-                    console.log(res.data);
-                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data }}), 7000);
+                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id }}), 7000);
                 })
                 .catch((err) => {
                     console.log(err);

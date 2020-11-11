@@ -6,12 +6,12 @@
             <!-- 화면 왼쪽 상단 -->
             <div class="row screen__left__top d-flex justify-content-center">
                 <!-- 게임 주제, 제시어 -->
-                <div class="room__title">
-                    <span>주제: 과일</span>
-                    <span class="ml-4">제시어: ●●</span>
+                <div class="game__title">
+                    <span>주제: {{ game.topic }}</span>
+                    <span class="ml-4">제시어: {{ showWord }}</span>
                 </div>
                 <!-- 게임 모드, 난이도 -->
-                <div class="room__mode">
+                <div class="game__mode">
                     <span>{{ output.mode }}</span>
                     <span class="ml-2">{{ output.difficulty }}</span>
                 </div>
@@ -32,8 +32,8 @@
             <!-- 유저 리스트 -->
             <div class="row screen__right">
                 <div v-for="n in 8" :key="'user' + n + 'key'" style="display: inline-block;" class="d-flex justify-content-center">
-                    <user v-if="n < room.members.length + 1" :userData="room.members[n-1]" :window="windowScreen" :isMode="isMode" :isTurn="isYourTurn" :memNo="n"/>
-                    <empty v-else-if="n < room.members.length + memCount.EmptyCount + 1"  :window="windowScreen" :isMode="isMode" />
+                    <user v-if="n < game.userList.length + 1" :userData="game.userList[n-1]" :window="windowScreen" :isMode="isMode" :isTurn="isYourTurn" :memNo="n"/>
+                    <empty v-else-if="n < game.userList.length + memCount.EmptyCount + 1"  :window="windowScreen" :isMode="isMode" />
                     <none v-else :window="windowScreen" :isMode="isMode" />
                 </div>
 
@@ -55,7 +55,7 @@ export default {
     name: "GameModeTwo",
 
     props: {
-        room: {
+        game: {
             type: Object
         },
         output: {
@@ -91,6 +91,7 @@ export default {
                 width: 0,
                 height: 0,
             },
+            showWord: '',
         }
     },
 
@@ -98,6 +99,10 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
+
+        for (let i=0; i < this.game.word.length; i++) {
+            this.showWord = this.showWord + 'O';
+        }
 
     },
     watch: {
@@ -194,21 +199,21 @@ export default {
 
 /* 개별 스타일 적용 */
 /* 왼편 상단 */
-.room__title {
+.game__title {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
     line-height: var(--leftTopSize);
 }
 
-.room__mode {
+.game__mode {
     position: absolute;
     left: 20px;
     top: 50%;
     transform: translate(0, -50%);
 }
 
-.room__mode > span {
+.game__mode > span {
     padding: 5px;
     border-radius: 10px;
     background-color: rgba(250, 181, 33, 0.789);
