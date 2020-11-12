@@ -17,17 +17,6 @@
                 <ModeTwo :game="game" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" @imgFile="sendAI" ref="modeTwo" />
             </div>
 
-            <div class="chat__part">
-                <div class="input-group">
-                    <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
-                        <option selected style="color:black;">채팅 문구 선택</option>
-                        <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
-                    </select>
-                    <div class="input-group-append">
-                        <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
-                    </div>
-                </div>
-            </div>
 
             <div v-if="timerShow" class="timer__part">
                 <div class="text__part">
@@ -48,6 +37,30 @@
             <div v-if="end" class="showScreen">
                 <EndScreen :isEnd="end" :isFinish="isFinish" :endScore="score" :game="game" :images="sendImage"/>
             </div>
+
+            
+            <div class="chat__part">
+                <div v-if="chatStatus" class="chatting__area">
+                    <div class="scrollbar-box" id="scrollbar__style" >
+                        <div class="force-overflow" >
+                            <!-- <br/> -->
+                            <div v-for="(log, index) in chatLogs" class="log" :key="index + 'chatLogKey'">
+                                <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
+                            </div>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
+                        <option selected style="color:black;">채팅 문구 선택</option>
+                        <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
+                    </select>
+                    <div class="input-group-append">
+                        <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -63,6 +76,7 @@ import aihttp from '@/util/http-ai.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
+const socketURL = 'ws://localhost:8002/chatting';
 
 
 export default {
@@ -178,6 +192,12 @@ export default {
                 showTimer: '',
                 timer: 4,
             },
+            
+            // 소켓, 채팅 메시지
+            chatMsg: '',
+            chatLogs: [],
+            chatStatus: false,
+            socket: '',
         }
     },
 
@@ -205,11 +225,14 @@ export default {
             this.score.push(0);
         }
 
+        this.connect();
+
         
         // 역할 확인 부분
         
         // this.checkRoll = false;
         // this.beforeStartTimer();
+        document.documentElement.style.setProperty('--indexNum', 99);
         
         this.checkRoll = true;
         var roll = setTimeout( this.goGame , 10000);
@@ -245,19 +268,6 @@ export default {
     },
 
     methods: {
-        // 채팅 버튼
-        chatMessage() {
-            var s = document.getElementById("inputMessageSelect");
-            var idx = s.options[s.selectedIndex].value;
-            if (this.chatList[idx] === undefined) {
-                alert('메시지를 선택해주세요');
-            } else {
-                // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-                this.chat.logs = [...[(this.game.userList[1].nickname, this.chatList[idx])], ...this.chat.logs];
-                console.log(this.chat.logs);
-            }
-        },
-
         // 게임 시작
         goGame() {
             this.checkRoll = false;
@@ -336,7 +346,7 @@ export default {
             this.images.push(image);
 
             if (this.game.mode == 3) {
-                var time = setTimeout( this.turnChange, 1000 );
+                var time = setTimeout( this.turnChange, 500 );
             } else {
                 let formData = new FormData;
                 formData.append('inputImage', image);
@@ -368,6 +378,53 @@ export default {
                 })
             }
         },
+
+        // 채팅 부분
+        // 소켓 연결
+        connect() {
+            this.chatStatus = true;
+            this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
+            this.socket.onopen = () => {
+                this.chatLogs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
+                
+
+                this.socket.onmessage = ({data}) => {
+                    console.log(data)
+                    this.chatLogs.push(data);
+                };
+            };
+        },
+
+        disconnect() {
+            this.socket.close();
+            this.chatStatus = false;
+            this.chatLogs = [];
+        },
+
+        // 채팅 버튼
+        chatMessage() {
+            var s = document.getElementById("inputMessageSelect");
+            var idx = s.options[s.selectedIndex].value;
+            if (this.chatList[idx] === undefined) {
+                alert('메시지를 선택해주세요');
+            } else {
+                // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
+                this.sendMessage(this.chatList[idx]);
+            }
+        },
+
+        //  채팅 보내기
+        sendMessage(Data) {
+            // websocketsend(Data) 와 동일
+
+            const chatBox = document.querySelector(".scrollbar-box");
+            
+            // this.chatLogs.push({ event: this.myNickname, data: Data });
+            chatBox.scrollTop = (chatBox.scrollHeight);
+        
+            this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.game.id }));
+        },
+
 
         // 턴 넘기기
         turnChange() {
@@ -477,7 +534,7 @@ export default {
 /* 투표 등 배경 흐리기 해야할 때 */
 .showScreen {
     position: fixed;
-    z-index: 999;
+    z-index: 10;
     top: 0;
     left: 0;
     width: 100%;
@@ -486,5 +543,59 @@ export default {
     display: table;
     transition: opacity .3s ease;
 }
+
+// 채팅 부분
+
+.chatting__area {
+    width: 100%;
+    padding: 10px 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: white;
+}
+
+
+.scrollbar-box
+{
+    width: 100%;
+    height: 380px;
+	overflow-y: scroll;
+    text-overflow:ellipsis;
+    position : relative; 
+    bottom: 0px;
+}
+
+.force-overflow
+{
+  /* 스크롤바 내부의 글자가 누적되는 창 크기
+  스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
+	min-height: 380px;
+}
+
+
+
+// scrollbar__style
+
+#scrollbar__style::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#scrollbar__style::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #F5F5F500;
+}
+
+#scrollbar__style::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+
 
 </style>
