@@ -21,7 +21,7 @@ class Room(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Room'
+        db_table = 'room'
 
 
 class UserRoom(models.Model):
@@ -31,4 +31,4 @@ class UserRoom(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'UserRoom'
+        db_table = 'userroom'

@@ -33,7 +33,7 @@ class User(AbstractUser):
 
     class Meta:
         managed = False
-        db_table = 'User'
+        db_table = 'user'
 
 
 class Userconnect(models.Model):
@@ -42,4 +42,4 @@ class Userconnect(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'UserConnect'
+        db_table = 'userconnect'
