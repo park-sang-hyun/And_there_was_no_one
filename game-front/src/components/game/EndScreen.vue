@@ -14,7 +14,7 @@
             </div>
 
             <!-- 일반 유저인 경우 -->
-            <div v-else  class="main__story">
+            <div v-else>
                 <div v-if="loseShadow">
                     <h1>You Win!</h1>
                 </div>
@@ -22,6 +22,11 @@
                     <h1>You Lose..</h1>
                 </div>
 
+            </div>
+
+            <!-- 점수 출력 (공통) -->
+            <div>
+                {{ myScore }}
             </div>
         </div>
 
@@ -134,6 +139,7 @@ export default {
             youShadow: false,
             showVoteResult: false,
             finishSentence: '',
+            myScore: 0,
         }
     },
 
@@ -142,9 +148,12 @@ export default {
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
 
-        // 처음에 사람 수만큼 채워두기
         for (let step = 0 ; step < this.game.userList.length; step++) {
-            this.isClick.push(false)
+            // 처음에 사람 수만큼 클릭할 수 있도록 채워두기
+            this.isClick.push(false);
+            if (this.game.userList[step].id == storage.getItem('id')) {
+                this.myScore = this.endScore[step];
+            }
         }
 
         // shadow 여부 확인
@@ -313,8 +322,6 @@ export default {
             .then((res) => {
                 for (let userNum=0; userNum < res.data.length; userNum++ ) {
                     for (let checkNum=0; checkNum < this.game.userList.length; checkNum++ ) {
-                        console.log(res.data[userNum].who);
-                        console.log(this.game.userList[checkNum].nickname);
                         if (res.data[userNum].who == this.game.userList[checkNum].nickname) {
                             this.voteUser.push(checkNum);
                         }
@@ -358,6 +365,27 @@ export default {
                     }
                 }
             }
+
+            // 점수 산정
+            // 섀도우인 경우
+            if (this.youShadow) {
+                // 실패 | 성공
+                if (this.loseShadow) {
+                    this.myScore = this.myScore - 40;
+                } else {
+                    this.myScore = this.myScore + 40;
+                }
+            }
+            // 섀도우가 아닌 경우
+            else {
+                // 성공 | 실패
+                if (this.loseShadow) {
+                    this.myScore = this.myScore + 30;
+                } else {
+                    this.myScore = this.myScore - 30;
+                }
+            }
+
 
             this.showVoteResult = true;
 

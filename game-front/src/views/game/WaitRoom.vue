@@ -17,8 +17,8 @@
                 <div class="screen__left">
                     <!-- 입장한 유저 목록 -->
                     <div class="user__part">
-                        <user v-for="n in room.cur_count" 
-                            :key="n + 'waitUserkey'" 
+                        <user v-for="n in room.userList.length" 
+                            :key="n-1 + 'waitUserkey'" 
                             :number="n-1"
                             :existClick="isUserClick[n-1]"
                             :userData="room.userList[n-1]" 
@@ -37,12 +37,20 @@
                     <!-- 채팅 (상용구) -->
                     <div class="chat__part d-flex justify-content-center">
                         <div class="input-group">
-                            <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
+                            <div class="input-group-append">
+                                <input class="input__text__part" 
+                                    type="text" 
+                                    placeholder="채팅을 입력해주세요" 
+                                    maxlength="50"
+                                    v-model="chatMsg" 
+                                    @keyup.enter="sendMessage(chatMsg)">
+                            </div>
+                            <!-- <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
                                 <option selected style="color:black;">채팅 문구 선택</option>
                                 <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
-                            </select>
+                            </select> -->
                             <div class="input-group-append">
-                                <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
+                                <div class="btn btn-outline-secondary" type="button" @click="sendMessage(chatMsg)">Enter</div>
                             </div>
                         </div>
                     </div>
@@ -191,6 +199,8 @@ export default {
                 '잠시만요',
                 'ㅇㅇ',
             ],
+            // 소켓, 채팅 메시지
+            chatMsg: '',
 
             // 받아온 모드 값
             checked: {
@@ -204,6 +214,7 @@ export default {
             ],
             isChangeLeader: false,
             changeLeaderNum: 0,
+            myNickname: '',
         }
     },
 
@@ -233,6 +244,14 @@ export default {
                 this.leader = true;
             } else {
                 this.leader = false;
+            }
+
+            // 본인 닉네임 찾기
+            for (let k=0; k < this.room.userList.length; k++) {
+                if (this.room.userList[k].id == storage.getItem('id')) {
+                    this.myNickname = this.room.userList[k].nickname;
+                    break;
+                }
             }
         })
         .catch((err) => {
@@ -314,14 +333,22 @@ export default {
         },
 
         // 채팅 버튼
-        chatMessage() {
-            var s = document.getElementById("inputMessageSelect");
-            var idx = s.options[s.selectedIndex].value;
-            if (this.chatList[idx] === undefined) {
-                alert('메시지를 선택해주세요');
-            } else {
-                // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-                console.log(this.chatList[idx]);
+        // chatMessage() {
+        //     var s = document.getElementById("inputMessageSelect");
+        //     var idx = s.options[s.selectedIndex].value;
+        //     if (this.chatList[idx] === undefined) {
+        //         alert('메시지를 선택해주세요');
+        //     } else {
+        //         // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
+        //         console.log(this.chatList[idx]);
+        //     }
+        // },
+
+        //  채팅 보내기
+        sendMessage(Data) {
+            // websocketsend(Data) 와 동일
+            if (Data != '') {
+                console.log(Data);
             }
         },
 
@@ -557,6 +584,17 @@ export default {
     border-radius: 5px;
     overflow: hidden;
 }
+
+// 채팅 인풋
+.input__text__part {
+    // width: var(--leftSize);
+    width: calc( var(--leftSize) - 110px );
+    padding-left: 10px;
+    background-color: rgba(255, 255, 255, 0.3); 
+    color: white; 
+    border: none;
+}
+
 
 .chatting__area {
     width: 82%;
