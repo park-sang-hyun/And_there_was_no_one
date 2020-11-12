@@ -5,6 +5,12 @@ from detection.darkflow.cli import cliHandler as de
 import base64
 
 
+kor_word = {
+    'apple': '사과',
+    'banana': '바나나',
+    'mask': '마스크',
+}
+
 @api_view(['POST'])
 def imgdetection(request):
     turn = request.data['turn']
@@ -20,11 +26,14 @@ def imgdetection(request):
     # text = speak.image
     return_text = de('room' + roomId + '_' + turn + '.jpg')
     context = {
-        'message': 'true',
+        'message': True,
         'result': return_text[0][0],
     }
     if return_text[0][0] == []:
-        context['message'] = 'false'
+        context['message'] = False
+    else:
+        for idx, word in enumerate(return_text[0][0]):
+            context['result'][idx] = kor_word[word]
 
     # return_text = { 'message': 'true' }
     # 결과물 전송

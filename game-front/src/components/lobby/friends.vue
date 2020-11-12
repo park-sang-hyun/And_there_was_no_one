@@ -15,7 +15,7 @@
       </transition>
       <!-- 친구추가 버튼을 눌렀을 때 생기는 모달 -->
       <transition name="pop" appear>
-        <div class="modal" 
+        <div class="friendmodal" 
             role="dialog" 
             v-if="showModal"
             >
@@ -38,15 +38,8 @@
           </div>
 
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
-          <!-- 이 상태에서 x 버튼을 누르면 요청 취소라고 상대방한테도 전달해야함... -->
-          <div v-else-if="friendReqStatus==='응답기다림'">
-              <p>친구의 응답을 기다리는 중입니다. </p>
-              <button @click="getSockMsg()">임시 버튼</button>
-          </div>
-
-          <!-- 친구 추가에 대한 응답 메시지를 받은 상태 -->
           <div v-else>
-            <p>{{ friendReqStatus }}</p>
+              <p>친구 추가 요청을 보냈습니다. </p>
             <button @click="showModal=false, friendReqStatus='요청전'" class="button">닫기</button>
           </div>
         
@@ -55,26 +48,35 @@
 
 
 
+
+
       <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
-        <div v-if="getFriendReqModal" @click="getFriendReqModal = false, friendAns('no')" class="modal-overlay"></div>
+        <div v-if="showFriendReq" @click="showFriendReq = false" class="modal-overlay"></div>
       </transition>
-      <!-- 친구 추가 요청을 받았을 때 popup되는 모달  -->
+      <!-- 벨을 눌렀을 때 popup되는 모달  -->
       <transition name="pop" appear>
-        <div class="modal" 
+        <div class="friendmodal" 
             role="dialog" 
-            v-if="getFriendReqModal"
+            v-if="showFriendReq"
           >
 
           <div class="container">
-            <button @click="getFriendReqModal = false, friendAns('no')" class="button">X</button>
+            <button @click="showFriendReq = false" class="button">X</button>
           </div>
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div>
             <h1>친구 추가 요청</h1>
-            <p>친구 추가 요청을 수락하시겠습니까?</p>
-            <button @click="friendAns('ok')" class="button" style="margin: 5px">수락</button>
-            <button @click="friendAns('no')" class="button" style="margin: 5px">거절</button>
+
+            <div class="scrollbar-box2" id="style-1" >
+              <div class="force-overflow" >
+                <div v-for="alarm in alarms" :key="alarm.no + 'key'" class="friend">
+                  <p>친구 추가 요청을 수락하시겠습니까?</p>
+                  <button @click="friendAns('ok')" class="button" style="margin: 5px">수락</button>
+                  <button @click="friendAns('no')" class="button" style="margin: 5px">거절</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </transition>
@@ -126,9 +128,16 @@ export default {
           showModal: false,
           friendReqStatus: "요청전",
           friendName: "",
-          // 소켓 getMessage 결과에 따라 아래 변수를 true로 하면 모달이 나옴
-          getFriendReqModal: true,
+
           websock: null,
+
+          showFriendReq: false,
+          alarms: [
+            {no: 0, username: 0},
+            {no: 1, username: 1},
+            {no: 2, username: 2},
+            {no: 3, username: 3},
+          ],
         }
   },
 
@@ -141,9 +150,9 @@ export default {
     console.log("id: ");
     console.log(sessionStorage);
     console.log("id: " + sessionStorage.getItem("id"));
-      // 처음에 lobby 서버에서 http로 친구목록 데이터를 받아옴
-      this.getFriendsList(); 
-      // this.initWebScoket();
+    // 처음에 lobby 서버에서 http로 친구목록 데이터를 받아옴
+    this.getFriendsList(); 
+    // this.initWebScoket();
   },
 
   mounted(){
@@ -206,8 +215,6 @@ export default {
 
 
 
-      // 요청 당사자가 친구 추가 요청을 취소했을 때
-      // this.getFriendReqModal = false;
 
 
 
@@ -228,7 +235,7 @@ export default {
       this.friendName = "";
     },
 
-    // 친구 추가 요청을 받았을 때 
+    // 친구 추가 요청 답변을 보낼 때 호출되는 메서드
     friendAns(ans) {
       console.log("Ans: "+ans)
 
@@ -238,12 +245,11 @@ export default {
 
       
 
-
+      // this.getFriendsList(); 
 
 
 
       
-      this.getFriendReqModal = false;
     },
 
     // 친구 추가 요청 취소
@@ -284,18 +290,25 @@ export default {
       console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
     },
 
-      webSocketSend(Data){
-        console.log("메시지 전송");
-        this.websock.send(Data);
-        console.log('1:' + Data)
-        console.log('2:' + this.websock)
-        console.log(this.websock.sessionId)
-      },
+    webSocketSend(Data){
+      console.log("메시지 전송");
+      this.websock.send(Data);
+      console.log('1:' + Data)
+      console.log('2:' + this.websock)
+      console.log(this.websock.sessionId)
+    },
 
-      webSocketClose(e){
-        console.log("소켓 닫기");
-        this.websock.close();
-      },
+    webSocketClose(e){
+      console.log("소켓 닫기");
+      this.websock.close();
+    },
+
+    showAlarm() {
+      this.showFriendReq = true;
+      console.log("sdsdfasdfdasdzfasdfxcvsf");
+      console.log("sdsdfasdfdasdzfasdfxcvsf");
+      console.log("sdsdfasdfdasdzfasdfxcvsf");
+    }
 
     // 딜레이 함수. 이거 쓰면 그냥 폴링방식으로 계속 기다림 주의
     // setTimeOut?은 다를까..? 한번 시도해보자 
@@ -391,7 +404,7 @@ export default {
     margin-bottom: 10px;
   }
 
-  .modal {
+  .friendmodal {
     position: absolute;
     position: fixed;
     top: 0;
@@ -410,7 +423,7 @@ export default {
     z-index: 999;
     transform: none;
   }
-  .modal h1 {
+  .friendmodal h1 {
     margin: 0 0 1rem;
   }
 

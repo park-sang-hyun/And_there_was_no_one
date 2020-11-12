@@ -3,6 +3,16 @@
     
     <div class="profile-wrapper">
       프로필
+
+      <div class="bell" >
+        <button class="notification" @click="bellclick">
+          <img class="img" src="../../assets/images/bell.svg">
+          <span v-if="alarmCnt" class="notification--num">{{ alarmCnt }}</span>
+        </button>
+      </div>
+
+      
+
       <!-- 프로필 이미지 불러오기 -->
       <div class="box" style="background: #BDBDBD;">
         <img class="profile" src="https://pbs.twimg.com/profile_images/1184827741884973057/V0F3blnl.jpg">
@@ -19,16 +29,19 @@
 
 <script>
 import http from "../../util/http-common.js";
+import httpLobby from "../../util/http-lobby.js";
 
 export default {
   data: () => {
     return {
       nickname: "Hello Anonymous User",
       score: 999,
+      alarmCnt: 0,
     };
   },
   created() {
     this.getProfile();
+    this.getAlarm();
   },
   methods: {
     getProfile() {
@@ -45,9 +58,24 @@ export default {
 
       console.log("Enter getProfile");
     },
+
     logout() {
       this.$emit('logout', 'logout');
-    }
+    },
+
+    getAlarm() {
+      // 친구 알람 개수 받아오기 
+      httpLobby
+      .get("")
+      .then((res) => {
+        // this.alarmCnt = res.;
+      })
+      this.alarmCnt = 2;
+    },
+
+    bellclick() {
+      this.$emit('bell', 'bell');
+    },
   },
 }
 </script>
@@ -89,4 +117,32 @@ export default {
     padding: 5px 10px;
     margin-bottom: 10px;
   }
+
+
+
+.img {
+  width: 100%;
+}
+
+.notification {
+  position: relative;
+  width: 20%;
+  border: none;
+  border-radius: 50px;
+  background: none;
+}
+.notification--num {
+  position: absolute;
+  top: 0%;
+  left: 60%;
+  font-size: 1rem;
+  border-radius: 50%;
+  width: 1.75em;
+  height: 1.75em;
+  background-color: #FF4C13;
+  color: #FFFFFF;
+  text-align: center;
+  line-height: 1.7em;
+  animation: notification 3.2s ease;
+}
 </style>
