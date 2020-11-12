@@ -220,6 +220,8 @@ export default {
 
 
     created() {
+
+        console.log('확인', storage.getItem('token'));
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
 
