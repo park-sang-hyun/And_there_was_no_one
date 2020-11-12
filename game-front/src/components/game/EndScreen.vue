@@ -25,8 +25,8 @@
             </div>
 
             <!-- 점수 출력 (공통) -->
-            <div>
-                {{ myScore }}
+            <div class="score">
+                <span v-if="myScore < 0">-</span><span class="js-score">{{ isScore }}</span>
             </div>
         </div>
 
@@ -140,6 +140,9 @@ export default {
             showVoteResult: false,
             finishSentence: '',
             myScore: 0,
+            total: 0,
+            score: 0,
+            scoreTimer: '',
         }
     },
 
@@ -193,9 +196,11 @@ export default {
         isGameFinish() {
             this.goWaitRoom();
             return this.result
+        },
+        
+        isScore() {
+            return this.score;
         }
-
-
     },
 
     methods: {
@@ -398,8 +403,23 @@ export default {
 
         goWaitRoom() {
             if (this.result == true) {
-                setTimeout(() => this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }}), 7000);
+                
+                // 점수 올라가기
+                this.total = Math.abs(this.myScore);
+                setTimeout(this.changeScore, 2000);
+
+                setTimeout(() => this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }}), 9000);
             }
+        },
+
+        changeScore() {
+            this.scoreTimer = setInterval(() => {
+                    this.score++;
+                    if (this.score == this.total) {
+                        clearInterval(this.scoreTimer);
+                        document.querySelector('.js-score').classList.add("animated", "bounceIn");
+                    }
+                }, 5); 
         }
 
     }
@@ -513,6 +533,19 @@ h1 {
     }
 }
 
+.score {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+}
+
+.js-score {
+    color: white;
+}
 
 
 </style>

@@ -3,8 +3,8 @@ import Signup from './views/user/Signup.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import Lobby from './views/lobby/lobby.vue'
-import Test from './views/user/tmp.vue'
 import forbidden from './views/forbidden/forbidden404.vue'
+import Test from './views/user/tmp.vue'
 
 
 // 로그인이 필요한 경우엔 requireAuth 를 사용한다. beforeEnter: requireAuth()
