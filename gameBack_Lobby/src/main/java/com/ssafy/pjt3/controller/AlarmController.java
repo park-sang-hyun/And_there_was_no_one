@@ -76,4 +76,18 @@ public class AlarmController {
 		
 		return contents;
 	}
+	
+	@PostMapping("/delete")
+	@ApiOperation(value = "알림 삭제", notes = "알림 삭제 기능 구현")
+	public void delete(@RequestParam int alarm_id) {
+		try {
+			alarmService.delete(alarm_id);
+			System.out.println("알람 삭제");
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }

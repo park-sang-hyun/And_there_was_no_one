@@ -6,9 +6,27 @@
     <select id="selectPkId" parameterType="String" resultType="int">
 		select id from user where username=#{username}
     </select>
+    
+    <select id="selectUserWithId" resultType="com.ssafy.pjt3.dto.User">
+		select * from user where id=#{user_id}
+    </select>
+    
 	<select id="isLeader" resultType="boolean">
 		select leader from userroom where user_id=#{user_id}
 	</select>
+	
+	<select id="friendList">
+    	select * from userconnect user_id = #{user_id}
+     </select>
+	
+	<insert id="friendAccecpt">
+    	insert into userconnect (user_id , friend_id) 
+    	values(#{user_id},#{friend_id})
+     </insert>
+     
+     <delete id="friendDelete">
+    	delete from userconnect where user_id = #{user_id} and friend_id = #{friend_id}
+     </delete>
 	
 </mapper>
 
