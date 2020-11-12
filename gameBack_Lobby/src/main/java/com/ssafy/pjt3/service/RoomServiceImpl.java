@@ -45,4 +45,10 @@ public class RoomServiceImpl implements RoomService {
 	public List<User> findUserInRoom(int room_id) throws SQLException {
 		return roomDao.findUserInRoom(room_id);
 	}
+
+	@Override
+	public Room findRoomWithRoomid(int room_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return roomDao.findRoomWithRoomid(room_id);
+	}
 }

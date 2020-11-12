@@ -79,11 +79,15 @@
             </div>
 
         </div>
+        
+        <div style="display: none;">{{ isGameFinish }}</div>
     </div>
 </template>
 
 <script>
 import http from '@/util/http-game.js';
+
+const storage = window.sessionStorage;
 
 
 export default {
@@ -144,7 +148,7 @@ export default {
         }
 
         // shadow 여부 확인
-        if (this.game.shadow.id == 1) {
+        if (this.game.shadow.id == storage.getItem('id')) {
             this.youShadow = true;
         }
 
@@ -175,7 +179,14 @@ export default {
         sendEnd() {
             this.endStart();
             return this.isEnd
+        },
+
+        isGameFinish() {
+            this.goWaitRoom();
+            return this.result
         }
+
+
     },
 
     methods: {
@@ -261,6 +272,7 @@ export default {
             }
         },
 
+        // 투표한 값 백으로 보내기
         finishVote() {
             // showNumber == 3
             this.showNumber = this.showNumber + 1;
@@ -268,12 +280,15 @@ export default {
             this.show[this.showNumber] = true;
 
             var formData = new FormData;
-            console.log(this.selectNumber);
+
             if (this.selectNumber != null) {
+                // 특정 유저 투표(nickname) 보냄
                 formData.append('who', this.game.userList[this.selectNumber].nickname);
-                console.log('투표', this.game.userList[this.selectNumber].nickname);
+
             } else {
+                // 기권
                 formData.append('who', null);
+
             }
 
 
@@ -290,6 +305,7 @@ export default {
 
         },
 
+        // 투표 결과 받아오기
         voteResult() {
 
             http
@@ -350,6 +366,12 @@ export default {
 
         finishGame() {
             this.result = true; 
+        },
+
+        goWaitRoom() {
+            if (this.result == true) {
+                setTimeout(() => this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }}), 7000);
+            }
         }
 
     }

@@ -62,6 +62,9 @@ import http from '@/util/http-game.js';
 import aihttp from '@/util/http-ai.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const storage = window.sessionStorage;
+
+
 export default {
     name: "PlayGame",
 
@@ -262,7 +265,7 @@ export default {
 
         // 본인의 턴이면 채팅창의 우선도를 뒤로, 아니면 앞으로
         yourTurn() {
-            if (this.game.userList[this.turn].id == 4 ) {
+            if (this.game.userList[this.turn].id == storage.getItem('id') ) {
                 document.documentElement.style.setProperty('--indexNum', -1);
             } else {
         
