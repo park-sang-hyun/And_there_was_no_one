@@ -79,6 +79,8 @@
             </div>
 
         </div>
+        
+        <div style="display: none;">{{ isGameFinish }}</div>
     </div>
 </template>
 
@@ -177,7 +179,14 @@ export default {
         sendEnd() {
             this.endStart();
             return this.isEnd
+        },
+
+        isGameFinish() {
+            this.goWaitRoom();
+            return this.result
         }
+
+
     },
 
     methods: {
@@ -357,6 +366,12 @@ export default {
 
         finishGame() {
             this.result = true; 
+        },
+
+        goWaitRoom() {
+            if (this.result == true) {
+                setTimeout(() => this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }}), 7000);
+            }
         }
 
     }
