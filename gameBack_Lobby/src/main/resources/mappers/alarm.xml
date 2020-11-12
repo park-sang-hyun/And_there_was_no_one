@@ -12,4 +12,8 @@
     	select id, from_id, to_id, content from alarm where to_id=#{user_id}
     </select>
 
+    <delete id="alarmDelete">
+    	delete from alarm where id = #{alarm_id}
+    </delete>
+
 </mapper>
