@@ -1,7 +1,15 @@
 <template>
     <!-- 게임 로딩 화면 (No AI 모드) -->
     <div id="LoadingModeThree">
-        <button @click="closeRule">X</button>
+
+        <div class=flexContainer>
+            <div>
+                <button class="button" @click="closeRule(1)">1</button>
+                <button class="button" @click="closeRule(2)">2</button>
+                <button class="button" @click="closeRule(3)">3</button>
+            </div>
+            <button class="button" @click="closeRule(0)">X</button>
+        </div>
         <!-- 중앙 정렬위한 빈 공간 -->
         <div id="floater"></div>
 
@@ -46,9 +54,9 @@ export default {
             document.documentElement.style.setProperty('--heightSize', height + suffix);
         },
 
-        closeRule() {
-            this.$emit('close', 'close');
-        },
+        closeRule(page) {
+            this.$emit('close', page);
+        }
 
 
     },
@@ -78,8 +86,27 @@ export default {
 // 중앙 정렬 위한 floater
 #floater {
     float: left; 
-    height: 50%; 
+    height: 30%; 
     margin-bottom: -120px;
+}
+
+.flexContainer {
+    padding: 60px;
+    width: 98%;
+    display: flex; 
+    justify-content:space-between;
+}
+
+.button {
+    border: none;
+    color: #FFF;
+    background: #42b983;
+    appearance: none;
+    font: inherit;
+    border-radius: .3em;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 10px 5px;
 }
 
 // story 부분

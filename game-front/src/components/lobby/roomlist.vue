@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="room-wrapper">
-      <div class="container" style="justify-content: space-between;">
+      <div class="btn_container" style="justify-content: space-between;">
         게임방 목록
         <div>
           {{showGamerule}}
@@ -10,24 +10,11 @@
           <button type="button" class="button" @click="showGamerule=1">게임 설명</button>
         </div>
       </div>
-    
 
-      <transition name="pop" appear>
-        <!-- 자유그리기 모드일 때 -->
-        <div v-if="showGamerule===1">
-            <ModeOne/>
-        </div>
-        <!-- 이어그리기 모드일 때 -->
-        <div v-if="showGamerule===2">
-            <ModeTwo/>
-        </div>
-        <!-- NO AI 모드일 때 -->
-        <div v-if="showGamerule===3">
-            <ModeThree/>
-        </div>
-        <ModeOne v-if="showGamerule===1" @close="close" @ruleStatus="ruleStatus"/>
-        <ModeTwo v-if="showGamerule===2" @close="close" @ruleStatus="ruleStatus"/>
-        <ModeThree v-if="showGamerule===3" @close="close" @ruleStatus="ruleStatus"/>
+      <transition name="fade" appear>
+        <modeOne v-if="showGamerule===1" @close="close" style="z-index: 1;"/>
+        <modeTwo v-if="showGamerule===2" @close="close" style="z-index: 1;"/>
+        <modeThree v-if="showGamerule===3" @close="close" style="z-index: 1;"/>
       </transition>
 
       <transition name="fade" appear>
@@ -266,18 +253,6 @@ export default {
             this.roomList[i].difficulty = res.data[i].difficulty;
             this.roomList[i].start = res.data[i].start;
           }
-
-          // 결과 찍어보기
-          //  for(let i=0; i<8; i++){
-          //   console.log(i + "번째 no : " + this.roomList[i].no);
-          //   console.log(i + "번째 roomname : " + this.roomList[i].roomname);
-          //   console.log(i + "번째 mode : " + this.roomList[i].mode);
-          //   console.log(i + "번째 cur_people : " + this.roomList[i].cur_people);
-          //   console.log(i + "번째 max_people : " + this.roomList[i].max_people);
-          //   console.log(i + "번째 difficulty : " + this.roomList[i].difficulty);
-          //   console.log(i + "번째 start : " + this.roomList[i].start);
-          //  }
-
         })
         .catch(err => {
           console.log(err)
@@ -415,8 +390,11 @@ export default {
         .catch((err) => {
           console.log(err);
         })                                                                                 
-        // this.$router.push("/room????");
       },
+
+      close(rule) {
+        this.showGamerule = rule;
+      }
     },
 }
 
@@ -562,7 +540,7 @@ html {background: #88bfd4; text-align: center}
 
 
 /* 우측정렬용 컨테이너 */
-.container {
+.btn_container {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;

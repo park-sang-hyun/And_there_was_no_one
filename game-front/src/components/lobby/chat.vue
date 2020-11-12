@@ -22,9 +22,6 @@
 
 <script>
 export default {
-  props: {
-    websocket: undefined,
-  }, 
 
   data: () =>{
     return{
@@ -85,7 +82,7 @@ export default {
 <style lang="scss" scoped>
   .chatbox {
     border-radius: 20px;
-    background-color: rgba(0, 41, 0, 0.6);
+    background-color: #eceef155;
     height: 80%;
     width: 100%;
     margin-top: 15px;

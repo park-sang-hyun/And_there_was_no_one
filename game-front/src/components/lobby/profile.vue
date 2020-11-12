@@ -98,7 +98,7 @@ export default {
   padding: 20px;
 }
 .profile-wrapper {
-  background-color: rgba(248, 93, 170, 0.7);
+  background-color: #eceef155;
   border-radius: 20px;
   margin: 20px;
   padding-top: 20px;

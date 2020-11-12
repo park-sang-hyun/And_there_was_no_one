@@ -1,6 +1,5 @@
 <template>
   <div class="lobby" >
-    <h1>Lobby page</h1>
 
     <!-- <div v-if="status === 'connected'"> -->
       <!-- <div>
@@ -91,16 +90,16 @@ export default {
     min-width: 300px;
   }
   .profile { 
-    background-color: #ba68c8; 
+    /* background-color: #ba68c8;  */
   }
   .friends { 
-    background-color: #245eaa; 
+    /* background-color: #245eaa;  */
   }
   .roomlist{ 
  
   }
   .chat { 
-    background-color: #77aa24; 
+    /* background-color: #77aa24;  */
   }
 
 </style>

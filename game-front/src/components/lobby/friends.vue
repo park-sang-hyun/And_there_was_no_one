@@ -2,7 +2,7 @@
   <div>
     <div class="friends-wrapper">
       
-      <div class="container" style="justify-content: space-between">
+      <div class="btn_container" style="justify-content: space-between">
         <p style="margin-left:20px">친구 목록</p>
         <!-- 친구 추가버튼  -->
         <button @click="showModal = true" class="button" style="margin:10px">+</button>
@@ -19,7 +19,7 @@
             role="dialog" 
             v-if="showModal"
             >
-          <div class="container">
+          <div class="btn_container">
             <button @click="cancel" class="button">X</button>
           </div>
           
@@ -60,14 +60,14 @@
             v-if="showFriendReq"
           >
 
-          <div class="container">
+          <div class="btn_container">
             <button @click="showFriendReq = false" class="button">X</button>
           </div>
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div>
             <h1>친구 추가 요청</h1>
 
-            <div class="scrollbar-box2" id="style-1" >
+            <div class="scrollbar-box2" id="style-1" style="width: 400px" >
               <div class="force-overflow" >
                 <div v-for="(alarm, index) in alarms" :key="(alarm.no, index) + 'alarmkey'" class="friend">
                   <p>{{alarm.content}}</p>
@@ -458,9 +458,9 @@ export default {
 
   .friends-wrapper {
     border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: #eceef155;
     height: 80%;
-    width: 80%;
+    width: 95%;
     margin: 0px 20px;
     padding: 20px;
   }
@@ -479,14 +479,14 @@ export default {
   {
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
-    min-height: 251px;
+    min-height: 220px;
     margin: 15px 10px;
   }
 
   .loginfriend {
     margin: 10px;
     padding: 5px;
-    background: rgba(255, 248, 220, 0.801);
+    background :#eceef188;
     border-radius: 10px;
   }
   .logoutfriend {
@@ -499,9 +499,9 @@ export default {
   /*scrollbar STYLE 1*/
   #style-1::-webkit-scrollbar-track
   {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
     border-radius: 10px;
-    background-color: #F5F5F5;
+    background-color: #eceef155;
   }
 
   #style-1::-webkit-scrollbar
@@ -519,7 +519,7 @@ export default {
   
 
   /* 우측정렬용 컨테이너 */
-  .container {
+  .btn_container {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
