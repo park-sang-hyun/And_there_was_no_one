@@ -70,7 +70,7 @@
 
             <div class="scrollbar-box2" id="style-1" >
               <div class="force-overflow" >
-                <div v-for="alarm in alarms" :key="alarm.no + 'key'" class="friend">
+                <div v-for="alarm in alarms" :key="alarm.no + 'alarmkey'" class="friend">
                   <p>친구 추가 요청을 수락하시겠습니까?</p>
                   <button @click="friendAns('ok')" class="button" style="margin: 5px">수락</button>
                   <button @click="friendAns('no')" class="button" style="margin: 5px">거절</button>
@@ -87,7 +87,7 @@
       <!-- scrollbar-box가 한 페이지에 두개라서 발생한 문제로 보임 뒤에 2를 붙여서 해결 -->
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
-          <div v-for="friend in friends" :key="friend.no + 'key'" class="friend">
+          <div v-for="friend in friends" :key="friend.no + 'friendkey'" class="friend">
             <p style="margin: 5px">
               {{ friend.isLogin }}: {{ friend.nickname }}
             </p>
