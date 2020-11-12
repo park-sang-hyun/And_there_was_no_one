@@ -69,7 +69,17 @@
 
                     <!-- 채팅 부분 -->
                     <div class="room__chatting d-flex justify-content-center">
-                        <div class="chatting__area">채팅 내용이 나올 부분</div>
+                        <div v-if="chatStatus" class="chatting__area">
+                            <div class="scrollbar-box" id="scrollbar__style" >
+                                <div class="force-overflow" >
+                                    <!-- <br/> -->
+                                    <div v-for="(log, index) in chatLogs" class="log" :key="index + 'chatKey'">
+                                        <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
+                                    </div>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 게임 시작 버튼 -->
@@ -124,6 +134,7 @@ import http from '@/util/http-game.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
+const socketURL = 'ws://localhost:8002/chatting';
 
 
 export default {
@@ -201,6 +212,9 @@ export default {
             ],
             // 소켓, 채팅 메시지
             chatMsg: '',
+            chatLogs: [],
+            chatStatus: false,
+            socket: '',
 
             // 받아온 모드 값
             checked: {
@@ -255,6 +269,8 @@ export default {
                     break;
                 }
             }
+
+            this.connect();
         })
         .catch((err) => {
             console.log(err);
@@ -317,23 +333,6 @@ export default {
 
         },
 
-        // 현재 보이는 화면 크기 계산
-        screenResize() {
-            this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
-            this.layoutCal();
-        },
-
-        // 넓이 계산해서 style 안에 계산해서 넣어주기
-        layoutCal() {
-            let suffix = 'px';
-            document.documentElement.style.setProperty('--widthSize', this.window.width + suffix);
-            document.documentElement.style.setProperty('--heightSize', this.window.height + suffix);
-            document.documentElement.style.setProperty('--leftSize', ((this.window.width * 0.6) - 20) + suffix);
-            document.documentElement.style.setProperty('--rightSize', ((this.window.width * 0.4) - 20) + suffix);
-            document.documentElement.style.setProperty('--mainSize', (this.window.height - 80 - 20) + suffix);
-        },
-
         // 채팅 버튼
         // chatMessage() {
         //     var s = document.getElementById("inputMessageSelect");
@@ -346,13 +345,48 @@ export default {
         //     }
         // },
 
+
+        // 채팅 부분
+        // 소켓 연결
+        connect() {
+            this.chatStatus = true;
+            this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
+            this.socket.onopen = () => {
+                this.chatLogs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
+                
+
+                this.socket.onmessage = ({data}) => {
+                    this.chatLogs.push(data);
+                };
+            };
+        },
+
+        disconnect() {
+            this.socket.close();
+            this.chatStatus = false;
+            this.chatLogs = [];
+        },
+
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
-            if (Data != '') {
-                console.log(Data);
-            }
+            if (Data != '' && this.myNickname != '') {
+
+                const chatBox = document.querySelector(".scrollbar-box");
+
+                chatBox.scrollTop = (chatBox.scrollHeight);
+                this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
+                
+                // this.chatLogs.push({ event: this.myNickname, data: Data });
+                // chatBox.scrollTop = (chatBox.scrollHeight);
+                // 
+                // this.chatMsg = "";  // 아래 소켓 연결 안돼서 지워지지 않음 그래서 여기서 임시로 지워줌 
+                // this.socket.send({ event: this.myNickname, data: Data });
+                // this.chatMsg = "";
+
+            } 
         },
+
 
         // 우측 상단 버튼
 
@@ -452,7 +486,26 @@ export default {
             // .catch((err) => {
             //     console.log(err);
             // })
-        }
+        },
+        
+
+        // 현재 보이는 화면 크기 계산
+        screenResize() {
+            this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
+            this.window.height = window.innerHeight;
+            this.layoutCal();
+        },
+
+        // 넓이 계산해서 style 안에 계산해서 넣어주기
+        layoutCal() {
+            let suffix = 'px';
+            document.documentElement.style.setProperty('--widthSize', this.window.width + suffix);
+            document.documentElement.style.setProperty('--heightSize', this.window.height + suffix);
+            document.documentElement.style.setProperty('--leftSize', ((this.window.width * 0.6) - 20) + suffix);
+            document.documentElement.style.setProperty('--rightSize', ((this.window.width * 0.4) - 20) + suffix);
+            document.documentElement.style.setProperty('--mainSize', (this.window.height - 80 - 20) + suffix);
+            document.documentElement.style.setProperty('--chatHeightSize', ((this.window.height * 0.25) - 20) + suffix);
+        },
     },
 
 }
@@ -466,6 +519,7 @@ export default {
     --leftSize: 800px;
     --rightSize: 400px;
     --mainSize: 800px;
+    --chatHeightSize: 400px;
 }
 
 #waitRoom {
@@ -590,7 +644,7 @@ export default {
 // 채팅 인풋
 .input__text__part {
     // width: var(--leftSize);
-    width: calc( var(--leftSize) - 110px );
+    width: calc( var(--leftSize) - 120px );
     padding-left: 10px;
     background-color: rgba(255, 255, 255, 0.3); 
     color: white; 
@@ -601,9 +655,29 @@ export default {
 .chatting__area {
     width: 82%;
     background-color: rgba(255, 255, 255, 0.3);
-    padding: 10px 20px;
+    padding: 10px 10px;
     border-radius: 10px;
+    font-size: 0.9rem;
 }
+
+
+.scrollbar-box
+{
+    width: 100%;
+    height: calc(var(--chatHeightSize) - 30px);
+	overflow-y: scroll;
+    text-overflow:ellipsis;
+    position : relative; 
+    bottom: 0px;
+}
+
+.force-overflow
+{
+  /* 스크롤바 내부의 글자가 누적되는 창 크기
+  스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
+	min-height: calc(var(--chatHeightSize) - 30px);
+}
+
 
 .change__part {
     position: fixed;
@@ -632,12 +706,34 @@ export default {
 }
 
 .modal__button > button {
-    padding: 5px;
+    padding: 3px;
     border-radius: 10px;
     color: white;
     background-color: rgba(28, 144, 65, 0.8);
     border: none;
 }
 
+
+// scrollbar__style
+
+#scrollbar__style::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#scrollbar__style::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #F5F5F500;
+}
+
+#scrollbar__style::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
 
 </style>
