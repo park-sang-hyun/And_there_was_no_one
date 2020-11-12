@@ -17,7 +17,20 @@
                 <div class="screen__left">
                     <!-- 입장한 유저 목록 -->
                     <div class="user__part">
-                        <user v-for="mem in room.userList" :key="mem.nickname + 'key'" :userData="mem" :window="windowScreen" style="display: inline-block; float:left;" />
+                        <user v-for="n in room.cur_count" 
+                            :key="n + 'waitUserkey'" 
+                            :number="n-1"
+                            :existClick="isUserClick[n-1]"
+                            :userData="room.userList[n-1]" 
+                            :sendLeader="room.leader"
+                            :youLeader="leader"
+                            :window="windowScreen"
+                            @clickUser="clickUser"
+                            @noClickUser="noClickUser"
+                            @changeLeader="changeLeader"
+                            style="display: inline-block; float:left;">
+                            <span style="display: none;">{{ isUserClick[n-1] }}</span>
+                        </user>
                         <empty v-for="n in EmptyCount" :key="n + 'Emptykey'" :window="windowScreen" style="display: inline-block; float:left;"/>
                         <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block; float:left;"/>
                     </div>
@@ -72,6 +85,18 @@
                 <!-- NO AI 모드일 때 -->
                 <div v-if="isMode[2]">
                     <loadingThree/>
+                </div>
+            </div>
+
+            <div v-if="isChangeLeader" class="change__part">
+                <div class="modal__part">
+                    <div class="modal__text">
+                        {{ room.userList[changeLeaderNum].nickname }}에게 방장을 넘기겠습니까?
+                    </div>
+                    <div class="modal__button d-flex justify-content-center">
+                        <button @click="exitLeader">닫기</button>
+                        <button @click="leaderChange" class="ml-2">팀장 위임</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -172,6 +197,11 @@ export default {
             },
             leader: false,
             isSend: false,
+            isUserClick: [
+                false, false, false, false, false, false, false, false,
+            ],
+            isChangeLeader: false,
+            changeLeaderNum: 0,
         }
     },
 
@@ -195,6 +225,7 @@ export default {
                 this.NoneCount = 8 - this.room.max_count;
             }
             
+            // 본인이 방장인지 여부 확인
             if (this.room.leader.id == 1) {
                 this.leader = true;
             } else {
@@ -204,13 +235,6 @@ export default {
         .catch((err) => {
             console.log(err);
         })
-
-        // 본인 위치 확인 (1 대신에 쿠키에서 본인 pk값 받아올 것)
-        // for (let i=0; i < this.room.userList.length; i++) {
-        //     if (this.room.userList[i].id === 1) {
-        //         this.user = i;
-        //     }
-        // }
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -357,6 +381,45 @@ export default {
         difficultyChange(difficulty) {
             this.checked.difficulty = Number(difficulty);
         },
+
+        // 유저 선택
+        clickUser(num) {
+
+            this.isUserClick = [false, false, false, false, false, false, false, false,],
+            this.isUserClick[num] = true;
+        },
+
+        noClickUser(num) {
+            this.isUserClick[num] = false;
+        },
+
+        changeLeader(num) {
+            if (this.leader) {
+                this.changeLeaderNum = num;
+                this.isChangeLeader = true;
+            } else {
+                alert('리더가 아닙니다');
+            }
+        },
+
+        exitLeader() {
+            this.isChangeLeader = false;
+        },
+
+        // 리더 위임
+        leaderChange() {
+            var formData = new FormData;
+            formData.append('leader', this.room.userList[this.changeLeaderNum].id)
+
+            // http
+            // .put(`game/leader/${this.room.id}`, formData)
+            // .then((res) => {
+            //     console.log(res.data);
+            // })
+            // .catch((err) => {
+            //     console.log(err);
+            // })
+        }
     },
 
 }
@@ -498,6 +561,39 @@ export default {
     border-radius: 10px;
 }
 
+.change__part {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--widthSize);
+    height: var(--heightSize);
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal__part {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 100px;
+    padding: 0px 50px;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+    background-color: white;
+    color: black;
+}
+
+.modal__text {
+    text-align: center;
+    line-height: 50px;
+}
+
+.modal__button > button {
+    padding: 5px;
+    border-radius: 10px;
+    color: white;
+    background-color: rgba(28, 144, 65, 0.8);
+    border: none;
+}
 
 
 </style>
