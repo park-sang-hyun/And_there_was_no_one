@@ -345,7 +345,7 @@ export default {
 
                 // ai로 이미지보내기
                 aihttp
-                .post(`/objects/image/`, formData)
+                .post(`objects/image/`, formData)
                 .then((res) => {
                     if (res.data.message) {
                         for (let i=0; i < res.data.result.length; i++) {
