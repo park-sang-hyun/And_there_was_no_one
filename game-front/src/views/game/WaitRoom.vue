@@ -115,6 +115,8 @@ import loadingThree from '@/components/room/LoadingModeThree.vue';
 import http from '@/util/http-game.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const storage = window.sessionStorage;
+
 
 export default {
     name: 'WaitRoom',
@@ -213,8 +215,9 @@ export default {
         http
         .get(`game/waitroom/${this.roomId}`)
         .then((res) => {
-            this.isSend = true;
             this.room = res.data;
+            console.log(this.room);
+            this.isSend = true;
                 
             // 빈자리 출력을 위해 인원 확인
             if (this.room.cur_count < this.room.max_count) {
@@ -226,7 +229,7 @@ export default {
             }
             
             // 본인이 방장인지 여부 확인
-            if (this.room.leader.id == 1) {
+            if (this.room.leader.id == storage.getItem('id')) {
                 this.leader = true;
             } else {
                 this.leader = false;
@@ -350,19 +353,20 @@ export default {
 
         // 방 나가기
         ExitRoom() {
-            let user_id = 4;
             http
-            .delete(`game/leave/${user_id}`)
+            .delete(`game/leave/${storage.getItem('id')}`)
             .then((res) => {
                 console.log(res.data);
-                if (res.data.object != null) {
-                    this.room.leader = res.data.object;
-                    if (this.room.leader.id == 1) {
-                        this.leader = true;
-                    } else {
-                        this.leader = false;
-                    }
-                }
+                // 이건 아마 리더 넘기는 건데.. 여기서 할 게 아니라 소켓 연결해서 새로 방 정보 받아와야함....
+                // if (res.data.object != null) {
+                //     this.room.leader = res.data.object;
+                //     if (this.room.leader.id == storage.getItem('id')) {
+                //         this.leader = true;
+                //     } else {
+                //         this.leader = false;
+                //     }
+                // }
+                this.$router.replace({ name: 'Lobby' })
             })
             .catch((err) => {
                 console.log(err);
