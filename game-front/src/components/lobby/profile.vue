@@ -65,12 +65,12 @@ export default {
 
     getAlarm() {
       // 친구 알람 개수 받아오기 
-      // httpLobby
-      // .get("")
-      // .then((res) => {
-      //   // this.alarmCnt = res.;
-      // })
-      this.alarmCnt = 2;
+      httpLobby
+      .get("alarm/count/" + sessionStorage.getItem('id') + "/" )
+      .then((res) => {
+        console.log(res.data)
+        this.alarmCnt = res.data;
+      })
     },
 
     bellclick() {

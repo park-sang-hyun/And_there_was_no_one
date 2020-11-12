@@ -18,10 +18,10 @@
     <div class="gerstner-2">
       <div class="comp">
         
-        <Profile class="profile" @logout="logout" @bell="bell" />
+        <Profile class="profile" @logout="logout" @bell="bell" ref="reloadBell"/>
         <!-- 소켓 props -->
         <!-- 대흠님이 ref 메서드 멀로 해놨을까?그거에 맞춰서 ref 쓰기  -->
-        <Friends class="friends" ref="out"></Friends>
+        <Friends class="friends" ref="out" @reload="reload"></Friends>
       </div>
       <div class="comp">
         <Roomlist class="roomlist"/>
@@ -63,7 +63,11 @@ export default {
       },
 
       bell(signal) {
-        this.$refs.out.showAlarm();
+        this.$refs.out.showAlarm(0);
+      },
+
+      reload() {
+        this.$refs.reloadBell.getAlarm();
       }
   }
 }
