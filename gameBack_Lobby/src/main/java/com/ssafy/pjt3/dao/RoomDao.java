@@ -14,4 +14,5 @@ public interface RoomDao {
 	public int findRoomPkId(int user_id) throws SQLException;
 	public Room findRoomWithUserid(int user_id) throws SQLException;
 	public List<User> findUserInRoom(int room_id) throws SQLException;
+	public Room findRoomWithRoomid(int room_id) throws SQLException;
 }

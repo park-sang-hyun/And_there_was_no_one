@@ -38,4 +38,11 @@
 		from user as u, userroom as ur
 		where ur.room_id = #{room_id} and ur.user_id = u.id;
      </select>
+     
+     <select id="findRoomWithRoomId" resultType="com.ssafy.pjt3.dto.Room">
+		select *
+		from room 
+		where id = #{room_id} 
+     </select>
+     
 </mapper>

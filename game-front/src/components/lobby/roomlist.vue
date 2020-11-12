@@ -142,6 +142,7 @@ import http from "../../util/http-lobby.js";
 
 // import mode from '@/components/room/modeSetting.vue';
 // import difficulty from '@/components/room/difficultySetting.vue';
+const storage = window.sessionStorage;
 
 
 export default {
@@ -368,9 +369,22 @@ export default {
 
       enterRoom(roomNo) {
         // Room 들어가기 요청 보내기
-        // this.$router.push("/room????");
         console.log("Enter enterRoom: " + roomNo);
-        this.$router.replace({ name: 'WaitRoom' , params: { roomId: roomNo }});
+
+        http
+        .get(`room/enter/${storage.getItem('id')}/${roomNo}`)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.status) {
+            this.$router.replace({ name: 'WaitRoom' , params: { roomId: roomNo }});
+          } else {
+            alert(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })                                                                                 
+        // this.$router.push("/room????");
       },
     },
 }
