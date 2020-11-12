@@ -15,7 +15,7 @@
       </transition>
       <!-- 친구추가 버튼을 눌렀을 때 생기는 모달 -->
       <transition name="pop" appear>
-        <div class="modal" 
+        <div class="friendmodal" 
             role="dialog" 
             v-if="showModal"
             >
@@ -56,7 +56,7 @@
       </transition>
       <!-- 벨을 눌렀을 때 popup되는 모달  -->
       <transition name="pop" appear>
-        <div class="modal" 
+        <div class="friendmodal" 
             role="dialog" 
             v-if="showFriendReq"
           >
@@ -404,7 +404,7 @@ export default {
     margin-bottom: 10px;
   }
 
-  .modal {
+  .friendmodal {
     position: absolute;
     position: fixed;
     top: 0;
@@ -423,7 +423,7 @@ export default {
     z-index: 999;
     transform: none;
   }
-  .modal h1 {
+  .friendmodal h1 {
     margin: 0 0 1rem;
   }
 

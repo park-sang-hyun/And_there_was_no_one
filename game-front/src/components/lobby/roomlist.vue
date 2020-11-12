@@ -16,7 +16,7 @@
       </transition>
       <!-- 방 만들기 버튼 눌렀을 때 생기는 모달 -->
       <transition name="pop" appear>
-        <div class="modal" 
+        <div class="roommodal" 
             role="dialog" 
             v-if="showCreateModal"
           >
@@ -110,9 +110,9 @@
 
 
       <!-- 게임방 목록 -->
-      <div class="cards">
-        <div class="card" v-for="room in roomList" :key="room.no + 'key'">
-          <div class="card__inner" @click="pickRoom(room.no)">
+      <div class="roomcards">
+        <div class="roomcard" v-for="room in roomList" :key="room.no + 'key'">
+          <div class="roomcard__inner" @click="pickRoom(room.no)">
             <span>No.{{ room.no }} Card</span>
             <span>title: {{ room.roomname }}</span>
             <span>mode: {{ room.mode }}</span>
@@ -124,10 +124,10 @@
       </div>
 
       <!-- 페이지네이션 -->
-      <ul class="pagination" id="menu">
-        <li class="page-item"><a class="page-link" @click="prevPage">Prev</a></li>
-        <li class="page-item"><a class="page-link" href="#">{{ pageNow }} of {{ pageLen }}</a></li>
-        <li class="page-item"><a class="page-link" @click="nextPage" >Next</a></li>
+      <ul class="roompagination" id="menu">
+        <li class="roompage-item"><a class="roompage-link" @click="prevPage">Prev</a></li>
+        <li class="roompage-item"><a class="roompage-link" >{{ pageNow }} of {{ pageLen }}</a></li>
+        <li class="roompage-item"><a class="roompage-link" @click="nextPage" >Next</a></li>
       </ul>
       
     </div>
@@ -398,20 +398,20 @@ export default {
     box-shadow: 0 0 5px 0 rgba(155, 150, 85, 0.06);
   }
 
-  .cards {
+  .roomcards {
     padding: 10px;
     display: flex;
     flex-flow: row wrap;
   }
   /* //Cards */
 
-  .card {
+  .roomcard {
     margin: 10px; 
     width: 47%;
     transition: all 0.2s ease-in-out;
     
     &:hover {
-      .card__inner {
+      .roomcard__inner {
         background-color: #9c642f;
         transform: scale(1.05);
         border-radius: 20px;
@@ -515,7 +515,7 @@ html {background: #88bfd4; text-align: center}
   margin-left:10px;
 }
 
-.modal {
+.roommodal {
   position: fixed;
   top: 0;
   right: 0;
@@ -533,7 +533,7 @@ html {background: #88bfd4; text-align: center}
   z-index: 999;
   transform: none;
 }
-.modal h1 {
+.roommodal h1 {
   margin: 0 0 1rem;
 }
 
@@ -551,7 +551,7 @@ html {background: #88bfd4; text-align: center}
   cursor: pointer;
 }
 
-.inmodal {
+.inroommodal {
   width: 400px;
   height: fit-content;
   text-align: center;
