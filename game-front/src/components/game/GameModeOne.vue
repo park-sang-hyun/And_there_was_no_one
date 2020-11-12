@@ -148,7 +148,6 @@ export default {
         },
 
         isYourTurn() {
-            this.yourTurn();
             this.checkImage();
             return this.isTurn
         },
