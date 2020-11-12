@@ -107,7 +107,7 @@ export default {
 
     props: {
         roomId: {
-            type: String,
+            type: undefined,
         }
     },
 
