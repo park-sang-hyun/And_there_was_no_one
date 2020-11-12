@@ -93,7 +93,7 @@ export default {
     background-color: #245eaa; 
   }
   .roomlist{ 
-    background-color: #aca002; 
+ 
   }
   .chat { 
     background-color: #77aa24; 

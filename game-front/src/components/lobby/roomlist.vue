@@ -111,16 +111,28 @@
 
       <!-- 게임방 목록 -->
       <div class="roomcards">
-        <div class="roomcard" v-for="room in roomList" :key="room.no + 'key'">
+        <div class="roomcard" v-for="room in roomList" :key="room.no + 'roomkey'">
           <div class="roomcard__inner" @click="pickRoom(room.no)">
-            <span>No.{{ room.no }} Card</span>
-            <span>title: {{ room.roomname }}</span>
-            <span>mode: {{ room.mode }}</span>
-            <span>//{{ room.cur_people }} /// {{ room.max_people }}</span>
-            <span>difficulty: {{ room.difficulty }}</span>
+            <span>No.{{ room.no }} </span> 
+            <span>방 이름: {{ room.roomname }} </span> <br>
+            <span>모드: {{ modelist[room.mode] }} </span> 
+            <span>인원: {{ room.cur_people }} / {{ room.max_people }}</span>
+            <span>난이도: {{ difficultylist[room.difficulty] }}</span>
             isStart: {{ room.start }}
           </div>
         </div>
+
+        <!-- 데이터 없는 카드 -->
+        <!-- <div class="roomcardNone" v-for="room in roomList" :key="room.no + 'roomkey'">
+          <div v-if="room.no === 'none'"  class="roomcardNone__inner" @click="pickRoom(room.no)">
+            <span>No.{{ room.no }} </span> 
+            <span>방 이름: {{ room.roomname }} </span> <br>
+            <span>모드: {{ modelist[room.mode] }} </span> 
+            <span>인원: {{ room.cur_people }} / {{ room.max_people }}</span>
+            <span>난이도: {{ difficultylist[room.difficulty] }}</span>
+            isStart: {{ room.start }}
+          </div>
+        </div> -->
       </div>
 
       <!-- 페이지네이션 -->
@@ -158,17 +170,18 @@ export default {
       return {
         // 받아온 방 정보 8개 객체를 받아옴
         roomList: [
-            {no: 0, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 1, roomname: 1, mode: 1, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 2, roomname: 2, mode: 2, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 3, roomname: 3, mode: 3, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 4, roomname: 4, mode: 4, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 5, roomname: 5, mode: 5, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 6, roomname: 6, mode: 6, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 7, roomname: 7, mode: 7, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 2, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+
           ],
         // totalRoom은 생성된 룸 개수
-        totalRoom: 12,
+        totalRoom: 16,
         // 페이지 총 길이
         pageLen: 0,
         // 현재 페이지
@@ -186,6 +199,10 @@ export default {
         mode: 1,
         difficulty: 2,
         people: 5,
+
+        //mode
+        modelist : ['자유그리기', '이어그리기', 'AI제외'],
+        difficultylist: ['하','중', '상'],
       }
     },
     created(){
@@ -405,17 +422,19 @@ export default {
     padding-left: 20px;
     position: relative;
     min-width: 900px;
-    min-height: 580px;
+    min-height: 600px;
 
-    background-color: rgba(221, 250, 193, 0.3);
+    /* background-color: rgba(221, 250, 193, 0.3); */
     border-radius: 20px;
     box-shadow: 0 0 5px 0 rgba(155, 150, 85, 0.06);
   }
 
   .roomcards {
     padding: 10px;
+    margin-bottom: 40px;
     display: flex;
     flex-flow: row wrap;
+    min-height: 581px;
   }
   /* //Cards */
 
@@ -426,7 +445,7 @@ export default {
     
     &:hover {
       .roomcard__inner {
-        background-color: #9c642f;
+        background-color: #969696;
         transform: scale(1.05);
         border-radius: 20px;
       }
@@ -434,15 +453,15 @@ export default {
 
     &__inner {
       width: 100%;
-      padding: 30px;
+      padding: 25px;
       min-width: 80px;
       min-height: 60px;
       position: relative;
       cursor: pointer;
       border-radius: 20px;
       
-      background-color: #eceef127;
-      color: #eceef127;
+      background-color: #eceef155;
+      color: #eceef155;
       font-size: 1.5em;
       text-transform: uppercase;
       text-align: center;
@@ -452,6 +471,23 @@ export default {
       &:after {
         transition: all 0.3s ease-in-out;
       }
+    }
+  }
+
+  .roomcardNone {
+    margin: 10px; 
+    width: 47%;
+    transition: all 0.2s ease-in-out;
+
+    &__inner {
+      width: 100%;
+      padding: 25px;
+      min-width: 80px;
+      min-height: 60px;
+      position: relative;
+      border-radius: 20px;
+    
+      font-size: 1.5em;
     }
   }
 
@@ -465,6 +501,8 @@ export default {
 html {background: #88bfd4; text-align: center}
 
 #menu {
+  position: absolute;
+  bottom: -45px;
 	list-style: none;
 	padding: 0px; 
   margin: 0;
