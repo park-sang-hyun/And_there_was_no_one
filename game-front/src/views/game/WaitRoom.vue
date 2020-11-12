@@ -73,8 +73,9 @@
                             <div class="scrollbar-box" id="scrollbar__style" >
                                 <div class="force-overflow" >
                                     <!-- <br/> -->
-                                    <div v-for="(log, index) in chatLogs" class="log" :key="index + 'chatKey'">
-                                        <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
+                                    <div v-for="(log, index) in chatLogs" :key="index + 'chatKey'">
+                                        <!-- <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span> -->
+                                        {{ log }}
                                     </div>
                                     <br/>
                                 </div>
@@ -235,7 +236,6 @@ export default {
 
     created() {
 
-        console.log('확인', storage.getItem('token'));
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
 
@@ -245,11 +245,13 @@ export default {
             this.room = res.data;
             console.log(this.room);
             this.isSend = true;
+            this.connect();
                 
             // 빈자리 출력을 위해 인원 확인
             if (this.room.cur_count < this.room.max_count) {
                 this.EmptyCount = this.room.max_count - this.room.cur_count;
             }
+
             // 막아둘 자리 출력을 위한 인원 확인
             if (this.room.max_count < 8) {
                 this.NoneCount = 8 - this.room.max_count;
@@ -270,7 +272,6 @@ export default {
                 }
             }
 
-            this.connect();
         })
         .catch((err) => {
             console.log(err);
@@ -349,6 +350,7 @@ export default {
         // 채팅 부분
         // 소켓 연결
         connect() {
+            console.log('확인');
             this.chatStatus = true;
             this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
             this.socket.onopen = () => {
@@ -356,7 +358,9 @@ export default {
                 
 
                 this.socket.onmessage = ({data}) => {
+                    console.log(data);
                     this.chatLogs.push(data);
+                    console.log(this.chatLogs);
                 };
             };
         },
