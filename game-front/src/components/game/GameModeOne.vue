@@ -62,6 +62,10 @@ import user from '@/components/game/PlayUser.vue';
 import empty from '@/components/game/EmptyUser.vue';
 import none from '@/components/game/NoneUser.vue';
 
+
+const storage = window.sessionStorage;
+
+
 export default {
     name: "GameModeOne",
 
@@ -176,7 +180,7 @@ export default {
 
         // 본인의 턴이면 그림 그리기를 할 수 있도록, 아니면 못하도록 막기
         yourTurn() {
-            if (this.game.userList[this.turn].id == 4 ) {
+            if (this.game.userList[this.turn].id == storage.getItem('id') ) {
                 this.selectCanvas = false;
             } else {
                 this.selectCanvas = true;
