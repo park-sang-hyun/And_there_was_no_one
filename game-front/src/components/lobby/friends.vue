@@ -87,9 +87,14 @@
       <!-- scrollbar-box가 한 페이지에 두개라서 발생한 문제로 보임 뒤에 2를 붙여서 해결 -->
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
-          <div v-for="friend in friends" :key="friend.no + 'friendkey'" class="friend">
+          <div v-for="friend in loginFriends" :key="friend.no + 'loginfriendkey'" class="loginfriend">
             <p style="margin: 5px">
-              {{ friend.isLogin }}: {{ friend.nickname }}
+              {{ friend.nickname }} {{ friend.score }}
+            </p>
+          </div>
+          <div v-for="friend in logoutFriends" :key="friend.no + 'logoutfriendkey'" class="logoutfriend">
+            <p style="margin: 5px">
+              {{ friend.nickname }} {{ friend.score }}
             </p>
           </div>
         </div> 
@@ -101,29 +106,34 @@
 
 <script>
 import http from "../../util/http-lobby.js";
+import httpCommon from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
 
 export default {
   data: () =>{
         return{
-          friends: [
-            {no: 1, isLogin: true, nickname:"1 번 친구"},
-            {no: 2, isLogin: true, nickname:"2 번 친구"},
-            {no: 3, isLogin: true, nickname:"3 번 친구"},
-            {no: 4, isLogin: true, nickname:"4 번 친구"},
-            {no: 5, isLogin: true, nickname:"5 번 친구"},
-            {no: 6, isLogin: true, nickname:"6 번 친구"},
-            {no: 7, isLogin: true, nickname:"7 번 친구"},
-            {no: 8, isLogin: true, nickname:"8 번 친구"},
-            {no: 9, isLogin: true, nickname:"9 번 친구"},
-            {no: 10, isLogin: true, nickname:"10 번 친구"},
-            {no: 11, isLogin: true, nickname:"11 번 친구"},
-            {no: 12, isLogin: true, nickname:"12 번 친구"},
-            {no: 13, isLogin: true, nickname:"13 번 친구"},
-            {no: 14, isLogin: true, nickname:"14 번 친구"},
-            {no: 15, isLogin: true, nickname:"15 번 친구"},
+          loginFriends: [
+            {no: 1, nickname:"1 번 친구", score:3},
+            {no: 2, nickname:"2 번 친구", score:3},
+            {no: 3, nickname:"3 번 친구", score:3},
+            {no: 4, nickname:"4 번 친구", score:3},
+            {no: 5, nickname:"5 번 친구", score:3},
+            {no: 6, nickname:"6 번 친구", score:3},
+            {no: 7, nickname:"7 번 친구", score:3},
+            {no: 8, nickname:"8 번 친구", score:3},
+            {no: 9, nickname:"9 번 친구", score:3},
           ],
+
+          logoutFriends: [
+            {no: 10, nickname:"10 번 친구", score:3},
+            {no: 11, nickname:"11 번 친구", score:3},
+            {no: 12, nickname:"12 번 친구", score:3},
+            {no: 13, nickname:"13 번 친구", score:3},
+            {no: 14, nickname:"14 번 친구", score:3},
+            {no: 15, nickname:"15 번 친구", score:3},
+          ],
+
           // 친구 추가 요청을 보낼 때 보이는 모달을 보여줄 것인지
           showModal: false,
           friendReqStatus: "요청전",
@@ -165,6 +175,8 @@ export default {
       // 대흠님이 소켓으로 가능하면 다 보내보고 안되면 http랑 섞을께요라고함
       // 친구가 로그인되어있는지 정보도 들어있어야함
 
+      // 로그인한 친구랑 로그아웃한 친구랑 데이터 따로 있으니까 꼭 따로 구분해서 저장할 것 !!!!!!
+
       // http
       // .get("/accounts/getFriendsList/")
       // .then((res) => {
@@ -204,16 +216,18 @@ export default {
 
 
 
-      // 소켓으로 친구 추가 요청에 대한 응답을 받았을 때 수락 or 거절
-      this.friendReqStatus='상대방이 요청을 수락했습니다.'
-      // this.friendReqStatus='상대방이 요청을 거절했습니다.'
-
 
       
       // 친구 추가 요청자와 응답자 모두 서버에서 상대 친구 정보를 받아서
       // this.friends 리스트에 데이터 추가하기 
 
 
+
+
+
+      // 친구 로그아웃 or 로그인 했다는 데이터를 받았을 때!!!!!
+      // this.refreshFriends(user, status);
+      
 
 
 
@@ -229,7 +243,7 @@ export default {
 
 
 
-
+      this.refreshFriends(11, 'login');
       
 
       this.friendName = "";
@@ -288,6 +302,45 @@ export default {
       console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
       console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
       console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
+
+
+      // 장고 서버로 로그아웃 요청 보내기 
+      httpCommon
+        .post("rest-auth/logout/", {
+          token : sessionStorage.getItem('token')
+        },
+        )
+        .then((res) => {
+          
+          alert("로그아웃 되었습니다");
+          this.$router.push("/");
+
+        })
+    },
+
+    refreshFriends(user, status) {
+      console.log("Enter refresh");
+      if (status === 'login'){
+        console.log("Enter login friends list");
+        for(let i=0; i<this.logoutFriends.length; i++){
+          if (this.logoutFriends[i].no === user) {
+            this.loginFriends.push(this.logoutFriends.splice(i, 1));
+            break;
+          }
+        }
+      }
+      else {
+        console.log("Enter logout friends list");
+        for(let i=0; i<this.loginFriends.length; i++){
+          if (this.loginFriends[i].no === user) {
+            let tmp = this.loginFriends[i];
+            this.loginFriends.splice(i, 1);
+            this.logoutFriends.push(tmp);
+            console.log(this.logoutFriends)
+            break;
+          }
+        }
+      }
     },
 
     webSocketSend(Data){
@@ -356,10 +409,16 @@ export default {
     margin: 15px 10px;
   }
 
-  .friend {
+  .loginfriend {
     margin: 10px;
     padding: 5px;
-    background: cornsilk;
+    background: rgba(255, 248, 220, 0.801);
+    border-radius: 10px;
+  }
+  .logoutfriend {
+    margin: 10px;
+    padding: 5px;
+    background: rgba(255, 248, 220, 0.2);
     border-radius: 10px;
   }
 

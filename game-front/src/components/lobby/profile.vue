@@ -65,11 +65,11 @@ export default {
 
     getAlarm() {
       // 친구 알람 개수 받아오기 
-      httpLobby
-      .get("")
-      .then((res) => {
-        // this.alarmCnt = res.;
-      })
+      // httpLobby
+      // .get("")
+      // .then((res) => {
+      //   // this.alarmCnt = res.;
+      // })
       this.alarmCnt = 2;
     },
 

@@ -47,7 +47,7 @@
                   @click="setMode('down')"
                 ></button>
                 <div class="number-input" style="text-align: center">
-                  {{ mode }}
+                  {{ modelist[mode-1] }}
                 </div>
                 <button
                   type="button"
@@ -68,7 +68,7 @@
                   @click="setDifficulty('down')"
                 ></button>
                 <div class="number-input">
-                  {{ difficulty }}
+                  {{ difficultylist[difficulty-1] }}
                 </div>
                 <button
                   type="button"
@@ -112,27 +112,18 @@
       <!-- 게임방 목록 -->
       <div class="roomcards">
         <div class="roomcard" v-for="room in roomList" :key="room.no + 'roomkey'">
-          <div class="roomcard__inner" @click="pickRoom(room.no)">
+          <div v-if="room.no !='none'" class="roomcard__inner" @click="pickRoom(room.no)">
             <span>No.{{ room.no }} </span> 
-            <span>방 이름: {{ room.roomname }} </span> <br>
+            <span>방 이름: {{ room.roomname }} </span>
             <span>모드: {{ modelist[room.mode] }} </span> 
             <span>인원: {{ room.cur_people }} / {{ room.max_people }}</span>
             <span>난이도: {{ difficultylist[room.difficulty] }}</span>
             isStart: {{ room.start }}
+          </div>
+          <div v-else class="roomcardNone__inner">
+            <span></span> <br> <br>
           </div>
         </div>
-
-        <!-- 데이터 없는 카드 -->
-        <!-- <div class="roomcardNone" v-for="room in roomList" :key="room.no + 'roomkey'">
-          <div v-if="room.no === 'none'"  class="roomcardNone__inner" @click="pickRoom(room.no)">
-            <span>No.{{ room.no }} </span> 
-            <span>방 이름: {{ room.roomname }} </span> <br>
-            <span>모드: {{ modelist[room.mode] }} </span> 
-            <span>인원: {{ room.cur_people }} / {{ room.max_people }}</span>
-            <span>난이도: {{ difficultylist[room.difficulty] }}</span>
-            isStart: {{ room.start }}
-          </div>
-        </div> -->
       </div>
 
       <!-- 페이지네이션 -->
@@ -170,9 +161,9 @@ export default {
       return {
         // 받아온 방 정보 8개 객체를 받아옴
         roomList: [
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 0, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 1, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 2, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 2, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
@@ -439,6 +430,7 @@ export default {
   /* //Cards */
 
   .roomcard {
+    height: fit-content;
     margin: 10px; 
     width: 47%;
     transition: all 0.2s ease-in-out;
