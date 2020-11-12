@@ -32,6 +32,10 @@
 </template>
 
 <script>
+
+const storage = window.sessionStorage;
+
+
 export default {
     name: "GameRoll",
 
@@ -55,7 +59,7 @@ export default {
         this.screenResize();
         this.isStart = true;
 
-        if ( this.sendGame.shadow.id == 1) {
+        if ( this.sendGame.shadow.id == storage.getItem('id')) {
             this.isShadow = true;
         } else {
             this.isShadow = false;

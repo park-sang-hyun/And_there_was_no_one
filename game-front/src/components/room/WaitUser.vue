@@ -27,6 +27,9 @@
 </template>
 
 <script>
+const storage = window.sessionStorage;
+
+
 export default {
     name: "WaitUser",
     
@@ -72,7 +75,7 @@ export default {
         }
 
         // 본인 확인
-        if (this.userData.id == 1) {
+        if (this.userData.id == storage.getItem('id')) {
             this.isYou = true;
         }
 

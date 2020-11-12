@@ -46,4 +46,10 @@ public class RoomDaoImpl implements RoomDao {
 	public List<User> findUserInRoom(int room_id) throws SQLException {
 		return session.selectList("room_mapper.findUserInRoom", room_id);
 	}
+
+	@Override
+	public Room findRoomWithRoomid(int room_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return session.selectOne("room_mapper.findRoomWithRoomId", room_id);
+	}
 }
