@@ -4,12 +4,31 @@
       <div class="container" style="justify-content: space-between;">
         게임방 목록
         <div>
+          {{showGamerule}}
           <button type="button" class="button" @click="showCreateModal = true">방 만들기</button>
           <button type="button" class="button" @click="random">빠른 입장</button>  
-          <!-- <button>게임 설명</button> -->
+          <button type="button" class="button" @click="showGamerule=1">게임 설명</button>
         </div>
       </div>
     
+
+      <transition name="pop" appear>
+        <!-- 자유그리기 모드일 때 -->
+        <div v-if="showGamerule===1">
+            <ModeOne/>
+        </div>
+        <!-- 이어그리기 모드일 때 -->
+        <div v-if="showGamerule===2">
+            <ModeTwo/>
+        </div>
+        <!-- NO AI 모드일 때 -->
+        <div v-if="showGamerule===3">
+            <ModeThree/>
+        </div>
+        <ModeOne v-if="showGamerule===1" @close="close" @ruleStatus="ruleStatus"/>
+        <ModeTwo v-if="showGamerule===2" @close="close" @ruleStatus="ruleStatus"/>
+        <ModeThree v-if="showGamerule===3" @close="close" @ruleStatus="ruleStatus"/>
+      </transition>
 
       <transition name="fade" appear>
         <div v-if="showCreateModal" @click="showCreateModal = false" class="modal-overlay"></div>
@@ -111,7 +130,7 @@
 
       <!-- 게임방 목록 -->
       <div class="roomcards">
-        <div class="roomcard" v-for="room in roomList" :key="room.no + 'roomkey'">
+        <div class="roomcard" v-for="(room, index) in roomList" :key="(room.no, index) + 'roomkey'">
           <div v-if="room.no !='none'" class="roomcard__inner" @click="pickRoom(room.no)">
             <span>No.{{ room.no }} </span> 
             <span>방 이름: {{ room.roomname }} </span>
@@ -139,8 +158,9 @@
 </template>
 
 <script>
-// http axios 요청 주소 lobby 서버로 바꿔야함 
-// js 파일 하나 더 만들든지 해서 아래 부분 처리하고 넘어가기
+import modeOne from './ModeOne.vue';
+import modeTwo from './ModeTwo.vue';
+import modeThree from './ModeThree.vue';
 import http from "../../util/http-lobby.js";
 
 // import mode from '@/components/room/modeSetting.vue';
@@ -152,10 +172,11 @@ export default {
   
     name: 'Roomlist',
 
-    // components: {
-    //     difficulty,
-    //     mode,
-    // },
+    components: {
+        modeOne,
+        modeTwo,
+        modeThree,
+    },
 
     data: () =>{
       return {
@@ -193,7 +214,9 @@ export default {
 
         //mode
         modelist : ['자유그리기', '이어그리기', 'AI제외'],
-        difficultylist: ['하','중', '상'],
+        difficultylist: ['하', '중', '상'],
+
+        showGamerule: false,
       }
     },
     created(){
