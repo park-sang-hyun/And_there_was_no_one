@@ -228,6 +228,11 @@ export default {
             // this.link.href = this.image;
             // this.link.download = "DrawBoard";
             // this.link.click();
+        },
+        // 초기화
+        resetCanvas(){
+            this.ctx.fillStyle = "white";
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
 };

@@ -1,30 +1,14 @@
 <template>
     <div id="EndScreen">
         <!-- 게임이 완전히 종료된 상황 -->
-        <div v-if="result" class="main__story">
-            <!-- shadow인 경우 -->
-            <div v-if="youShadow">
-                <h1>당신이 이번 판의 Shadow 였습니다.</h1>
-                <div v-if="loseShadow">
-                    <h1>You Lose..</h1>
-                </div>
-                <div v-else>
-                    <h1>You Win!</h1>
-                </div>
+        <div v-if="result">
+            <div class="main__story">
+                <h1>{{ gameSentence }}</h1>
+                <p>{{ firstSentence }}</p>
+                <p>{{ secondSentence }}</p>
             </div>
 
-            <!-- 일반 유저인 경우 -->
-            <div v-else>
-                <div v-if="loseShadow">
-                    <h1>You Win!</h1>
-                </div>
-                <div v-else>
-                    <h1>You Lose..</h1>
-                </div>
-
-            </div>
-
-            <!-- 점수 출력 (공통) -->
+            <!-- 점수 (공통) / 정중앙에 출력 -->
             <div class="score">
                 <span v-if="myScore < 0">-</span><span class="js-score">{{ isScore }}</span>
             </div>
@@ -114,6 +98,9 @@ export default {
         images: {
             type: Array,
         },
+        sendSentence: {
+            type: String,
+        },
     },
 
     data() {
@@ -143,6 +130,9 @@ export default {
             total: 0,
             score: 0,
             scoreTimer: '',
+            gameSentence: '',
+            firstSentence: '',
+            secondSentence: '',
         }
     },
 
@@ -150,6 +140,7 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
+
 
         for (let step = 0 ; step < this.game.userList.length; step++) {
             // 처음에 사람 수만큼 클릭할 수 있도록 채워두기
@@ -164,6 +155,15 @@ export default {
             this.youShadow = true;
         }
 
+
+        if (this.sendSentence != '') {
+            this.firstSentence = this.sendSentence;
+            if (this.youShadow) {
+                this.gameSentence = 'You Win'; 
+            } else {
+                this.gameSentence = 'You Lose'; 
+            }
+        }
         
         // 게임 종료 여부 확인
         if (this.isFinish) {
@@ -298,11 +298,22 @@ export default {
             if (this.selectNumber != null) {
                 // 특정 유저 투표(nickname) 보냄
                 formData.append('who', this.game.userList[this.selectNumber].nickname);
+                if (this.youShadow == false) {
+                    if ( this.game.shadow.id == this.game.userList[this.selectNumber].id) {
+                        this.secondSentence = '당신은 Shadow에게 투표했습니다.';
+                        this.myScore = this.myScore + 5;
+                    } else {
+                        this.secondSentence = '당신은 탐정에게 투표했습니다.';
+                        this.myScore = this.myScore - 5;
+                    }
+                }
 
             } else {
                 // 기권
                 formData.append('who', null);
-
+                if (this.youShadow == false) {
+                    this.secondSentence = '당신은 기권했습니다.';
+                }
             }
 
 
@@ -315,7 +326,6 @@ export default {
             .catch((err) => {
                 console.log(err);
             })
-            // setTimeout(this.nextVote, 4000);
 
         },
 
@@ -356,49 +366,80 @@ export default {
             this.loseShadow = false;
 
             if (this.voteUser.length == 1) {
+                // Shadow 발각
                 if (this.game.shadow.nickname == this.game.userList[this.voteUser[0]].nickname) {
-                    this.loseShadow = true;
                     this.finishSentence = 'Shadow를 찾았습니다';
-                } else {
+
+                    // 본인이 Shadow라면 실패
+                    if (this.youShadow) {
+                        this.myScore = this.myScore - 40;
+                        this.gameSentence = 'You Lose';
+                        this.firstSentence = '당신은 Shadow임이 발각되었습니다.';
+                    } else {
+                        // 아니면 성공
+                        this.myScore = this.myScore + 30;
+                        this.gameSentence = 'You Win!';
+                        this.firstSentence = '탐정들이 Shadow를 검거했습니다.';
+                    }
+                    this.loseShadow = true;
+                } 
+                // Shadow 발각 X
+                else {
                     this.finishSentence = 'Shadow를 찾지 못했습니다.';
-                }
-            } else {
-                this.finishSentence = 'Shadow가 존재하지 않습니다.';
-                for (let k; k < this.voteUser.length; k++) {
-                    if (this.game.shadow.nickname == this.game.userList[this.voteUser[k]].nickname) {
-                        this.finishSentence = 'Shadow가 존재하지만 검거하진 못했습니다.';
+
+                    // 본인이 Shadow라면 성공
+                    if (this.youShadow) {
+                        this.myScore = this.myScore + 40;
+                        this.gameSentence = 'You Win!';
+                        this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
+                    } else {
+                        // 아니면 실패
+                        this.myScore = this.myScore - 30;
+                        this.gameSentence = 'You Lose';
+                        this.firstSentence = 'Shadow를 찾지 못했습니다.';
                     }
                 }
-            }
+            } else {
+                var flag = false;
 
-            // 점수 산정
-            // 섀도우인 경우
-            if (this.youShadow) {
-                // 실패 | 성공
-                if (this.loseShadow) {
-                    this.myScore = this.myScore - 40;
-                } else {
-                    this.myScore = this.myScore + 40;
+                for (let k; k < this.voteUser.length; k++) {
+                    if (this.game.shadow.nickname == this.game.userList[this.voteUser[k]].nickname) {
+                        flag = true;
+                        break;
+                    }
                 }
-            }
-            // 섀도우가 아닌 경우
-            else {
-                // 성공 | 실패
-                if (this.loseShadow) {
-                    this.myScore = this.myScore + 30;
+                
+                if (flag) {
+                    // 본인이 Shadow라면 성공
+                    if (this.youShadow) {
+                        this.myScore = this.myScore + 20;
+                        this.gameSentence = 'You Win';
+                        this.firstSentence = 'Shadow 임무를 간신히 성공했습니다.';
+                    } else {
+                        // 아니면 실패
+                        this.myScore = this.myScore - 20;
+                        this.gameSentence = 'You Lose..';
+                        this.finishSentence = 'Shadow를 검거하진 못했습니다.';
+                    }
                 } else {
-                    this.myScore = this.myScore - 30;
+                    // 본인이 Shadow라면 성공
+                    if (this.youShadow) {
+                        this.myScore = this.myScore + 40;
+                        this.gameSentence = 'You Win!';
+                        this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
+                    } else {
+                        // 아니면 실패
+                        this.myScore = this.myScore - 30;
+                        this.gameSentence = 'You Lose';
+                        this.finishSentence = 'Shadow가 존재하지 않습니다.';
+                    }
                 }
-            }
 
+            }
 
             this.showVoteResult = true;
 
-            setTimeout(this.finishGame, 4000);
-        },
-
-        finishGame() {
-            this.result = true; 
+            setTimeout(() => this.result = true, 4000);
         },
 
         goWaitRoom() {
@@ -406,7 +447,7 @@ export default {
                 
                 // 점수 올라가기
                 this.total = Math.abs(this.myScore);
-                setTimeout(this.changeScore, 2000);
+                setTimeout(this.changeScore, 1000);
 
                 setTimeout(() => this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }}), 9000);
             }
@@ -419,7 +460,7 @@ export default {
                         clearInterval(this.scoreTimer);
                         document.querySelector('.js-score').classList.add("animated", "bounceIn");
                     }
-                }, 5); 
+                }, 10); 
         }
 
     }
@@ -461,6 +502,7 @@ export default {
     animation-fill-mode:forwards;
 }
 
+
 .zero__middle {
     line-height: var(--heightSize);
 }
@@ -499,6 +541,9 @@ h1 {
     width: var(--imageSize);
     height: var(--imageSize);
     background-color: rgba(255, 0, 0, 0.5);
+    background-image: url('../../assets/images/check.png');
+    background-repeat : no-repeat;
+    background-size : cover;
 }
 
 .user__part {

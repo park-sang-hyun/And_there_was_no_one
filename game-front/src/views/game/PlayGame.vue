@@ -35,7 +35,7 @@
             </div>
 
             <div v-if="end" class="showScreen">
-                <EndScreen :isEnd="end" :isFinish="isFinish" :endScore="score" :game="game" :images="sendImage"/>
+                <EndScreen :isEnd="end" :isFinish="isFinish" :endScore="score" :game="game" :images="sendImage" :sendSentence="sendSentence" />
             </div>
 
             
@@ -198,6 +198,7 @@ export default {
             chatLogs: [],
             chatStatus: false,
             socket: '',
+            sendSentence: '',
         }
     },
 
@@ -316,6 +317,13 @@ export default {
         
         // before 타이머
         beforeStartTimer() {
+
+            if (this.game.mode == 1) {
+                this.$refs.modeOne.$refs.draw.resetCanvas();
+            } else if (this.game.mode == 3) {
+                this.$refs.modeOne.$refs.draw.resetCanvas();
+            }
+
             this.show = false;
             this.beforeShow = true;
             this.before.interval = setInterval(this.beforeCountDown, 1000);
@@ -364,6 +372,7 @@ export default {
                                     this.score[this.turn] = this.score[this.turn] - 20;
                                 } else if (this.game.mode == 2) {
                                     this.score[this.turn] = this.score[this.turn] - 100;
+                                    this.sendSentence = '누군가가 AI에게 발각되었습니다.';
                                     this.turnFinish();
                                 }
                             }
@@ -560,10 +569,12 @@ export default {
     width: 100%;
     height: 380px;
 	overflow-y: scroll;
-    text-overflow:ellipsis;
+    overflow-x: hidden;
+    white-space: normal;
     position : relative; 
     bottom: 0px;
 }
+
 
 .force-overflow
 {

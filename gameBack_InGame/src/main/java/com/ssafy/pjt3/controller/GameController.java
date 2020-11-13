@@ -256,14 +256,12 @@ public class GameController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@PutMapping("/mandate/{username}/{leader_username}")
+	@PutMapping("/mandate/{user_id}/{leader_user_id}")
 	@ApiOperation(value = "방장 위임", notes = "방장 위임 기능 구현")
-	public Object mandate(@PathVariable String username, @PathVariable String leader_username) {
+	public Object mandate(@PathVariable int user_id, @PathVariable int leader_user_id) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
-			int user_id = userService.findPkId(username);
-			int leader_user_id = userService.findPkId(leader_username);
 			
 			gameService.mandateLeader(leader_user_id, user_id);
 		}catch(SQLException e){
