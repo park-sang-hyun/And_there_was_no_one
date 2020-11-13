@@ -113,24 +113,9 @@ export default {
   data: () =>{
         return{
           loginFriends: [
-            {no: 1, nickname:"1 번 친구", score:3},
-            {no: 2, nickname:"2 번 친구", score:3},
-            {no: 3, nickname:"3 번 친구", score:3},
-            {no: 4, nickname:"4 번 친구", score:3},
-            {no: 5, nickname:"5 번 친구", score:3},
-            {no: 6, nickname:"6 번 친구", score:3},
-            {no: 7, nickname:"7 번 친구", score:3},
-            {no: 8, nickname:"8 번 친구", score:3},
-            {no: 9, nickname:"9 번 친구", score:3},
           ],
 
           logoutFriends: [
-            {no: 10, nickname:"10 번 친구", score:3},
-            {no: 11, nickname:"11 번 친구", score:3},
-            {no: 12, nickname:"12 번 친구", score:3},
-            {no: 13, nickname:"13 번 친구", score:3},
-            {no: 14, nickname:"14 번 친구", score:3},
-            {no: 15, nickname:"15 번 친구", score:3},
           ],
 
           // 친구 추가 요청을 보낼 때 보이는 모달을 보여줄 것인지
@@ -181,7 +166,10 @@ export default {
         // 아래 내용은 서버 기능 만들고 수정하기 
         // this.friends 변수에 친구 목록 데이터 넣기
         this.friends = res.data;
-        console.log(this.friends);
+        console.log(res.data[0].login);
+        console.log(res.data[0].logout);
+        this.loginFriends = res.data[0].login;
+        this.logoutFriends = res.data[0].logout;
       })
 
 
@@ -285,8 +273,16 @@ export default {
         http  
         .post("user/friend/make", formData)
         .then((res) => {
+          console.log("정보정보");
+          console.log(res.data.object);
+          console.log(res.data.status);
+
           this.getFriendsList(); 
           this.showAlarm(1);
+          if(res.data.status === false){
+            // room 이동
+            this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.object }});
+          }
         })
       }
       else {

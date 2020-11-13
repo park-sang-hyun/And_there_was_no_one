@@ -22,7 +22,6 @@ public class RoomServiceImpl implements RoomService{
 
 	@Override
 	public Room findRoomWithRoomid(int room_id) throws SQLException {
-		// TODO Auto-generated method stub
 		return roomDao.findRoomWithRoomid(room_id);
 	}
 }

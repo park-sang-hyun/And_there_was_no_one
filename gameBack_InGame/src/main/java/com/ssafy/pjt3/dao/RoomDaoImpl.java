@@ -22,7 +22,7 @@ public class RoomDaoImpl implements RoomDao{
 
 	@Override
 	public Room findRoomWithRoomid(int room_id) throws SQLException {
-		return session.selectOne("room_mapper.findRoomWithRoomId", room_id);
+		return session.selectOne("room_mapper.findRoomWithRoomid", room_id);
 	}
 
 }

@@ -14,7 +14,7 @@
                         </div>
                     </div>
                     <div class="friends__invite">
-                        <div class="friends__invite__button">친구 초대</div>
+                        <div class="btn btn-secondary" @click="friendsList">친구 초대</div>
                     </div>
                 </div>
 
@@ -122,6 +122,17 @@
                     </div>
                 </div>
             </div>
+            
+            <div v-if="isPopupFriend" class="change__part">
+                <div class="freinds__part">
+                    <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="modal__text" @click="inviteFriend">
+                        {{ friend.nickname }}
+                    </div>
+                    <div class="modal__button">
+                        <button @click="isPopupFriend = false;">닫기</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -136,6 +147,7 @@ import loadingOne from '@/components/room/LoadingModeOne.vue';
 import loadingTwo from '@/components/room/LoadingModeTwo.vue';
 import loadingThree from '@/components/room/LoadingModeThree.vue';
 import http from '@/util/http-game.js';
+import httplobby from '@/util/http-lobby.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
@@ -236,6 +248,8 @@ export default {
             isChangeLeader: false,
             changeLeaderNum: 0,
             myNickname: '',
+            myfriends: [],
+            isPopupFriend: false,
         }
     },
 
@@ -259,7 +273,7 @@ export default {
         })
 
         this.connect();
-        this.connectRoom();
+        // this.connectRoom();
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -364,9 +378,10 @@ export default {
                 
                 this.sendRoomMessage();
 
-                this.socketRoom.onmessage = ({data}) => {
-                    console.log('대기방 소켓');
-                    this.room = JSON.parse(data);
+                this.socketRoom.onmessage = ({roomdata}) => {
+                    console.log('대기방 소켓 데이터 받음');
+                    this.room = JSON.parse(roomdata);
+                    console.log('룸 업데이트', this.room);
                     this.checkRoom();
                 };
             };
@@ -374,7 +389,7 @@ export default {
         
         //  채팅 보내기
         sendRoomMessage() {
-            this.socketRoom.send(JSON.stringify({ room_id: this.room.id }));
+            this.socketRoom.send(JSON.stringify({ room_id: this.room.id })); 
         },
 
         // 채팅 부분
@@ -399,6 +414,7 @@ export default {
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
+            console.log("나 채팅!!")
             if (Data != '' && this.myNickname != '') {
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
             }
@@ -434,7 +450,7 @@ export default {
 
         // 방 나가기
         ExitRoom() {
-
+            // this.sendRoomMessage();
             http
             .delete(`game/leave/${storage.getItem('id')}`)
             .then((res) => {
@@ -499,6 +515,33 @@ export default {
             .catch((err) => {
                 console.log(err);
             })
+        },
+
+        // 친구 리스트 가져오기
+        friendsList() {
+            httplobby
+            .get(`user/loginFriend/list/${storage.getItem('id')}`)
+            .then((res) => {
+                console.log(res.data);
+                this.myfriends = res.data;
+                this.isPopupFriend = true;
+            })
+        },
+
+        // 친구 초대
+        inviteFriend(event) {
+            var ID = event.target.id.split('-');
+            var formData = new FormData;
+            formData.append('from_id', storage.getItem('id'));
+            formData.append('to_nickname', ID[0]);
+            formData.append('room_id', this.room.id);
+
+            httplobby
+            .post('alarm/inviteGame', formData)
+            .then((res) => {
+                console.log(res.data);
+            })
+
         },
         
 
@@ -616,19 +659,18 @@ export default {
 /* 개별 style */
 /* 상단 우측 버튼 */
 .friends__invite {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: fixed;
+    right: 15px;
+    top: 0px;
 }
 
 .friends__invite__button {
-    padding: 10px;
+    padding: 0px 10px;
     background-color: green;
     border: none;
     border-radius: 20px;
-    height: 50%;
     color: white;
+    height: 50px !important;
 }
 
 

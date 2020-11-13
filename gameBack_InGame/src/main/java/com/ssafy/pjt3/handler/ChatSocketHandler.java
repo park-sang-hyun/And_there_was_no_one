@@ -102,6 +102,8 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 			JSONObject transfer = new JSONObject();
 			transfer.put("event", event);
 			transfer.put("data", data);
+			
+			System.out.println(transfer.toJSONString());
 
 			// 해당 방의 세션들만 찾아서 메시지를 발송해준다.
 			for (String k : temp.keySet()) {

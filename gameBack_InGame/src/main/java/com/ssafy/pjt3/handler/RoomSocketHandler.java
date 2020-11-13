@@ -17,7 +17,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.service.RoomService;
+import com.ssafy.pjt3.service.UserService;
 
 @Component
 public class RoomSocketHandler extends TextWebSocketHandler {
@@ -28,6 +30,9 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 
 	@Autowired
 	RoomService roomService;
+	
+	@Autowired
+	UserService userService;
 	
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -87,10 +92,10 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 		String msg = message.getPayload();
 		JSONObject obj = jsonToObjectParser(msg);
 		
-		int temp_rN = (int) obj.get("room_id");
+		long t = (long) obj.get("room_id");
+		int temp_rN = (int) t;
 		
 		System.out.println("temp_rN: " + temp_rN);
-
 		String rN = String.valueOf(obj.get("room_id")); // 어느 방에 보낼 것 인지.
 		System.out.println("rN: " + rN);
 		
@@ -110,19 +115,24 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 			}
 
 			// db에 접근해서 해당 방에 있는 유저정보를 들고옴.
-			Room room = null;
+			Room room = new Room();
 			ObjectMapper objectMapper = new ObjectMapper();
 			
 			
 			try {
+				System.out.println("asdaad");
+//				u = userService.getLeader(3);
 				room = roomService.findRoomWithRoomid(temp_rN);
+//				List<User> list = roomService.findUserInRoom(3);
+	
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
 			System.out.println("room_id: " + room.getId());
 			
-			String massage = objectMapper.writeValueAsString(room);
+//			String massage = objectMapper.writeValueAsString(room);
+//			System.out.println("massage: " + massage);
 			
 			// 해당 방의 세션들만 찾아서 메시지를 발송해준다.
 			for (String k : temp.keySet()) {
@@ -133,13 +143,15 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				WebSocketSession wss = (WebSocketSession) temp.get(k);
 				if (wss != null) {
 					try {
-						wss.sendMessage(new TextMessage(massage));
+						wss.sendMessage(new TextMessage(objectMapper.writeValueAsString(room)));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
+		
+		System.out.println("나나간다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 	
 	

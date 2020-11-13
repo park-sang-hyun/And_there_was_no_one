@@ -42,7 +42,7 @@
      <select id="findRoomWithRoomId" resultType="com.ssafy.pjt3.dto.Room">
 		select *
 		from room 
-		where id = #{room_id} 
+		where id = #{room_id}
      </select>
      
 </mapper>
