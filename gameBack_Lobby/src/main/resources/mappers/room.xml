@@ -4,7 +4,7 @@
                         
 <mapper namespace="room_mapper"> <!-- mybatis는 namespace필수!! -->
      <select id="selectAll" resultType="room">
-		select * from room where 1=1
+		select * from room where start=false
      </select>
 
      <insert id="create" useGeneratedKeys="true" keyProperty="id">
