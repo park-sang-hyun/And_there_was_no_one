@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService{
 				if(rankList.get(i).getId() == user_id) break;
 			}
 			
-			double per = index / rankList.size() * 100;
+			double per = (double)index / (double)rankList.size() * 100;
 			
 			if(per <= 1) rank = "S";
 			else if(per <= 5) rank = "A";

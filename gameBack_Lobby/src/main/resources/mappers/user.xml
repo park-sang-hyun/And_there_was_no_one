@@ -35,7 +35,7 @@
      <select id="findAllUser" resultType="com.ssafy.pjt3.dto.User">
 		select id, username, nickname, password, playcount, wincount, score
 		from user
-		order by score
+		order by score desc
 	</select>
 </mapper>
 
