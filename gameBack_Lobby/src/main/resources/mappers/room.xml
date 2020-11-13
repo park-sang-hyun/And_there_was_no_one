@@ -24,18 +24,18 @@
      </update>
      
      <select id="findRoomPkId" resultType="int">
-		select room_id from userroom where user_id=#{user_id}
+		select room_id from UserRoom where user_id=#{user_id}
      </select>
      
      <select id="findRoomWithUserid" resultType="com.ssafy.pjt3.dto.Room">
 		select r.id, r.title, r.cur_count, r.max_count, r.mode, r.difficulty, r.start
-		from userroom as ur, room as r
+		from userroom as ur, Room as r
 		where ur.user_id = #{user_id} and ur.room_id = r.id;
      </select>
      
      <select id="findUserInRoom" resultType="com.ssafy.pjt3.dto.User">
 		select u.id, u.username, u.nickname, u.password, u.playcount, u.wincount, u.score
-		from user as u, userroom as ur
+		from User as u, UserRoom as ur
 		where ur.room_id = #{room_id} and ur.user_id = u.id;
      </select>
      

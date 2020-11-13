@@ -9,11 +9,16 @@
     </insert>
     
     <select id="receive" resultType="com.ssafy.pjt3.dto.Alarm">
-    	select id, from_id, to_id, content from alarm where to_id=#{user_id}
+    	select id, from_id, to_id, content from Alarm where to_id=#{user_id}
     </select>
 
     <delete id="alarmDelete">
     	delete from alarm where id = #{alarm_id}
     </delete>
+
+    <select id="findOne" resultType="com.ssafy.pjt3.dto.Alarm">
+    	select * from alarm where alarm_id=#{alarm_id}
+    </select>
+
 
 </mapper>

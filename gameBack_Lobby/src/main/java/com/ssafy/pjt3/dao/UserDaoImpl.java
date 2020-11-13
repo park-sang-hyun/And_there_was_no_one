@@ -48,4 +48,12 @@ public class UserDaoImpl implements UserDao{
 		// TODO Auto-generated method stub
 		return session.selectOne("user_mapper.selectUserWithId", user_id);
 	}
+
+	@Override
+	public int loginCheck(int user_id) throws SQLException {
+		// TODO Auto-generated method stub
+		if(session.selectOne("user_mapper.loginCheck", user_id) == null)
+			return 0;
+		else return session.selectOne("user_mapper.loginCheck", user_id);
+	}
 }
