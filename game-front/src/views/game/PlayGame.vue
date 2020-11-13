@@ -35,7 +35,13 @@
             </div>
 
             <div v-if="end" class="showScreen">
-                <EndScreen :isEnd="end" :isFinish="isFinish" :endScore="score" :game="game" :images="sendImage" :sendSentence="sendSentence" />
+                <EndScreen :isEnd="end" 
+                    :isFinish="isFinish" 
+                    :endScore="score" 
+                    :game="game" 
+                    :images="sendImage" 
+                    :sendSentence="sendSentence"
+                    :sendSocket="socket" />
             </div>
 
             
@@ -233,7 +239,7 @@ export default {
         // 본인 닉네임 찾기
         for (let k=0; k < this.game.userList.length; k++) {
             if (this.game.userList[k].id == storage.getItem('id')) {
-                this.myNickname = this.room.userList[k].nickname;
+                this.myNickname = this.game.userList[k].nickname;
                 break;
             }
         }
@@ -416,12 +422,6 @@ export default {
             };
         },
 
-        disconnect() {
-            this.socket.close();
-            this.chatStatus = false;
-            this.chatLogs = [];
-        },
-
         // 채팅 버튼
         chatMessage() {
             var s = document.getElementById("inputMessageSelect");
@@ -458,6 +458,7 @@ export default {
 
         // 게임 종료
         turnFinish() {
+            this.disconnect();
             this.end = true;
             this.finish = true;
         }

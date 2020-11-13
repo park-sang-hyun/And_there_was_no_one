@@ -156,7 +156,7 @@ public class GameController {
 		return gamedata;
 	}
 	
-	@GetMapping("/exitgame/{room_id}")
+	@PutMapping("/exitgame/{room_id}")
 	@ApiOperation(value = "게임 끝", notes = "게임이 끝났을 때 필요한 정보를 변경")
 	public Object exitgame(@PathVariable int room_id) {
 		final BasicResponse result = new BasicResponse();

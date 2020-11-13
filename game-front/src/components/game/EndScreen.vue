@@ -101,6 +101,9 @@ export default {
         sendSentence: {
             type: String,
         },
+        sendSocket: {
+            type: WebSocket,
+        },
     },
 
     data() {
@@ -133,6 +136,7 @@ export default {
             gameSentence: '',
             firstSentence: '',
             secondSentence: '',
+            
         }
     },
 
@@ -449,9 +453,25 @@ export default {
                 this.total = Math.abs(this.myScore);
                 setTimeout(this.changeScore, 1000);
 
-                setTimeout(() => this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }}), 9000);
+                setTimeout(this.goRoom, 9000);
             }
         },
+
+        goRoom() {
+
+            this.sendSocket.close();
+            
+            http
+            .put(`game/exitgame/${this.game.id}`)
+            .then((res) => {
+                this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }});
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        },
+        
+
 
         changeScore() {
             this.scoreTimer = setInterval(() => {
