@@ -13,7 +13,7 @@
         </div>
       </div>
       <form @submit.prevent="sendMessage" action="#">
-        <input v-model="message"><button type="submit">메시지 전송</button>
+        <input v-model="message"><button type="submit" style="background-color:#c3c5c73d; color:rgba(255, 254, 254, 0.6);">메시지 전송</button>
       </form>
       
     </div>
@@ -82,9 +82,10 @@ export default {
 <style lang="scss" scoped>
   .chatbox {
     border-radius: 20px;
-    background-color: #eceef155;
+    background-color: #aeb0b32f;
     height: 80%;
-    width: 100%;
+    width: 88%;
+    margin-left:7%;
     margin-top: 15px;
     padding-top: 15px;
     margin-bottom: 15px;
@@ -101,6 +102,7 @@ export default {
   input {
     width: 85%;
     margin-right: 10px;
+    background-color: #c3c5c73d;
   }
 
 .scrollbar-box
@@ -113,6 +115,7 @@ export default {
 	overflow-y: scroll;
   position : relative; 
   bottom: 0px;
+  color:rgba(255, 254, 254, 0.7);
 }
 
 .force-overflow

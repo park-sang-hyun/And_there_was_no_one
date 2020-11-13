@@ -87,18 +87,24 @@ export default {
     border-radius: 70%;
     overflow: hidden;
     margin:auto;
+    opacity:0.9;
 }
 .profile {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    opacity:0.9;
 }
 .info {
   /* background-color: rgba(255, 255, 255, 0.6); */
   padding: 20px;
+  color :rgba(255, 254, 254, 0.6);
+  font-size:20px;
+  margin-left: 20%;
 }
 .profile-wrapper {
-  background-color: #eceef155;
+  width: 80%;
+  background-color: #aeb0b32f;
   border-radius: 20px;
   margin: 20px;
   padding-top: 20px;
@@ -109,21 +115,18 @@ export default {
 .button {
     border: none;
     color: #FFF;
-    background: #42b983;
+    background: rgba(255, 254, 254, 0.151);
     appearance: none;
     font: inherit;
     border-radius: .3em;
     cursor: pointer;
     padding: 5px 10px;
     margin-bottom: 10px;
-  }
-
-
-
+    opacity:0.9;
+}
 .img {
   width: 100%;
 }
-
 .notification {
   position: relative;
   width: 20%;
@@ -140,9 +143,12 @@ export default {
   width: 1.75em;
   height: 1.75em;
   background-color: #FF4C13;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: center;
   line-height: 1.7em;
   animation: notification 3.2s ease;
+}
+.bell{
+  opacity:0.6;
 }
 </style>

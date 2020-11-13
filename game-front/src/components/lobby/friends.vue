@@ -1,15 +1,6 @@
 <template>
   <div>
-    <div class="friends-wrapper">
-      
-      <div class="btn_container" style="justify-content: space-between">
-        <p style="margin-left:20px">친구 목록</p>
-        <!-- 친구 추가버튼  -->
-        <button @click="showModal = true" class="button" style="margin:10px">+</button>
-      </div>
-
-
-      <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
+    <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
         <div v-if="showModal" @click="cancel" class="modal-overlay"></div>
       </transition>
@@ -20,7 +11,7 @@
             v-if="showModal"
             >
           <div class="btn_container">
-            <button @click="cancel" class="button">X</button>
+            <button @click="cancel" class="button" style="color: rgba(37, 37, 37, 0.788);">X</button>
           </div>
           
           <h1>친구 추가</h1>
@@ -36,7 +27,7 @@
               placeholder="닉네임"
             >
             <p>{{ errmsg }}</p>
-            <button @click="addFriend" class="button" style="margin-left:10px">요청하기</button>
+            <button @click="addFriend" class="button" style="margin-left:10px; color:rgba(37, 37, 37, 0.788);">요청하기</button>
           </div>
 
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
@@ -48,6 +39,13 @@
         </div>
       </transition>
 
+    <div class="friends-wrapper">
+      
+      <div class="btn_container" style="justify-content: space-between">
+        <p style="margin-left:20px; color:rgba(255, 254, 254, 0.6);">친구 목록</p>
+        <!-- 친구 추가버튼  -->
+        <button @click="showModal = true" class="button" style="margin:10px">+</button>
+      </div>
 
       <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
@@ -458,21 +456,23 @@ export default {
 
   .friends-wrapper {
     border-radius: 20px;
-    background-color: #eceef155;
+    background-color: #aeb0b32f;
     height: 80%;
-    width: 95%;
+    width: 80%;
     margin: 0px 20px;
     padding: 20px;
+    opacity:0.9;
   }
   
   .scrollbar-box2
   {
-    height: 250px;
+    height: 330px;
     width: 100%;
     background-color: rgba(0, 41, 0, 0);
     overflow-y: scroll;
     position : relative; 
     bottom: 0px;
+
   }
 
   .force-overflow
@@ -502,6 +502,7 @@ export default {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
     border-radius: 10px;
     background-color: #eceef155;
+    opacity:0.9;
   }
 
   #style-1::-webkit-scrollbar
@@ -528,18 +529,20 @@ export default {
   .button {
     border: none;
     color: #FFF;
-    background: #42b983;
+    background: rgba(255, 254, 254, 0.151);;
     appearance: none;
     font: inherit;
     border-radius: .3em;
     cursor: pointer;
     padding: 5px 10px;
     margin-bottom: 10px;
+    opacity:0.9;
   }
 
   .friendmodal {
     position: absolute;
     position: fixed;
+    
     top: 0;
     right: 0;
     bottom: 0;
