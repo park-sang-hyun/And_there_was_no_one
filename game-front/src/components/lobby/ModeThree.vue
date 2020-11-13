@@ -1,7 +1,6 @@
 <template>
     <!-- 게임 로딩 화면 (No AI 모드) -->
     <div id="LoadingModeThree">
-
         <div class=flexContainer>
             <div>
                 <button class="button" @click="closeRule(1)">1</button>
