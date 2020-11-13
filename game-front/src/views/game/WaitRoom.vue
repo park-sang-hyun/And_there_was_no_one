@@ -13,10 +13,8 @@
                             [{{ room.id }}]번방 {{ sendTitle }} 
                         </div>
                     </div>
-                    <div class="screen__top__right">
-                        <div>
-                            <!-- <button>초대하기</button> -->
-                        </div>
+                    <div class="friends__invite">
+                        <div class="friends__invite__button">친구 초대</div>
                     </div>
                 </div>
 
@@ -142,7 +140,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
 const socketURL = 'ws://localhost:8002/chatting';
-const userURL = 'ws://localhost:8002/chatting';
+const socketRoomURL = 'ws://localhost:8002/renewing';
 
 
 export default {
@@ -222,7 +220,8 @@ export default {
             chatMsg: '',
             chatLogs: [],
             chatStatus: false,
-            socket: '',
+            socket: null,
+            socketRoom: null,
 
             // 받아온 모드 값
             checked: {
@@ -245,8 +244,22 @@ export default {
 
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
-        this.readRoom();
+        
+        http
+        .get(`game/waitroom/${this.roomId}`)
+        .then((res) => {
+            this.room = res.data;
+            this.isSend = true;
+                
+            this.checkRoom();
+
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+
         this.connect();
+        this.connectRoom();
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -280,44 +293,31 @@ export default {
 
     methods: {
 
-        // 방 정보 조회
-        readRoom() {
-            http
-            .get(`game/waitroom/${this.roomId}`)
-            .then((res) => {
-                this.room = res.data;
-                console.log(this.room);
-                this.isSend = true;
-                    
-                // 빈자리 출력을 위해 인원 확인
-                if (this.room.cur_count < this.room.max_count) {
-                    this.EmptyCount = this.room.max_count - this.room.cur_count;
-                }
+        checkRoom() {
+            // 빈자리 출력을 위해 인원 확인
+            if (this.room.cur_count < this.room.max_count) {
+                this.EmptyCount = this.room.max_count - this.room.cur_count;
+            }
 
-                // 막아둘 자리 출력을 위한 인원 확인
-                if (this.room.max_count < 8) {
-                    this.NoneCount = 8 - this.room.max_count;
-                }
-                
-                // 본인이 방장인지 여부 확인
-                if (this.room.leader.id == storage.getItem('id')) {
-                    this.leader = true;
-                } else {
-                    this.leader = false;
-                }
+            // 막아둘 자리 출력을 위한 인원 확인
+            if (this.room.max_count < 8) {
+                this.NoneCount = 8 - this.room.max_count;
+            }
+            
+            // 본인이 방장인지 여부 확인
+            if (this.room.leader.id == storage.getItem('id')) {
+                this.leader = true;
+            } else {
+                this.leader = false;
+            }
 
-                // 본인 닉네임 찾기
-                for (let k=0; k < this.room.userList.length; k++) {
-                    if (this.room.userList[k].id == storage.getItem('id')) {
-                        this.myNickname = this.room.userList[k].nickname;
-                        break;
-                    }
+            // 본인 닉네임 찾기
+            for (let k=0; k < this.room.userList.length; k++) {
+                if (this.room.userList[k].id == storage.getItem('id')) {
+                    this.myNickname = this.room.userList[k].nickname;
+                    break;
                 }
-
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+            }
         },
 
         // 방 업데이트
@@ -335,8 +335,7 @@ export default {
             http
             .put(`game/modify/${this.room.id}`, formData)
             .then((res) => {
-                this.room.mode = this.checked.mode;
-                this.room.difficulty = this.checked.difficulty;
+                this.sendRoomMessage();
                 alert(`방 정보가 수정되었습니다.`)
             })
             .catch((err) => {
@@ -357,11 +356,31 @@ export default {
         //     }
         // },
 
+        // 대기 방 소켓 연결
+        connectRoom() {
+            console.log('대기방 소켓 연결');
+            this.socketRoom = new WebSocket(`${socketRoomURL}/${this.room.id}`);
+            this.socketRoom.onopen = () => {
+                
+                this.sendRoomMessage();
+
+                this.socketRoom.onmessage = ({data}) => {
+                    console.log('대기방 소켓');
+                    this.room = JSON.parse(data);
+                    this.checkRoom();
+                };
+            };
+        },
+        
+        //  채팅 보내기
+        sendRoomMessage() {
+            this.socketRoom.send(JSON.stringify({ room_id: this.room.id }));
+        },
 
         // 채팅 부분
         // 소켓 연결
         connect() {
-            console.log('확인');
+            console.log('채팅 소켓 연결');
             this.chatStatus = true;
             this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
             this.socket.onopen = () => {
@@ -369,6 +388,7 @@ export default {
                 
 
                 this.socket.onmessage = ({data}) => {
+                    console.log('채팅 소켓');
                     this.chatLogs.push(JSON.parse(data));
                     const chatBox = document.querySelector(".scrollbar-box");
                     chatBox.scrollTop = chatBox.scrollHeight;
@@ -418,7 +438,7 @@ export default {
             http
             .delete(`game/leave/${storage.getItem('id')}`)
             .then((res) => {
-                console.log(res.data);
+                this.sendRoomMessage();
                 // 이건 아마 리더 넘기는 건데.. 여기서 할 게 아니라 소켓 연결해서 새로 방 정보 받아와야함....
                 // if (res.data.object != null) {
                 //     this.room.leader = res.data.object;
@@ -474,7 +494,7 @@ export default {
             http
             .put(`game/mandate/${this.room.userList[this.changeLeaderNum].id}/${storage.getItem('id')}`)
             .then((res) => {
-                console.log(res.data);
+                this.sendRoomMessage();
             })
             .catch((err) => {
                 console.log(err);
@@ -526,6 +546,7 @@ export default {
 
 /* 전체 영역 3부분으로 나눔 상단 | 왼 | 오 */
 .screen__top {
+    position: relative;
     width: var(--widthSize);
     height: 80px;
     font-size: 20px;
@@ -550,6 +571,13 @@ export default {
     height: var(--mainSize);
     margin: 10px;
     /* background-color: skyblue; */
+}
+
+/* 레이아웃 상단 */
+.screen__top__left {
+    position: inline-block;
+    width: var(--leftSize);
+    height: 100%;
 }
 
 
@@ -586,6 +614,23 @@ export default {
 
 
 /* 개별 style */
+/* 상단 우측 버튼 */
+.friends__invite {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.friends__invite__button {
+    padding: 10px;
+    background-color: green;
+    border: none;
+    border-radius: 20px;
+    height: 50%;
+    color: white;
+}
+
 
 /* 우측 상단 버튼 */
 .mode__button > button {
