@@ -23,6 +23,7 @@ import com.ssafy.pjt3.dto.Topic;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.model.BasicResponse;
 import com.ssafy.pjt3.model.GameData;
+import com.ssafy.pjt3.model.UserData;
 import com.ssafy.pjt3.model.WaitRoomData;
 import com.ssafy.pjt3.service.GameService;
 import com.ssafy.pjt3.service.UserService;
@@ -52,6 +53,7 @@ public class GameController {
 	public WaitRoomData wait(@PathVariable int room_id) {
 		Room room = new Room();
 		List<User> userList = new ArrayList<>();
+		List<UserData> userListWithRank = new ArrayList<>();
 		User leader = new User();
 		WaitRoomData waitroomdata = new WaitRoomData();
 		
@@ -69,7 +71,21 @@ public class GameController {
 			waitroomdata.setStart(room.isStart());
 			waitroomdata.setLeader(leader);
 			
-			waitroomdata.setUserList(userList);
+			for(int i=0; i< userList.size(); i++) {
+				UserData ud = new UserData();
+				
+				ud.setId(userList.get(i).getId());
+				ud.setUsername(userList.get(i).getUsername());
+				ud.setNickname(userList.get(i).getNickname());
+				ud.setPlaycount(userList.get(i).getPlaycount());
+				ud.setScore(userList.get(i).getScore());
+				ud.setWincount(userList.get(i).getWincount());
+				ud.setRank(userService.getRank(userList.get(i).getId()));
+				
+				userListWithRank.add(ud);
+			}
+			
+			waitroomdata.setUserList(userListWithRank);
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -274,14 +290,12 @@ public class GameController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/kickout/{username}")
+	@DeleteMapping("/kickout/{user_id}")
 	@ApiOperation(value = "유저 강제 퇴장", notes = "방장이 유저를 강제 퇴장 시키는 기능을 구현")
-	public Object kickout(@PathVariable String username) {
+	public Object kickout(@PathVariable int user_id) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
-			int user_id = userService.findPkId(username);
-			
 			gameService.kickoutUser(user_id);
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
@@ -290,6 +304,29 @@ public class GameController {
 		
 		result.status = true;
         result.data = "강제 퇴장 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@GetMapping("/score/{user_id}/{score}/{win}")
+	@ApiOperation(value = "게임이 끝난 후 점수 변경", notes = "게임이 끝난 후 점수 변경하는 기능을 구현")
+	public Object score(@PathVariable int user_id, int score, boolean win) {
+		final BasicResponse result = new BasicResponse();
+		User user = new User();
+		
+		try {
+			user = userService.getUserwithUserId(user_id);
+			user.setPlaycount(user.getPlaycount() + 1);
+			user.setScore(score);
+			if(win == true) user.setWincount(user.getWincount() + 1);
+			
+			userService.changeScore(user);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		result.status = true;
+        result.data = "점수 변경 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }
