@@ -307,15 +307,15 @@ export default {
             console.log(res)  
             console.log(res.data)  
             console.log("방생성 완료");
-            this.enterRoom(res.data.room_id);
+            this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.room_id }});
           })
           .catch(err => {
             console.log(err)
           })
 
 
-          // 임시로 1번방으로 들어가는 느낌으로 해놓음
-          this.enterRoom(1)
+          // // 임시로 1번방으로 들어가는 느낌으로 해놓음
+          // this.enterRoom(1)
 
           this.showCreateModal = false;
           this.roomName = "";

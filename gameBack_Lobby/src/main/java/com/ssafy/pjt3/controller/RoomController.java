@@ -87,10 +87,7 @@ public class RoomController {
 	
 	@PostMapping("/create")
 	@ApiOperation(value = "방 생성", notes = "방 생성 기능을 구현")
-	public Object create(@RequestParam String title, int cur_count, int max_count, int mode, int difficulty, boolean start, String username) {
-		
-		System.out.println("room create!!!!!!!!");
-		System.out.println(username);
+	public Object create(@RequestParam String title, int cur_count, int max_count, int mode, int difficulty, boolean start, int user_id) {
 		final BasicResponse result = new BasicResponse();
 		Room room = new Room();
 		room.setTitle(title);
@@ -105,11 +102,6 @@ public class RoomController {
 		try {
 			roomService.createRoom(room);
 			int room_id = room.getId();
-//			int user_id = userService.findPkId(username);
-			
-			int user_id = Integer.parseInt(username);
-			
-			
 			
 			userroom.setLeader(true);
 			userroom.setUser_id(user_id);
