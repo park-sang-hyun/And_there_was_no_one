@@ -93,6 +93,9 @@ export default {
         sendGame: {
             type: undefined,
         },
+        sendSocket: {
+            type: WebSocket,
+        }
     },
 
     data() {
@@ -199,6 +202,7 @@ export default {
             chatStatus: false,
             socket: '',
             sendSentence: '',
+            myNickname: '',
         }
     },
 
@@ -224,6 +228,14 @@ export default {
         // 각 턴마다 점수를 위한 부분
         for (let j=0; j < this.game.cur_count; j++) {
             this.score.push(0);
+        }
+        
+        // 본인 닉네임 찾기
+        for (let k=0; k < this.game.userList.length; k++) {
+            if (this.game.userList[k].id == storage.getItem('id')) {
+                this.myNickname = this.room.userList[k].nickname;
+                break;
+            }
         }
 
         this.connect();
@@ -392,14 +404,14 @@ export default {
         // 소켓 연결
         connect() {
             this.chatStatus = true;
-            this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
+            this.socket = this.sendSocket;
+
             this.socket.onopen = () => {
-                this.chatLogs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
-                
 
                 this.socket.onmessage = ({data}) => {
-                    console.log(data)
-                    this.chatLogs.push(data);
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 };
             };
         },
@@ -417,8 +429,7 @@ export default {
             if (this.chatList[idx] === undefined) {
                 alert('메시지를 선택해주세요');
             } else {
-                // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-                this.sendMessage(this.chatList[idx]);
+                this.sendMessage(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
             }
         },
 
