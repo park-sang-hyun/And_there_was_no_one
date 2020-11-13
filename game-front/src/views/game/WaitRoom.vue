@@ -8,8 +8,15 @@
                 <!-- 화면 상단 -->
                 <div class="screen__top">
                     <!-- 방제목 -->
-                    <div class="room__title">
-                        [{{ room.id }}]번방 {{ sendTitle }} 
+                    <div class="screen__top__left">
+                        <div class="room__title">
+                            [{{ room.id }}]번방 {{ sendTitle }} 
+                        </div>
+                    </div>
+                    <div class="screen__top__right">
+                        <div>
+                            <!-- <button>초대하기</button> -->
+                        </div>
                     </div>
                 </div>
 
@@ -74,10 +81,9 @@
                                 <div class="force-overflow" >
                                     <!-- <br/> -->
                                     <div v-for="(log, index) in chatLogs" :key="index + 'chatKey'">
-                                        <!-- <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span> -->
-                                        {{ log }}
+                                        <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
                                     </div>
-                                    <br/>
+                                    <!-- <br/> -->
                                 </div>
                             </div>
                         </div>
@@ -136,6 +142,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
 const socketURL = 'ws://localhost:8002/chatting';
+const userURL = 'ws://localhost:8002/chatting';
 
 
 export default {
@@ -238,44 +245,8 @@ export default {
 
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
-
-        http
-        .get(`game/waitroom/${this.roomId}`)
-        .then((res) => {
-            this.room = res.data;
-            console.log(this.room);
-            this.isSend = true;
-            this.connect();
-                
-            // 빈자리 출력을 위해 인원 확인
-            if (this.room.cur_count < this.room.max_count) {
-                this.EmptyCount = this.room.max_count - this.room.cur_count;
-            }
-
-            // 막아둘 자리 출력을 위한 인원 확인
-            if (this.room.max_count < 8) {
-                this.NoneCount = 8 - this.room.max_count;
-            }
-            
-            // 본인이 방장인지 여부 확인
-            if (this.room.leader.id == storage.getItem('id')) {
-                this.leader = true;
-            } else {
-                this.leader = false;
-            }
-
-            // 본인 닉네임 찾기
-            for (let k=0; k < this.room.userList.length; k++) {
-                if (this.room.userList[k].id == storage.getItem('id')) {
-                    this.myNickname = this.room.userList[k].nickname;
-                    break;
-                }
-            }
-
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        this.readRoom();
+        this.connect();
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -308,6 +279,46 @@ export default {
     },
 
     methods: {
+
+        // 방 정보 조회
+        readRoom() {
+            http
+            .get(`game/waitroom/${this.roomId}`)
+            .then((res) => {
+                this.room = res.data;
+                console.log(this.room);
+                this.isSend = true;
+                    
+                // 빈자리 출력을 위해 인원 확인
+                if (this.room.cur_count < this.room.max_count) {
+                    this.EmptyCount = this.room.max_count - this.room.cur_count;
+                }
+
+                // 막아둘 자리 출력을 위한 인원 확인
+                if (this.room.max_count < 8) {
+                    this.NoneCount = 8 - this.room.max_count;
+                }
+                
+                // 본인이 방장인지 여부 확인
+                if (this.room.leader.id == storage.getItem('id')) {
+                    this.leader = true;
+                } else {
+                    this.leader = false;
+                }
+
+                // 본인 닉네임 찾기
+                for (let k=0; k < this.room.userList.length; k++) {
+                    if (this.room.userList[k].id == storage.getItem('id')) {
+                        this.myNickname = this.room.userList[k].nickname;
+                        break;
+                    }
+                }
+
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        },
 
         // 방 업데이트
         roomUpdate() {
@@ -354,41 +365,24 @@ export default {
             this.chatStatus = true;
             this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
             this.socket.onopen = () => {
-                this.chatLogs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
+                // this.chatLogs.push({ event: "연결 완료", data: 'wss://echo.websocket.org'})
                 
 
                 this.socket.onmessage = ({data}) => {
-                    console.log(data);
-                    this.chatLogs.push(data);
-                    console.log(this.chatLogs);
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 };
             };
-        },
-
-        disconnect() {
-            this.socket.close();
-            this.chatStatus = false;
-            this.chatLogs = [];
         },
 
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
             if (Data != '' && this.myNickname != '') {
-
-                const chatBox = document.querySelector(".scrollbar-box");
-
-                chatBox.scrollTop = (chatBox.scrollHeight);
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
-                
-                // this.chatLogs.push({ event: this.myNickname, data: Data });
-                // chatBox.scrollTop = (chatBox.scrollHeight);
-                // 
-                // this.chatMsg = "";  // 아래 소켓 연결 안돼서 지워지지 않음 그래서 여기서 임시로 지워줌 
-                // this.socket.send({ event: this.myNickname, data: Data });
-                // this.chatMsg = "";
-
-            } 
+            }
+            this.chatMsg = "";
         },
 
 
@@ -410,7 +404,7 @@ export default {
                 http
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
-                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id }}), 7000);
+                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -420,6 +414,7 @@ export default {
 
         // 방 나가기
         ExitRoom() {
+
             http
             .delete(`game/leave/${storage.getItem('id')}`)
             .then((res) => {
@@ -438,11 +433,7 @@ export default {
             .catch((err) => {
                 console.log(err);
             })
-        },
-
-        // playgame으로 보내기
-        goPlayGame(data) {
-            this.$router.replace({ name: 'PlayGame' , params: { sendGame: data }});
+            
         },
 
         // 선택한 설정값 변경 (모드 | 난이도)
@@ -479,17 +470,15 @@ export default {
 
         // 리더 위임
         leaderChange() {
-            var formData = new FormData;
-            formData.append('leader', this.room.userList[this.changeLeaderNum].id)
 
-            // http
-            // .put(`game/leader/${this.room.id}`, formData)
-            // .then((res) => {
-            //     console.log(res.data);
-            // })
-            // .catch((err) => {
-            //     console.log(err);
-            // })
+            http
+            .put(`game/mandate/${this.room.userList[this.changeLeaderNum].id}/${storage.getItem('id')}`)
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         },
         
 
@@ -670,7 +659,8 @@ export default {
     width: 100%;
     height: calc(var(--chatHeightSize) - 30px);
 	overflow-y: scroll;
-    text-overflow:ellipsis;
+    overflow-x: hidden;
+    white-space: normal;
     position : relative; 
     bottom: 0px;
 }

@@ -35,7 +35,13 @@
             </div>
 
             <div v-if="end" class="showScreen">
-                <EndScreen :isEnd="end" :isFinish="isFinish" :endScore="score" :game="game" :images="sendImage"/>
+                <EndScreen :isEnd="end" 
+                    :isFinish="isFinish" 
+                    :endScore="score" 
+                    :game="game" 
+                    :images="sendImage" 
+                    :sendSentence="sendSentence"
+                    :sendSocket="socket" />
             </div>
 
             
@@ -93,6 +99,9 @@ export default {
         sendGame: {
             type: undefined,
         },
+        sendSocket: {
+            type: WebSocket,
+        }
     },
 
     data() {
@@ -198,6 +207,8 @@ export default {
             chatLogs: [],
             chatStatus: false,
             socket: '',
+            sendSentence: '',
+            myNickname: '',
         }
     },
 
@@ -223,6 +234,14 @@ export default {
         // 각 턴마다 점수를 위한 부분
         for (let j=0; j < this.game.cur_count; j++) {
             this.score.push(0);
+        }
+        
+        // 본인 닉네임 찾기
+        for (let k=0; k < this.game.userList.length; k++) {
+            if (this.game.userList[k].id == storage.getItem('id')) {
+                this.myNickname = this.game.userList[k].nickname;
+                break;
+            }
         }
 
         this.connect();
@@ -316,6 +335,13 @@ export default {
         
         // before 타이머
         beforeStartTimer() {
+
+            if (this.game.mode == 1) {
+                this.$refs.modeOne.$refs.draw.resetCanvas();
+            } else if (this.game.mode == 3) {
+                this.$refs.modeOne.$refs.draw.resetCanvas();
+            }
+
             this.show = false;
             this.beforeShow = true;
             this.before.interval = setInterval(this.beforeCountDown, 1000);
@@ -364,6 +390,7 @@ export default {
                                     this.score[this.turn] = this.score[this.turn] - 20;
                                 } else if (this.game.mode == 2) {
                                     this.score[this.turn] = this.score[this.turn] - 100;
+                                    this.sendSentence = '누군가가 AI에게 발각되었습니다.';
                                     this.turnFinish();
                                 }
                             }
@@ -383,22 +410,16 @@ export default {
         // 소켓 연결
         connect() {
             this.chatStatus = true;
-            this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
+            this.socket = this.sendSocket;
+
             this.socket.onopen = () => {
-                this.chatLogs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
-                
 
                 this.socket.onmessage = ({data}) => {
-                    console.log(data)
-                    this.chatLogs.push(data);
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 };
             };
-        },
-
-        disconnect() {
-            this.socket.close();
-            this.chatStatus = false;
-            this.chatLogs = [];
         },
 
         // 채팅 버튼
@@ -408,8 +429,7 @@ export default {
             if (this.chatList[idx] === undefined) {
                 alert('메시지를 선택해주세요');
             } else {
-                // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-                this.sendMessage(this.chatList[idx]);
+                this.sendMessage(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
             }
         },
 
@@ -438,6 +458,7 @@ export default {
 
         // 게임 종료
         turnFinish() {
+            this.disconnect();
             this.end = true;
             this.finish = true;
         }
@@ -560,10 +581,12 @@ export default {
     width: 100%;
     height: 380px;
 	overflow-y: scroll;
-    text-overflow:ellipsis;
+    overflow-x: hidden;
+    white-space: normal;
     position : relative; 
     bottom: 0px;
 }
+
 
 .force-overflow
 {

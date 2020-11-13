@@ -282,9 +282,9 @@ export default {
           console.log("roomname: "+this.roomName)
           
           //임의로 정의
-          let username = sessionStorage.getItem("id");
+          let user_id = sessionStorage.getItem("id");
           let title=this.roomName;
-          let cur_count = 1;
+          let cur_count = 0;
           let max_count = this.people;
           let mode = this.mode;
           let difficulty = this.difficulty;
@@ -298,24 +298,24 @@ export default {
           formData.append("mode", mode);
           formData.append("difficulty", difficulty);
           formData.append("start", start);
-          formData.append("username", username);
+          formData.append("user_id", user_id);
 
           http
           .post("room/create", formData)
           .then((res) => {
             //Create요청 후 받은 방 번호로 페이지 이동
             console.log(res)  
-            console.log(res.data)  
+            console.log(res.data)
             console.log("방생성 완료");
-            this.enterRoom(res.data.room_id);
+            this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.room_id }});
           })
           .catch(err => {
             console.log(err)
           })
 
 
-          // 임시로 1번방으로 들어가는 느낌으로 해놓음
-          this.enterRoom(1)
+          // // 임시로 1번방으로 들어가는 느낌으로 해놓음
+          // this.enterRoom(1)
 
           this.showCreateModal = false;
           this.roomName = "";

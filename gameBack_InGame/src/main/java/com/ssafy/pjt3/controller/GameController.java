@@ -156,7 +156,7 @@ public class GameController {
 		return gamedata;
 	}
 	
-	@GetMapping("/exitgame/{room_id}")
+	@PutMapping("/exitgame/{room_id}")
 	@ApiOperation(value = "게임 끝", notes = "게임이 끝났을 때 필요한 정보를 변경")
 	public Object exitgame(@PathVariable int room_id) {
 		final BasicResponse result = new BasicResponse();
@@ -256,14 +256,12 @@ public class GameController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@PutMapping("/mandate/{username}/{leader_username}")
+	@PutMapping("/mandate/{user_id}/{leader_user_id}")
 	@ApiOperation(value = "방장 위임", notes = "방장 위임 기능 구현")
-	public Object mandate(@PathVariable String username, @PathVariable String leader_username) {
+	public Object mandate(@PathVariable int user_id, @PathVariable int leader_user_id) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
-			int user_id = userService.findPkId(username);
-			int leader_user_id = userService.findPkId(leader_username);
 			
 			gameService.mandateLeader(leader_user_id, user_id);
 		}catch(SQLException e){
