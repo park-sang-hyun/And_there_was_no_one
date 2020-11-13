@@ -46,16 +46,20 @@ public class UserServiceImpl implements UserService{
 		try {
 			List<User> rankList = userDao.findAllUser();
 			
-			int index = 0;
+			int index = 0, playcount = 0;
 			
 			for(int i=0; i<rankList.size(); i++) {
 				index++;
-				if(rankList.get(i).getId() == user_id) break;
+				if(rankList.get(i).getId() == user_id) {
+					playcount = rankList.get(i).getPlaycount();
+					break;
+				}
 			}
 			
 			double per = (double)index / (double)rankList.size() * 100;
 
-			if(per <= 1) rank = "S";
+			if(playcount == 0) rank= "F";
+			else if(per <= 1) rank = "S";
 			else if(per <= 5) rank = "A";
 			else if(per <= 10) rank = "B";
 			else if(per <= 20) rank = "C";
