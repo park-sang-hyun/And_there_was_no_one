@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService{
 			
 			double per = (double)index / (double)rankList.size() * 100;
 
-			if(playcount == 0) rank= "F";
+			if(playcount == 0) rank= "UnRank";
 			else if(per <= 1) rank = "S";
 			else if(per <= 5) rank = "A";
 			else if(per <= 10) rank = "B";
