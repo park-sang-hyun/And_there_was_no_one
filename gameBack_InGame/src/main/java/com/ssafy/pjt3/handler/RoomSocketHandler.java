@@ -87,7 +87,8 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 		String msg = message.getPayload();
 		JSONObject obj = jsonToObjectParser(msg);
 		
-		int temp_rN = (int) obj.get("room_id");
+		long t = (long) obj.get("room_id");
+		int temp_rN = (int) t;
 		
 		System.out.println("temp_rN: " + temp_rN);
 
@@ -113,7 +114,6 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 			Room room = null;
 			ObjectMapper objectMapper = new ObjectMapper();
 			
-			
 			try {
 				room = roomService.findRoomWithRoomid(temp_rN);
 			} catch (Exception e) {
@@ -121,8 +121,7 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 			}
 			
 			System.out.println("room_id: " + room.getId());
-			
-			String massage = objectMapper.writeValueAsString(room);
+		
 			
 			// 해당 방의 세션들만 찾아서 메시지를 발송해준다.
 			for (String k : temp.keySet()) {
@@ -133,7 +132,7 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				WebSocketSession wss = (WebSocketSession) temp.get(k);
 				if (wss != null) {
 					try {
-						wss.sendMessage(new TextMessage(massage));
+						wss.sendMessage(new TextMessage(objectMapper.writeValueAsString(room)));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

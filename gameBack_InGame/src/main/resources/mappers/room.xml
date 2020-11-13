@@ -15,9 +15,9 @@
      </select>
      
      <select id="findRoomWithRoomid" resultType="com.ssafy.pjt3.dto.Room">
-		select id, title, cur_count, max_count, mode, difficulty, start
+		select *
 		from room
-		where id = #{room_id}
+		where id = #{id}
      </select>
      
      <select id="findUserInRoom" resultType="com.ssafy.pjt3.dto.User">

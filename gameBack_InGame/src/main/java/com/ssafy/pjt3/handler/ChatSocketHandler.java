@@ -80,7 +80,6 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 		String msg = message.getPayload();
 		JSONObject obj = jsonToObjectParser(msg);
 		
-		
 		String event = (String) obj.get("event");
 		String rN = String.valueOf(obj.get("room_id")); // 어느 방에 보낼 것 인지.
 		System.out.println("rN: " + rN);
