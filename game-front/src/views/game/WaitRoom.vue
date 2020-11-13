@@ -8,8 +8,15 @@
                 <!-- 화면 상단 -->
                 <div class="screen__top">
                     <!-- 방제목 -->
-                    <div class="room__title">
-                        [{{ room.id }}]번방 {{ sendTitle }} 
+                    <div class="screen__top__left">
+                        <div class="room__title">
+                            [{{ room.id }}]번방 {{ sendTitle }} 
+                        </div>
+                    </div>
+                    <div class="screen__top__right">
+                        <div>
+                            <!-- <button>초대하기</button> -->
+                        </div>
                     </div>
                 </div>
 
