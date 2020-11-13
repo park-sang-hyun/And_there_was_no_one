@@ -37,7 +37,7 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 		boolean flag = false;
 		String url = session.getUri().toString();
 		System.out.println(url);
-		String room_id = url.split("/chatting/")[1];
+		String room_id = url.split("/renewing/")[1];
 
 		System.out.println(room_id);
 
@@ -88,6 +88,8 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 		JSONObject obj = jsonToObjectParser(msg);
 		
 		int temp_rN = (int) obj.get("room_id");
+		
+		System.out.println("temp_rN: " + temp_rN);
 
 		String rN = String.valueOf(obj.get("room_id")); // 어느 방에 보낼 것 인지.
 		System.out.println("rN: " + rN);
@@ -117,6 +119,8 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			System.out.println("room_id: " + room.getId());
 			
 			String massage = objectMapper.writeValueAsString(room);
 			
