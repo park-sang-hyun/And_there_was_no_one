@@ -135,6 +135,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
 const socketURL = 'ws://localhost:8002/chatting';
+const userURL = 'ws://localhost:8002/chatting';
 
 
 export default {
@@ -237,44 +238,8 @@ export default {
 
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
-
-        http
-        .get(`game/waitroom/${this.roomId}`)
-        .then((res) => {
-            this.room = res.data;
-            console.log(this.room);
-            this.isSend = true;
-            this.connect();
-                
-            // 빈자리 출력을 위해 인원 확인
-            if (this.room.cur_count < this.room.max_count) {
-                this.EmptyCount = this.room.max_count - this.room.cur_count;
-            }
-
-            // 막아둘 자리 출력을 위한 인원 확인
-            if (this.room.max_count < 8) {
-                this.NoneCount = 8 - this.room.max_count;
-            }
-            
-            // 본인이 방장인지 여부 확인
-            if (this.room.leader.id == storage.getItem('id')) {
-                this.leader = true;
-            } else {
-                this.leader = false;
-            }
-
-            // 본인 닉네임 찾기
-            for (let k=0; k < this.room.userList.length; k++) {
-                if (this.room.userList[k].id == storage.getItem('id')) {
-                    this.myNickname = this.room.userList[k].nickname;
-                    break;
-                }
-            }
-
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        this.readRoom();
+        this.connect();
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -307,6 +272,46 @@ export default {
     },
 
     methods: {
+
+        // 방 정보 조회
+        readRoom() {
+            http
+            .get(`game/waitroom/${this.roomId}`)
+            .then((res) => {
+                this.room = res.data;
+                console.log(this.room);
+                this.isSend = true;
+                    
+                // 빈자리 출력을 위해 인원 확인
+                if (this.room.cur_count < this.room.max_count) {
+                    this.EmptyCount = this.room.max_count - this.room.cur_count;
+                }
+
+                // 막아둘 자리 출력을 위한 인원 확인
+                if (this.room.max_count < 8) {
+                    this.NoneCount = 8 - this.room.max_count;
+                }
+                
+                // 본인이 방장인지 여부 확인
+                if (this.room.leader.id == storage.getItem('id')) {
+                    this.leader = true;
+                } else {
+                    this.leader = false;
+                }
+
+                // 본인 닉네임 찾기
+                for (let k=0; k < this.room.userList.length; k++) {
+                    if (this.room.userList[k].id == storage.getItem('id')) {
+                        this.myNickname = this.room.userList[k].nickname;
+                        break;
+                    }
+                }
+
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        },
 
         // 방 업데이트
         roomUpdate() {
@@ -359,7 +364,7 @@ export default {
                 this.socket.onmessage = ({data}) => {
                     this.chatLogs.push(JSON.parse(data));
                     const chatBox = document.querySelector(".scrollbar-box");
-                    chatBox.scrollTop = (chatBox.scrollHeight);
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 };
             };
         },
@@ -467,17 +472,15 @@ export default {
 
         // 리더 위임
         leaderChange() {
-            var formData = new FormData;
-            formData.append('leader', this.room.userList[this.changeLeaderNum].id)
 
-            // http
-            // .put(`game/leader/${this.room.id}`, formData)
-            // .then((res) => {
-            //     console.log(res.data);
-            // })
-            // .catch((err) => {
-            //     console.log(err);
-            // })
+            http
+            .put(`game/mandate/${this.room.userList[this.changeLeaderNum].id}/${storage.getItem('id')}`)
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         },
         
 
