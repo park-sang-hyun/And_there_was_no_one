@@ -272,6 +272,13 @@ export default {
         },
     },
 
+    destroyed() {
+        
+        this.socket.close();
+        this.socketRoom.close();
+
+    },
+
     methods: {
 
         readRoom() {
@@ -366,7 +373,6 @@ export default {
 
         // 대기 방 소켓 연결
         connectRoom() {
-            console.log('대기방 소켓 연결');
             this.socketRoom = new WebSocket(`${socketRoomURL}/${this.room.id}`);
             this.socketRoom.onopen = () => {
 
@@ -379,9 +385,9 @@ export default {
                     }
                     
                     if (sendRoomData.start) {
-                        this.$router.replace({ name: 'LoadingGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id, sendSocket: this.socket }});
+                        this.$router.replace({ name: 'LoadingGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id }});
                         // this.delayMode = true;
-                        // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id, sendSocket: this.socket }}), 7000);
+                        // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id }}), 7000);
                     } else {
                         this.readRoom();
                     }
@@ -391,13 +397,12 @@ export default {
         
         //  
         sendRoomMessage() {
-            this.socketRoom.send(JSON.stringify({ start: false, room_id: this.room.id })); 
+            this.socketRoom.send(JSON.stringify({ start: false, game: false, room_id: this.room.id })); 
         },
 
         // 채팅 부분
         // 소켓 연결
         connect() {
-            console.log('채팅 소켓 연결');
             this.chatStatus = true;
             this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
             this.socket.onopen = () => {
@@ -405,7 +410,6 @@ export default {
                 
 
                 this.socket.onmessage = ({data}) => {
-                    console.log('채팅 소켓');
                     this.chatLogs.push(JSON.parse(data));
                     const chatBox = document.querySelector(".scrollbar-box");
                     chatBox.scrollTop = chatBox.scrollHeight;
@@ -440,8 +444,7 @@ export default {
                 http
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
-                    this.socketRoom.send(JSON.stringify({ start: true, room_id: this.room.id, sendGame: res.data }));
-                    setTimeout(() => this.$router.replace({ name: 'LoadingGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 1000);
+                    this.socketRoom.send(JSON.stringify({ start: true, game: false, room_id: this.room.id, sendGame: res.data }));
                     // // 로딩화면 띄우기
                     // this.delayMode = true;
                     // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
@@ -543,7 +546,7 @@ export default {
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
             this.layoutCal();
         },
 

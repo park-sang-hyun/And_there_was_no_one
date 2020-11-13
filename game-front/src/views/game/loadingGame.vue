@@ -34,9 +34,6 @@ export default {
         sendGame: {
             type: Object,
         },
-        sendSocket: {
-            type: WebSocket,
-        },
         roomId: {
             type: Number,
         }
@@ -44,7 +41,7 @@ export default {
 
     created() {
 
-        setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: this.sendGame, roomId: this.roomId, sendSocket: this.sendSocket }}), 7000);
+        setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: this.sendGame, roomId: this.roomId }}), 7000);
 
     }
 
