@@ -92,29 +92,31 @@ export default {
         /* width: 1200px;
         height: 900px; */
         overflow: hidden;
+        /* animation:page-in ease-out 3s;
+        animation-fill-mode:forwards; */
     }
 
     span {
-    font-size: 100px;
-    display: inline-block;
-    text-shadow: 0 0 0 whitesmoke;
-    -webkit-animation: smoky 5s 3s both;
-            animation: smoky 5s 3s both;
+        font-size: 100px;
+        display: inline-block;
+        text-shadow: 0 0 0 whitesmoke;
+        -webkit-animation: smoky 5s 3s both;
+                animation: smoky 5s 3s both;
     }
 
     .text{
-    position: absolute;
-    top: 40%;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    text-align: center;
-    color: transparent;
-    -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-    font-family: 'East Sea Dokdo', cursive;
-    /* overflow: hidden; */
+        position: absolute;
+        top: 40%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        text-align: center;
+        color: transparent;
+        -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+        font-family: 'East Sea Dokdo', cursive;
+        /* overflow: hidden; */
     }
 
     span:nth-child(even) {

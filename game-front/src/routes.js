@@ -4,8 +4,6 @@ import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import Lobby from './views/lobby/lobby.vue'
 import forbidden from './views/forbidden/forbidden404.vue'
-import Test from './views/user/tmp.vue'
-
 
 // 로그인이 필요한 경우엔 requireAuth 를 사용한다. beforeEnter: requireAuth()
 const requireAuth = () => (to, from, next) => {
@@ -35,12 +33,6 @@ const getAuth = () => (to, from, next) => {
 
 
 export default [
-    // test 
-    {
-        path : '/test',
-        name : 'Test',
-        component : Test
-    },
     // Auth 
     {
         path : '/',
