@@ -74,10 +74,9 @@
                                 <div class="force-overflow" >
                                     <!-- <br/> -->
                                     <div v-for="(log, index) in chatLogs" :key="index + 'chatKey'">
-                                        <!-- <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span> -->
-                                        {{ log }}
+                                        <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
                                     </div>
-                                    <br/>
+                                    <!-- <br/> -->
                                 </div>
                             </div>
                         </div>
@@ -354,13 +353,13 @@ export default {
             this.chatStatus = true;
             this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
             this.socket.onopen = () => {
-                this.chatLogs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
+                // this.chatLogs.push({ event: "연결 완료", data: 'wss://echo.websocket.org'})
                 
 
                 this.socket.onmessage = ({data}) => {
-                    console.log(data);
-                    this.chatLogs.push(data);
-                    console.log(this.chatLogs);
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = (chatBox.scrollHeight);
                 };
             };
         },
@@ -375,20 +374,9 @@ export default {
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
             if (Data != '' && this.myNickname != '') {
-
-                const chatBox = document.querySelector(".scrollbar-box");
-
-                chatBox.scrollTop = (chatBox.scrollHeight);
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
-                
-                // this.chatLogs.push({ event: this.myNickname, data: Data });
-                // chatBox.scrollTop = (chatBox.scrollHeight);
-                // 
-                // this.chatMsg = "";  // 아래 소켓 연결 안돼서 지워지지 않음 그래서 여기서 임시로 지워줌 
-                // this.socket.send({ event: this.myNickname, data: Data });
-                // this.chatMsg = "";
-
-            } 
+            }
+            this.chatMsg = "";
         },
 
 
@@ -670,7 +658,8 @@ export default {
     width: 100%;
     height: calc(var(--chatHeightSize) - 30px);
 	overflow-y: scroll;
-    text-overflow:ellipsis;
+    overflow-x: hidden;
+    white-space: normal;
     position : relative; 
     bottom: 0px;
 }

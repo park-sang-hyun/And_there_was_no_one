@@ -569,10 +569,12 @@ export default {
     width: 100%;
     height: 380px;
 	overflow-y: scroll;
-    text-overflow:ellipsis;
+    overflow-x: hidden;
+    white-space: normal;
     position : relative; 
     bottom: 0px;
 }
+
 
 .force-overflow
 {
