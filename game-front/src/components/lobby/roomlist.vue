@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="room-wrapper">
-      <div class="btn_container" style="justify-content: space-between;">
-        게임방 목록
+      <div class="btn_container" style="justify-content: space-between; color:rgba(255, 254, 254, 0.6); margin-left:3%; font-size: 15px;">
+        <h3 style="color:white;">방 목록</h3>
         <div>
-          {{showGamerule}}
-          <button type="button" class="button" @click="showCreateModal = true">방 만들기</button>
-          <button type="button" class="button" @click="random">빠른 입장</button>  
-          <button type="button" class="button" @click="showGamerule=1">게임 설명</button>
+          <button type="button" class="button" style="color:white;" @click="showCreateModal = true">방 만들기</button>
+          <button type="button" class="button" style="color:white;" @click="random">빠른 입장</button>  
+          <button type="button" class="button" style="color:white;" @click="showGamerule=1">게임 설명</button>
+          <button type="button" class="button" style="color:white;" @click="gameRanking=true">랭킹</button>
         </div>
       </div>
 
@@ -15,6 +15,99 @@
         <modeOne v-if="showGamerule===1" @close="close" style="z-index: 1;"/>
         <modeTwo v-if="showGamerule===2" @close="close" style="z-index: 1;"/>
         <modeThree v-if="showGamerule===3" @close="close" style="z-index: 1;"/>
+      </transition>
+
+      <transition name="fade" appear>
+        <div v-if="gameRanking" @click="gameRanking = false" class="modal-overlay"></div>
+      </transition>
+      <!-- 방 만들기 버튼 눌렀을 때 생기는 모달 -->
+      <transition name="pop" appear>
+        <div class="roommodal" 
+            role="dialog" 
+            v-if="gameRanking"
+          >
+          <div class="container" style="width:100%">
+            <button @click="gameRanking = false" class="button">X</button>
+          </div>
+          
+          <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
+          <div class="inmodal">
+            <h1>게임 방 만들기</h1>
+            <p>방 이름을 입력하세요</p>
+            <input 
+              v-model="roomName"
+              type="text"
+              placeholder="방 이름"
+              @keyup.enter="createRoom"
+            >
+
+            <p>{{ roomCreateErr }}</p>
+            <div >
+              <div>
+                <label for="mode">Mode</label>
+              </div>
+              <div class="number-input-container">
+                <button
+                  type="button"
+                  class="button-decrement"
+                  @click="setMode('down')"
+                ></button>
+                <div class="number-input" style="text-align: center;">
+                  {{ modelist[mode-1] }}
+                </div>
+                <button
+                  type="button"
+                  class="button-increment"
+                  @click="setMode('up')"
+                ></button>
+              </div>
+            </div>
+
+            <div>
+              <div>
+                <label for="difficulty">Difficulty</label>
+              </div>
+              <div class="number-input-container">
+                <button
+                  type="button"
+                  class="button-decrement"
+                  @click="setDifficulty('down')"
+                ></button>
+                <div class="number-input">
+                  {{ difficultylist[difficulty-1] }}
+                </div>
+                <button
+                  type="button"
+                  class="button-increment"
+                  @click="setDifficulty('up')"
+                ></button>
+              </div>
+            </div>
+
+            <div>
+              <div>
+                <label for="people">Number of People</label>
+              </div>
+              <div class="number-input-container">
+                <button
+                  type="button"
+                  class="button-decrement"
+                  @click="setPeople('down')"
+                ></button>
+                <div class="number-input">
+                  {{ people }}
+                </div>
+                <button
+                  type="button"
+                  class="button-increment"
+                  @click="setPeople('up')"
+                ></button>
+              </div>
+            </div>
+
+          </div>
+        
+        </div>
       </transition>
 
       <transition name="fade" appear>
@@ -27,7 +120,7 @@
             v-if="showCreateModal"
           >
           <div class="container" style="width:100%">
-            <button @click="showCreateModal = false" class="button">X</button>
+            <button @click="showCreateModal = false" class="button" style="margin-left:100%">X</button>
           </div>
           
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
@@ -106,7 +199,7 @@
             </div>
             
 
-            <button type="button" @click="createRoom" class="button">방 생성하기</button>
+            <button type="button" @click="createRoom" class="button" style="margin-left:60%;">방 생성하기</button>
           </div>
         
         </div>
@@ -119,12 +212,12 @@
       <div class="roomcards">
         <div class="roomcard" v-for="(room, index) in roomList" :key="(room.no, index) + 'roomkey'">
           <div v-if="room.no !='none'" class="roomcard__inner" @click="pickRoom(room.no)">
-            <span>No.{{ room.no }} </span> 
-            <span>방 이름: {{ room.roomname }} </span>
-            <span>모드: {{ modelist[room.mode] }} </span> 
-            <span>인원: {{ room.cur_people }} / {{ room.max_people }}</span>
-            <span>난이도: {{ difficultylist[room.difficulty] }}</span>
-            isStart: {{ room.start }}
+            <div style="float:left; font-size:22px; text-shadow: 2px 2px 2px gray;">No.{{ room.no }} </div> 
+            <div style="text-align:left; margin-left:20%; font-size:20px;">방 제 : {{ room.roomname }} </div>
+            <div style="text-align:left; margin-left:70%; font-size:15px;">모드 : {{ modelist[room.mode] }} </div> 
+            <div style="text-align:left; margin-left:70%; font-size:15px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
+            <div style="text-align:left; margin-left:70%; font-size:15px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
+            <!-- isStart: {{ room.start }} -->
           </div>
           <div v-else class="roomcardNone__inner">
             <span></span> <br> <br>
@@ -187,6 +280,9 @@ export default {
         pageNow: 1,
         // 방만들기 모달 활성화
         showCreateModal: false,
+        // 랭킹 모달 활성화
+        gameRanking: false,
+
         roomName: "",
         // 게임방 만들기 버튼 활성화
         isRoomSubmit: false,
@@ -394,7 +490,7 @@ export default {
 
       close(rule) {
         this.showGamerule = rule;
-      }
+      },
     },
 }
 
@@ -410,8 +506,8 @@ export default {
   } */
 
   .room-wrapper {
-    padding-top: 20px;
-    padding-left: 20px;
+    padding-top: 5%;
+    padding-left: 5%;
     position: relative;
     min-width: 900px;
     min-height: 600px;
@@ -435,10 +531,12 @@ export default {
     margin: 10px; 
     width: 47%;
     transition: all 0.2s ease-in-out;
-    
+    color:white;
+    //font-size:10px;
+
     &:hover {
       .roomcard__inner {
-        background-color: #969696;
+        background-color: #aeb0b373;
         transform: scale(1.05);
         border-radius: 20px;
       }
@@ -453,8 +551,8 @@ export default {
       cursor: pointer;
       border-radius: 20px;
       
-      background-color: #eceef155;
-      color: #eceef155;
+      background-color: #aeb0b32f;
+      color: rgba(255, 254, 254, 0.8);
       font-size: 1.5em;
       text-transform: uppercase;
       text-align: center;
@@ -516,7 +614,7 @@ html {background: #88bfd4; text-align: center}
 #menu li:first-child {margin: 0}
 
 #menu li a {
-	background: #a1d0dd;
+	background:rgba(255, 254, 254, 0.6);
 	display: block;
 	border-radius: 3px;
 	padding: 0 12px;
@@ -525,17 +623,17 @@ html {background: #88bfd4; text-align: center}
 	text-decoration: none;
 	height: 27px;
 	font: 12px / 27px "PT Sans", Arial, sans-serif;
-	box-shadow: 0px 3px #7fafbc, 0px 4px 5px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 3px rgba(255, 254, 254, 0.6), 0px 4px 5px rgba(0, 0, 0, 0.11);
 	transition: all 0.3s ease;
 }
 
 
-#menu li a:hover {background: #bae0ea}
+#menu li a:hover {background: rgba(255, 254, 254, 0.9)}
 #menu li a:active {
-	background: #bae0ea;
+	background:rgba(255, 254, 254, 0.9);
 
 	bottom: -3px;
-	box-shadow: 0px 0px #7fafbc, 0px 1px 3px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 0px rgba(255, 254, 254, 0.9), 0px 1px 3px rgba(0, 0, 0, 0.11);
 }
 
 
@@ -549,8 +647,8 @@ html {background: #88bfd4; text-align: center}
 
 .button {
   border: none;
-  color: #FFF;
-  background: #42b983;
+  color: rgba(37, 37, 37, 0.788);
+  background: rgba(255, 254, 254, 0.151);
   appearance: none;
   font: inherit;
   border-radius: .3em;
@@ -633,7 +731,7 @@ html {background: #88bfd4; text-align: center}
   }
 
   .number-input {
-      width: 100%;
+      width: 100px !important;
       text-align: center;
   }
 

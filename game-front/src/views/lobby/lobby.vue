@@ -76,13 +76,20 @@ export default {
 
 <style lang="scss" scoped>
   .lobby /deep/ { 
-    border: none;;
+    border: none;
+
+    background: url('../../assets/images/background.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
   }
   .gerstner-2 {
     display: grid;
     grid-template-columns: 1fr 2.5fr;
     /* grid-column-gap: 1em; */
-    background-color: black;
+    
+    //background-color: black;
   }
   .comp {
     display: grid;
