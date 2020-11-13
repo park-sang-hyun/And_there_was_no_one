@@ -1,5 +1,9 @@
 <template>
-    <div class="container">
+  <div id="backGrd">
+    <transition v-if="goLobby" name="fade" appear>
+      <enterLobby style="z-index: 1;"/>
+    </transition>
+    <div v-else class="container">
       <form>
         <h1>Login page</h1>
         <div class="form-item">
@@ -43,10 +47,6 @@
 
 
 
-
-
-
-
       <!-- <div class="popups-cont">
         <div class="popups-cont__overlay" @click="closeHandler"></div>
         <div class="popup">
@@ -62,17 +62,20 @@
       <button type="button" class="popup-btn">Show Popup</button>  -->
 
     </div>
+  </div>
 </template>
 
 <script>
 import PV from "password-validator";
+import enterLobby from './enterLobby.vue'
+
 import http from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
 
 export default {
   components: {
-    // Logo,
+    enterLobby,
   },
   data: () => {
     return {
@@ -84,12 +87,15 @@ export default {
       },
       isSubmit: false,
 
-
-
-
+      goLobby: false,
     };
   },
   created() {
+
+    // 화면 크기 확인
+    window.addEventListener('resize', this.screenResize);
+    this.screenResize();
+
     if (storage.NickName || storage.User) this.$router.replace({name: 'Main'})
     this.component = this;
 
@@ -103,7 +109,24 @@ export default {
       .has()
       .letters();
   },
+
+  watch: {
+        // 보이는 화면 크기 변화 감지
+        window() {
+            window.removeEventListener('resize', this.screenResize);
+        },
+  },
+
   methods: {
+    // 현재 보이는 화면 크기 계산
+    screenResize() {
+        var width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
+        var height = window.innerHeight;
+        let suffix = 'px';
+        document.documentElement.style.setProperty('--widthSize', width + suffix);
+        document.documentElement.style.setProperty('--heightSize', height + suffix);
+    },
+
     setInfo(status, token, info) {
       this.status = status
       this.token = token
@@ -134,7 +157,6 @@ export default {
         storage.setItem("id", "");
         storage.setItem("alarmTab", 1);
         
-        let msg = "";
         
         http
         .post("rest-auth/login/", {
@@ -148,12 +170,10 @@ export default {
           console.log(res.data.user)
           if(res.status) {
             console.log("enter")
-            msg = "로그인되었습니다.";
             storage.setItem("token", res.data.key)
             storage.setItem("id", res.data.user)
             console.log(storage)
           }
-          alert(msg);
           this.moveFeed();
         })
         .catch((err) => {
@@ -163,19 +183,14 @@ export default {
     }
   },
 
-  moveFeed(){
-        this.$router.push("/lobby");
+  lobbyNext() {
+    this.$router.push("/lobby");
   },
 
-
-
-
-
-
-
-
-
-
+  moveFeed(){
+    this.goLobby = true;
+    var go = setTimeout( this.lobbyNext , 6000);
+  },
 
 
 
@@ -201,6 +216,11 @@ export default {
     box-sizing: border-box;
   }
 
+  :root {
+    --widthSize: 400px;
+    --heightSize: 400px;
+  }
+
   body {
     /* background: black;
     font: 16px "Helvetica Neue";
@@ -208,11 +228,21 @@ export default {
     letter-spacing: 1.5px; */
   }
 
+  #backGrd{
+    background: black;
+    width: var(--widthSize);
+    height: var(--heightSize);
+    padding-top: 18%;
+    transform:translateY(1em);
+    // animation stuff
+    animation:page-in ease-out 3s;
+    animation-fill-mode:forwards;
+  }
+
   .container {
+
     width: 360px;
-    background: ivory;
     background-color: #fff;
-    margin: 40px auto auto;
     padding: 8px 0 20px 0;
     border-radius: 4px;
     -webkit-box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);      
@@ -297,21 +327,6 @@ export default {
   a {
     text-decoration: none;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   *, *:before, *:after {
   box-sizing: border-box;
