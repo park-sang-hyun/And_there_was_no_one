@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.pjt3.dto.Alarm;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.dto.Userconnect;
 import com.ssafy.pjt3.model.BasicResponse;
 import com.ssafy.pjt3.model.LoginCheck;
+import com.ssafy.pjt3.model.UserData;
 import com.ssafy.pjt3.service.AlarmService;
 import com.ssafy.pjt3.service.UserService;
 
@@ -88,8 +88,8 @@ public class UserController {
 	@ApiOperation(value = "친구 목록", notes = "친구 목록")
 	public List<LoginCheck> showFriend(@PathVariable int user_id) {
 		List<Userconnect> list = new ArrayList<Userconnect>();
-		List<User> login = new ArrayList<User>();
-		List<User> logout = new ArrayList<User>();
+		List<UserData> login = new ArrayList<>();
+		List<UserData> logout = new ArrayList<>();
 		List<LoginCheck> list1 = new ArrayList<LoginCheck>();
 
 		try {
@@ -100,12 +100,22 @@ public class UserController {
 				int a = userService.loginCheck(list.get(i).getFriend_id());
 				System.out.println("login check: " + a);
 
+				User u = userService.findUser(list.get(i).getFriend_id());
+				
+				UserData ud = new UserData();
+				
+				ud.setId(u.getId());
+				ud.setUsername(u.getUsername());
+				ud.setNickname(u.getNickname());
+				ud.setPlaycount(u.getPlaycount());
+				ud.setScore(u.getScore());
+				ud.setWincount(u.getWincount());
+				ud.setRank(userService.getRank(u.getId()));
+				
 				if (a == 0) {
-					User u = userService.findUser(list.get(i).getFriend_id());
-					logout.add(u);
+					logout.add(ud);
 				} else {
-					User u = userService.findUser(list.get(i).getFriend_id());
-					login.add(u);
+					login.add(ud);
 				}
 			}
 			System.out.println("친구리스트");

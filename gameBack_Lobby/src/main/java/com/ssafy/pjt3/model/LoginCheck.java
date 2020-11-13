@@ -2,27 +2,30 @@ package com.ssafy.pjt3.model;
 
 import java.util.List;
 
-import com.ssafy.pjt3.dto.User;
-
 public class LoginCheck {
-	List<User> login;
-	List<User> logout;
-	public LoginCheck(List<User> login, List<User> logout) {
+	List<UserData> login;	
+	List<UserData> logout;
+	
+	public LoginCheck() {}
+
+	public LoginCheck(List<UserData> login, List<UserData> logout) {
 		this.login = login;
 		this.logout = logout;
 	}
-	public List<User> getLogin() {
+
+	public List<UserData> getLogin() {
 		return login;
 	}
-	public void setLogin(List<User> login) {
+
+	public void setLogin(List<UserData> login) {
 		this.login = login;
 	}
-	public List<User> getLogout() {
+
+	public List<UserData> getLogout() {
 		return logout;
 	}
-	public void setLogout(List<User> logout) {
+
+	public void setLogout(List<UserData> logout) {
 		this.logout = logout;
 	}
-	
-	
 }

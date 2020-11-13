@@ -31,6 +31,12 @@
 	<select id="loginCheck" resultType="int">
     	select user_id from authtoken_token where user_id = #{user_id}
      </select>
+     
+     <select id="findAllUser" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		order by score
+	</select>
 </mapper>
 
 

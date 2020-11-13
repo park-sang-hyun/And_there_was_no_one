@@ -16,4 +16,5 @@ public interface UserDao {
 	public List<Userconnect> listFriend(int user_id) throws SQLException;
 	
 	public int loginCheck(int user_id) throws SQLException;
+	public List<User> findAllUser() throws SQLException;
 }
