@@ -16,4 +16,5 @@ public interface UserService {
 	public List<Userconnect> listFriend(int user_id) throws SQLException;
 
 	public int loginCheck(int user_id) throws SQLException;
+	public String getRank(int user_id) throws SQLException;
 }

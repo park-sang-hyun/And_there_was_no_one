@@ -56,4 +56,9 @@ public class UserDaoImpl implements UserDao{
 			return 0;
 		else return session.selectOne("user_mapper.loginCheck", user_id);
 	}
+	
+	@Override
+	public List<User> findAllUser() throws SQLException {
+		return session.selectList("user_mapper.findAllUser");
+	}
 }
