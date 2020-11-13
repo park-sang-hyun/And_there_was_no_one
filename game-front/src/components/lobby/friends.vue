@@ -2,7 +2,7 @@
   <div>
     <div class="friends-wrapper">
       
-      <div class="container" style="justify-content: space-between">
+      <div class="btn_container" style="justify-content: space-between">
         <p style="margin-left:20px">친구 목록</p>
         <!-- 친구 추가버튼  -->
         <button @click="showModal = true" class="button" style="margin:10px">+</button>
@@ -19,7 +19,7 @@
             role="dialog" 
             v-if="showModal"
             >
-          <div class="container">
+          <div class="btn_container">
             <button @click="cancel" class="button">X</button>
           </div>
           
@@ -28,12 +28,14 @@
           <!-- 친구 추가 요청 보내기 전 상태 -->
           <div v-if="friendReqStatus==='요청전'">
             <p>추가할 친구의 닉네임을 입력하세요</p>
+            
             <input 
               v-model="friendName"
               type="text"
               @keyup.enter="addFriend"
               placeholder="닉네임"
             >
+            <p>{{ errmsg }}</p>
             <button @click="addFriend" class="button" style="margin-left:10px">요청하기</button>
           </div>
 
@@ -47,9 +49,6 @@
       </transition>
 
 
-
-
-
       <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
         <div v-if="showFriendReq" @click="showFriendReq = false" class="modal-overlay"></div>
@@ -61,19 +60,19 @@
             v-if="showFriendReq"
           >
 
-          <div class="container">
+          <div class="btn_container">
             <button @click="showFriendReq = false" class="button">X</button>
           </div>
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div>
             <h1>친구 추가 요청</h1>
 
-            <div class="scrollbar-box2" id="style-1" >
+            <div class="scrollbar-box2" id="style-1" style="width: 400px" >
               <div class="force-overflow" >
-                <div v-for="alarm in alarms" :key="alarm.no + 'alarmkey'" class="friend">
-                  <p>친구 추가 요청을 수락하시겠습니까?</p>
-                  <button @click="friendAns('ok')" class="button" style="margin: 5px">수락</button>
-                  <button @click="friendAns('no')" class="button" style="margin: 5px">거절</button>
+                <div v-for="(alarm, index) in alarms" :key="(alarm.no, index) + 'alarmkey'" class="friend">
+                  <p>{{alarm.content}}</p>
+                  <button @click="friendAns('ok', index), showFriendReq = false" class="button" style="margin: 5px">수락</button>
+                  <button @click="friendAns('no', index), showFriendReq = false" class="button" style="margin: 5px">거절</button>
                 </div>
               </div>
             </div>
@@ -138,16 +137,14 @@ export default {
           showModal: false,
           friendReqStatus: "요청전",
           friendName: "",
+          friendName_copy: "",
 
           websock: null,
 
           showFriendReq: false,
-          alarms: [
-            {no: 0, username: 0},
-            {no: 1, username: 1},
-            {no: 2, username: 2},
-            {no: 3, username: 3},
-          ],
+          alarms: [],
+
+          errmsg: "",
         }
   },
 
@@ -177,18 +174,15 @@ export default {
 
       // 로그인한 친구랑 로그아웃한 친구랑 데이터 따로 있으니까 꼭 따로 구분해서 저장할 것 !!!!!!
 
-      // http
-      // .get("/accounts/getFriendsList/")
-      // .then((res) => {
-      //   // 아래 내용은 서버 기능 만들고 수정하기 
-      //   // this.friends 변수에 친구 목록 데이터 넣기
-      //   this.friends = res.data;
-      // })
-
-
-
-
-
+      http
+      .get("user/friend/list/" + sessionStorage.getItem('id') + "/")
+      .then((res) => {
+        console.log(res.data)
+        // 아래 내용은 서버 기능 만들고 수정하기 
+        // this.friends 변수에 친구 목록 데이터 넣기
+        this.friends = res.data;
+        console.log(this.friends);
+      })
 
 
     },
@@ -236,32 +230,74 @@ export default {
 
     // 친구 추가 요청을 보낼 때
     addFriend() {
-      this.friendReqStatus = '응답기다림'
-      // console.log("friend Name:"+this.friendName)
-      // 소켓으로 친구 닉네임 넘겨서 친구추가요청 여기에 구현하기
-      
+      console.log("1;" +this.friendName);
+      // 이름을 입력했을 때만 가능
+      if (this.friendName) {
+        this.friendName_copy = this.friendName
+        
+        // 장고로 존재하는 유저인지 확인
+        httpCommon
+        .get("accounts/nickname/" + this.friendName + "/")
+        .then((res) => {
+          if(res.data.message === "ok") {
+            this.errmsg = "존재하지 않는 닉네임입니다.";
+            
+          }
+          else {
+            console.log("2;" +this.friendName_copy);
+                        //formData안에 값 넣기
+            let formData = new FormData();
+            formData.append("from_id", sessionStorage.getItem("id"));
+            formData.append("to_nickname", this.friendName_copy);
+            console.log(this.friendName_copy);
 
-
-
-      this.refreshFriends(11, 'login');
-      
-
+            // 스프링으로 친구추가 요청 보내기
+            http
+            .post("alarm/send/", formData
+            )
+            .then((res) => {
+              console.log("sdfsxdfgadflkaowieuosadxkljlsd")
+              console.log(res.data)
+            })
+            this.friendReqStatus = '응답기다림'
+          }
+        })
+      }
+      else {
+        this.errmsg = "닉네임을 입력해주세요"
+      }
       this.friendName = "";
     },
 
     // 친구 추가 요청 답변을 보낼 때 호출되는 메서드
-    friendAns(ans) {
+    friendAns(ans, index) {
       console.log("Ans: "+ans)
 
       // 로비서버에 소켓으로 친구 추가 요청 응답(ans 매개변수) 보내기 
       // 로비서버에서 user 테이블 안에 있는 친구 정보 수정
       // 친구가 로그아웃이거나 게임중이면 바로 친구추가 불가 메시지를 요청자가 받아야함
-
-      
-
-      // this.getFriendsList(); 
-
-
+      let formData = new FormData();
+      if (ans === 'ok') {
+        formData.append("user_id", sessionStorage.getItem('id'));
+        formData.append("friend_id", this.alarms[index].to_id);
+        formData.append("alarm_id", this.alarms[index].alarm_id);
+        console.log(formData)
+        http  
+        .post("user/friend/make", formData)
+        .then((res) => {
+          this.getFriendsList(); 
+          this.showAlarm(1);
+        })
+      }
+      else {
+        formData.append("alarm_id", this.alarms[index].alarm_id);
+        http
+        .post("alarm/delete", formData)
+        .then((res) => {
+          this.getFriendsList(); 
+          this.showAlarm(1);
+        })
+      }
 
       
     },
@@ -305,17 +341,28 @@ export default {
 
 
       // 장고 서버로 로그아웃 요청 보내기 
+      let formData = new FormData();
+      formData.append("id", sessionStorage.getItem('id'));
       httpCommon
-        .post("rest-auth/logout/", {
-          token : sessionStorage.getItem('token')
-        },
+      .post("accounts/deltoken/", formData)
+      .then((res) => {
+        console.log(res.data);
+        console.log(res.data);
+        console.log(res.data);
+        console.log(res.data);
+         httpCommon
+        .post("rest-auth/logout/", { 'headers': { 'Authorization': 'Token ' + sessionStorage.getItem('token') }}
+          // db에 token 테이블 잘 날아가는지 확인해서 제대로 로그아웃 시키기 
         )
         .then((res) => {
-          
+          //세션 정보 삭제 
+          sessionStorage.clear();
           alert("로그아웃 되었습니다");
           this.$router.push("/");
 
         })
+      })
+     
     },
 
     refreshFriends(user, status) {
@@ -356,11 +403,38 @@ export default {
       this.websock.close();
     },
 
-    showAlarm() {
-      this.showFriendReq = true;
-      console.log("sdsdfasdfdasdzfasdfxcvsf");
-      console.log("sdsdfasdfdasdzfasdfxcvsf");
-      console.log("sdsdfasdfdasdzfasdfxcvsf");
+    showAlarm(typealarm) {
+      // typealarm이 0 이면 데이터 없어도 호출 1이면 데이터 없을 때 호출 안함
+      
+      
+      http
+      .get("alarm/receive/" + sessionStorage.getItem('id') + "/")
+      .then((res) => {
+        console.log(res.data)
+        this.alarms = res.data
+        console.log("alarm: ");
+        console.log(this.alarms)
+
+        if (typealarm === 0){
+          this.showFriendReq = true;
+        }
+        else {
+          if (this.alarms.length) {
+              this.showFriendReq = true;
+          }
+          else {
+            this.showFriendReq = false;
+          }
+        }
+      })
+
+      this.reload();
+
+      
+    },
+
+    reload() {
+      this.$emit('reload', 'reload');
     }
 
     // 딜레이 함수. 이거 쓰면 그냥 폴링방식으로 계속 기다림 주의
@@ -384,9 +458,9 @@ export default {
 
   .friends-wrapper {
     border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: #eceef155;
     height: 80%;
-    width: 80%;
+    width: 95%;
     margin: 0px 20px;
     padding: 20px;
   }
@@ -405,14 +479,14 @@ export default {
   {
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
-    min-height: 251px;
+    min-height: 220px;
     margin: 15px 10px;
   }
 
   .loginfriend {
     margin: 10px;
     padding: 5px;
-    background: rgba(255, 248, 220, 0.801);
+    background :#eceef188;
     border-radius: 10px;
   }
   .logoutfriend {
@@ -425,9 +499,9 @@ export default {
   /*scrollbar STYLE 1*/
   #style-1::-webkit-scrollbar-track
   {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
     border-radius: 10px;
-    background-color: #F5F5F5;
+    background-color: #eceef155;
   }
 
   #style-1::-webkit-scrollbar
@@ -445,7 +519,7 @@ export default {
   
 
   /* 우측정렬용 컨테이너 */
-  .container {
+  .btn_container {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;

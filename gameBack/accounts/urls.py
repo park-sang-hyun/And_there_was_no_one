@@ -5,6 +5,7 @@ from . import views
 app_name = 'accounts'
 
 urlpatterns = [
+    path('deltoken/', views.deltoken),
     path('read/<int:id>/', views.read),
     path('nickname/<str:nickname>/', views.nickname),
     path('update/', views.update),

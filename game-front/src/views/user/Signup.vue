@@ -1,65 +1,72 @@
 <template>
-  <div class="container">
-    <form>
-      <h1>Signup page</h1>
-      <div class="form-item">
+  <div id="backGrd">
+    <transition name="fade" appear>
+      <enterLobby v-if="goLobby" style="z-index: 1;"/>
+    
+    <div v-else class="container">
+      <form>
+        <h1>Signup page</h1>
+        <div class="form-item">
+          <input
+            v-model="username"
+            type="text"
+            id="username"
+            placeholder="아이디를 입력하세요."
+          />
+        </div>
+        <div class="form-item">
         <input
-          v-model="username"
-          type="text"
-          id="username"
-          placeholder="아이디를 입력하세요."
-        />
-      </div>
-      <div class="form-item">
-      <input
-          v-model="nickname"
-          type="text"
-          id="nickname"
-          placeholder="닉네임을 입력하세요."
-          @keyup="nickCheck=false"
-        />
-      </div>
-      <button type="button" @click="nicknameCheck(nickname)">중복체크</button>
-      <!-- 닉네임 중복체크하기  -->
-      <div class="error-text" v-if="error.password1">{{error.password1}}</div>
-      <div class="form-item">
-        <input
-          v-model="password1"
-          type="password"
-          v-bind:class="{error : error.password1, complete:!error.password1&&password1.length!==0}"
-          id="password1"
-          @keyup="checkPasswordForm"
-          placeholder="비밀번호를 입력하세요."
-        />
-        
-      </div>
-      <!-- 비밀번호 맞는지 체크하기  -->
-      <div class="form-item">
-        <input
-          v-model="password2"
-          type="password"
-          id="password2"
-          @keyup="checkPasswordsame"
-          @keyup.enter="onSignup"
-          placeholder="비밀번호를 다시 입력하세요."
-        />
-      </div>
+            v-model="nickname"
+            type="text"
+            id="nickname"
+            placeholder="닉네임을 입력하세요."
+            @keyup="nickCheck=false"
+          />
+        </div>
+        <button type="button" @click="nicknameCheck(nickname)">중복체크</button>
+        <!-- 닉네임 중복체크하기  -->
+        <div class="error-text" v-if="error.password1">{{error.password1}}</div>
+        <div class="form-item">
+          <input
+            v-model="password1"
+            type="password"
+            v-bind:class="{error : error.password1, complete:!error.password1&&password1.length!==0}"
+            id="password1"
+            @keyup="checkPasswordForm"
+            placeholder="비밀번호를 입력하세요."
+          />
+          
+        </div>
+        <!-- 비밀번호 맞는지 체크하기  -->
+        <div class="form-item">
+          <input
+            v-model="password2"
+            type="password"
+            id="password2"
+            @keyup="checkPasswordsame"
+            @keyup.enter="onSignup"
+            placeholder="비밀번호를 다시 입력하세요."
+          />
+        </div>
 
-      <button
-        type="button"
-        class="button btn--back btn--signup"
-        @click="onSignup"
-        :disabled="!isSubmit"
-        :class="{disabled : !isSubmit}"
-      >Signup</button>
+        <button
+          type="button"
+          class="button btn--back btn--signup"
+          @click="onSignup"
+          :disabled="!isSubmit"
+          :class="{disabled : !isSubmit}"
+        >Signup</button>
 
-      <div class="add-option mt-4">
-          <div class="wrap">
-            <router-link to="/" class="btn--text">Login</router-link>
-          </div>
-      </div>
-    </form>
+        <div class="add-option mt-4">
+            <div class="wrap">
+              <router-link to="/" class="btn--text">Login</router-link>
+            </div>
+        </div>
+      </form>
+    </div>
+    </transition>
   </div>
+  
 </template>
 
 <script>
@@ -85,7 +92,8 @@ export default {
         password1: false
       },
       isSubmit: false,
-      nickCheck: false
+      nickCheck: false,
+      goLobby: false,
     };
   },
   created() {
@@ -179,8 +187,14 @@ export default {
       }
       
     },
+
+    lobbyNext() {
+      this.$router.push("/lobby");
+    },
+
     moveFeed(){
-        this.$router.push("/lobby");
+      this.goLobby = true;
+      var go = setTimeout( this.lobbyNext , 6000);
     },
 
     nicknameCheck(nick) {
@@ -231,6 +245,13 @@ export default {
     font: 16px "Helvetica Neue";
     font-weight: 200;
     letter-spacing: 1.5px; */
+  }
+
+  #backGrd{
+    background: black;
+    width: var(--widthSize);
+    height: var(--heightSize);
+    padding-top: 13%;
   }
 
   .container {

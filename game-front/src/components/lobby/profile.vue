@@ -65,12 +65,12 @@ export default {
 
     getAlarm() {
       // 친구 알람 개수 받아오기 
-      // httpLobby
-      // .get("")
-      // .then((res) => {
-      //   // this.alarmCnt = res.;
-      // })
-      this.alarmCnt = 2;
+      httpLobby
+      .get("alarm/count/" + sessionStorage.getItem('id') + "/" )
+      .then((res) => {
+        console.log(res.data)
+        this.alarmCnt = res.data;
+      })
     },
 
     bellclick() {
@@ -98,7 +98,7 @@ export default {
   padding: 20px;
 }
 .profile-wrapper {
-  background-color: rgba(248, 93, 170, 0.7);
+  background-color: #eceef155;
   border-radius: 20px;
   margin: 20px;
   padding-top: 20px;

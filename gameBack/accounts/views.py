@@ -9,6 +9,15 @@ from .serializers import UserSerializer
 from django.http import JsonResponse
 import json
 
+from rest_framework.authtoken.models import Token
+
+@api_view(['POST']) # read
+def deltoken(request):
+    token = Token.objects.get(user_id=request.data['id'])
+    token.delete()
+
+    return JsonResponse({'message':'done'})
+
 @api_view(['GET']) # read
 def read(request, id):
     user = get_object_or_404(User, id=id)
