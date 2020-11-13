@@ -2,6 +2,7 @@ import Login from './views/user/Login.vue'
 import Signup from './views/user/Signup.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
+import LoadingGame from './views/game/loadingGame.vue'
 import Lobby from './views/lobby/lobby.vue'
 import forbidden from './views/forbidden/forbidden404.vue'
 
@@ -52,6 +53,14 @@ export default [
         path: '/room/:roomId',
         name: 'WaitRoom',
         component: WaitRoom,
+        props: true,
+        beforeEnter: requireAuth()
+    },
+    // loading
+    {
+        path: '/loading/:roomId',
+        name: 'LoadingGame',
+        component: LoadingGame,
         props: true,
         beforeEnter: requireAuth()
     },
