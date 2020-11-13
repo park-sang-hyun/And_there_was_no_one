@@ -369,12 +369,6 @@ export default {
             };
         },
 
-        disconnect() {
-            this.socket.close();
-            this.chatStatus = false;
-            this.chatLogs = [];
-        },
-
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
@@ -403,7 +397,7 @@ export default {
                 http
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
-                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id }}), 7000);
+                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -413,6 +407,7 @@ export default {
 
         // 방 나가기
         ExitRoom() {
+
             http
             .delete(`game/leave/${storage.getItem('id')}`)
             .then((res) => {
@@ -431,11 +426,7 @@ export default {
             .catch((err) => {
                 console.log(err);
             })
-        },
-
-        // playgame으로 보내기
-        goPlayGame(data) {
-            this.$router.replace({ name: 'PlayGame' , params: { sendGame: data }});
+            
         },
 
         // 선택한 설정값 변경 (모드 | 난이도)
