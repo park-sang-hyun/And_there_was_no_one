@@ -92,6 +92,7 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 		String msg = message.getPayload();
 		JSONObject obj = jsonToObjectParser(msg);
 		
+		System.out.println("fffff:"+ obj.toJSONString());
 		long t = (long) obj.get("room_id");
 		int temp_rN = (int) t;
 		
@@ -114,22 +115,22 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				}
 			}
 
-			// db에 접근해서 해당 방에 있는 유저정보를 들고옴.
-			Room room = new Room();
-			ObjectMapper objectMapper = new ObjectMapper();
+//			// db에 접근해서 해당 방에 있는 유저정보를 들고옴.
+//			Room room = new Room();
+//			ObjectMapper objectMapper = new ObjectMapper();
 			
-			
-			try {
-				System.out.println("asdaad");
-//				u = userService.getLeader(3);
-				room = roomService.findRoomWithRoomid(temp_rN);
-//				List<User> list = roomService.findUserInRoom(3);
-	
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			System.out.println("room_id: " + room.getId());
+//			
+//			try {
+//				System.out.println("asdaad");
+////				u = userService.getLeader(3);
+//				room = roomService.findRoomWithRoomid(temp_rN);
+////				List<User> list = roomService.findUserInRoom(3);
+//	
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			
+//			System.out.println("room_id: " + room.getId());
 			
 //			String massage = objectMapper.writeValueAsString(room);
 //			System.out.println("massage: " + massage);
@@ -143,7 +144,7 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				WebSocketSession wss = (WebSocketSession) temp.get(k);
 				if (wss != null) {
 					try {
-						wss.sendMessage(new TextMessage(objectMapper.writeValueAsString(room)));
+						wss.sendMessage(new TextMessage(obj.toJSONString()));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

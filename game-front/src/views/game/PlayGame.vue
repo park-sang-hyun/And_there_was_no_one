@@ -209,6 +209,7 @@ export default {
             socket: '',
             sendSentence: '',
             myNickname: '',
+            
         }
     },
 
@@ -333,6 +334,8 @@ export default {
         },
 
         
+
+        
         // before 타이머
         beforeStartTimer() {
 
@@ -371,39 +374,44 @@ export default {
 
             this.images.push(image);
 
-            if (this.game.mode == 3) {
-                var time = setTimeout( this.turnChange, 500 );
-            } else {
-                let formData = new FormData;
-                formData.append('inputImage', image);
-                formData.append('turn', this.turn);
-                formData.append('roomId', this.game.id);
+            if (this.game.userList[this.turn].id == storage.getItem('id')) {
+                if (this.game.mode == 3) {
+                    var time = setTimeout( this.turnChange, 500 );
 
-                // ai로 이미지보내기
-                aihttp
-                .post(`objects/image/`, formData)
-                .then((res) => {
-                    if (res.data.message) {
-                        for (let i=0; i < res.data.result.length; i++) {
-                            if (res.data.result[i] == this.game.word) {
-                                if (this.game.mode == 1) {
-                                    this.score[this.turn] = this.score[this.turn] - 20;
-                                } else if (this.game.mode == 2) {
-                                    this.score[this.turn] = this.score[this.turn] - 100;
-                                    this.sendSentence = '누군가가 AI에게 발각되었습니다.';
-                                    this.turnFinish();
+                } else {
+                    let formData = new FormData;
+                    formData.append('inputImage', image);
+                    formData.append('turn', this.turn);
+                    formData.append('roomId', this.game.id);
+
+                    // ai로 이미지보내기
+                    aihttp
+                    .post(`objects/image/`, formData)
+                    .then((res) => {
+                        if (res.data.message) {
+                            for (let i=0; i < res.data.result.length; i++) {
+                                if (res.data.result[i] == this.game.word) {
+                                    if (this.game.mode == 1) {
+                                        this.score[this.turn] = this.score[this.turn] - 20;
+                                    } else if (this.game.mode == 2) {
+                                        this.score[this.turn] = this.score[this.turn] - 100;
+                                        this.sendSentence = '누군가가 AI에게 발각되었습니다.';
+                                        this.turnFinish();
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (!this.finish) {
-                        var time = setTimeout( this.turnChange, 1000 );
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
+                        if (!this.finish) {
+                            var time = setTimeout( this.turnChange, 1000 );
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
+                }
             }
+    
+            
         },
 
         // 채팅 부분
@@ -458,7 +466,6 @@ export default {
 
         // 게임 종료
         turnFinish() {
-            this.disconnect();
             this.end = true;
             this.finish = true;
         }
