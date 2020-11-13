@@ -29,4 +29,10 @@ public class AlarmDaoImpl implements AlarmDao{
 		// TODO Auto-generated method stub
 		session.delete("alarm_mapper.alarmDelete",alarm_id);
 	}
+
+	@Override
+	public Alarm findOne(int alarm_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return session.selectOne("alarm_mapper.findOne", alarm_id);
+	}
 }

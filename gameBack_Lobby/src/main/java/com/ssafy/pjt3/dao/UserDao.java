@@ -14,4 +14,6 @@ public interface UserDao {
 	public void makeFriend(Userconnect uc) throws SQLException;
 	public void deleteFriend(Userconnect uc) throws SQLException;
 	public List<Userconnect> listFriend(int user_id) throws SQLException;
+	
+	public int loginCheck(int user_id) throws SQLException;
 }

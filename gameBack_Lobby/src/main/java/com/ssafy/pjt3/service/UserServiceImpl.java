@@ -49,4 +49,10 @@ public class UserServiceImpl implements UserService{
 		return userDao.findUser(user_id);
 	}
 
+	@Override
+	public int loginCheck(int user_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return userDao.loginCheck(user_id);		
+	}
+
 }

@@ -29,4 +29,10 @@ public class AlarmServiceImpl implements AlarmService{
 		// TODO Auto-generated method stub
 		alarmDao.delete(alarm_id);
 	}
+
+	@Override
+	public Alarm findOne(int alarm_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return alarmDao.findOne(alarm_id);
+	}
 }

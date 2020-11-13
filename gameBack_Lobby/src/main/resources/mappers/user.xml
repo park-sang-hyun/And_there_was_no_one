@@ -4,7 +4,7 @@
                         
 <mapper namespace="user_mapper"> <!-- mybatis는 namespace필수!! -->
     <select id="selectPkId" parameterType="String" resultType="int">
-		select id from user where username=#{username}
+		select id from user where nickname=#{username}
     </select>
     
     <select id="selectUserWithId" resultType="com.ssafy.pjt3.dto.User">
@@ -15,8 +15,8 @@
 		select leader from userroom where user_id=#{user_id}
 	</select>
 	
-	<select id="friendList">
-    	select * from userconnect user_id = #{user_id}
+	<select id="friendList" resultType="com.ssafy.pjt3.dto.Userconnect">
+    	select * from userconnect where user_id = #{user_id}
      </select>
 	
 	<insert id="friendAccecpt">
@@ -28,6 +28,9 @@
     	delete from userconnect where user_id = #{user_id} and friend_id = #{friend_id}
      </delete>
 	
+	<select id="loginCheck" resultType="int">
+    	select user_id from authtoken_token where user_id = #{user_id}
+     </select>
 </mapper>
 
 

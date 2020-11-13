@@ -9,4 +9,6 @@ public interface AlarmService {
 	public void send(Alarm alarm) throws SQLException;
 	public List<Alarm> receive(int user_id) throws SQLException;
 	public void delete(int alarm_id) throws SQLException;
+	
+	public Alarm findOne(int alarm_id) throws SQLException;
 }
