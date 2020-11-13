@@ -18,6 +18,25 @@
 		where id=(select user_id from userroom where room_id=#{room_id} and leader=true);
 	</select>
 	
+	<select id="getUserwithUserId" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		where id=#{user_id}
+	</select>
+	
+	 <update id="changeScore" parameterType="com.ssafy.pjt3.dto.User">
+    	update user 
+     	set playcount=#{playcount},
+     	score=#{score},
+     	wincount=#{wincount}
+     	where id=#{id}
+     </update>
+     
+     <select id="findAllUser" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		order by score
+	</select>
 </mapper>
 
 

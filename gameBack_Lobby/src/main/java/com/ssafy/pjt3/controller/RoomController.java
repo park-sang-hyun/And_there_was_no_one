@@ -160,7 +160,7 @@ public class RoomController {
 	}
 	
 	@GetMapping("/enterAlarm/{user_id}/")
-	@ApiOperation(value = "방 입장", notes = "방 입장 기능을 구현(유저 가득 찼을 때, 시작됬을 때, 방이 없을 때 고려)")
+	@ApiOperation(value = "친구가 초대 했을 때 방 입장", notes = "친구가 초대 했을 때 방 입장 기능을 구현(유저 가득 찼을 때, 시작됬을 때, 방이 없을 때 고려)")
 	public Object enterAlarm(@PathVariable int user_id, @RequestParam String content) {
 		final BasicResponse result = new BasicResponse();
 		
