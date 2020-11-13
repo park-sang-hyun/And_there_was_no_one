@@ -20,7 +20,7 @@
       <!-- 유저 정보 불러오기  -->
       <div class="info">
         <p>nickname: {{ nickname }}</p>
-        <p>score: {{ score }}lv</p> 
+        <p>score: {{ score }}</p> 
       </div>
       <button class="button" @click="logout">게임 종료</button>
     </div>
