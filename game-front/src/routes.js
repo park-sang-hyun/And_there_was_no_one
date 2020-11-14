@@ -41,6 +41,7 @@ export default [
         path : '/test',
         name : 'Test',
         component : Test,
+    },
     {
         path: '/page',
         name: 'testpage',
