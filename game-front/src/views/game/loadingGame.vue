@@ -41,6 +41,8 @@ export default {
 
     created() {
 
+        console.log(this.sendGame);
+
         setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: this.sendGame, roomId: this.roomId }}), 7000);
 
     }
