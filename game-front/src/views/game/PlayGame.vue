@@ -39,8 +39,7 @@
                     :isFinish="isFinish" 
                     :endScore="score" 
                     :game="game" 
-                    :images="sendImage" 
-                    :sendSentence="sendSentence"
+                    :images="sendImage"
                     @submitVoteResult="endVoteResult"
                     ref="endscreen" />
             </div>
@@ -209,8 +208,8 @@ export default {
             chatLogs: [],
             socket: null,
             socketPlay: null,
-            sendSentence: '',
             myNickname: '',
+            youShadow: false,
             
         }
     },
@@ -238,6 +237,13 @@ export default {
         for (let j=0; j < this.game.cur_count; j++) {
             this.score.push(0);
         }
+
+        
+        // shadow 여부 확인
+        if (this.game.shadow.id == storage.getItem('id')) {
+            this.youShadow = true;
+        }
+
         
         // 본인 닉네임 찾기
         for (let k=0; k < this.game.userList.length; k++) {
@@ -325,7 +331,7 @@ export default {
                                 this.end = true;
                             }
                         } else {
-                            this.$refs.endscreen.resultCheck(PlayData.vote_result);
+                            this.$refs.endscreen.sendResultVote(PlayData.vote_result);
                         }
                     }
                     
@@ -439,8 +445,6 @@ export default {
         // mode 1,2 : 이미지 저장 후 ai로 보내기 / mode 3 : 이미지 저장 후 턴 넘기기
         sendAI(image) {
             this.images.push(image);
-            console.log('this turn:' , this.turn);
-            console.log('image:', this.images[this.turn-1]);
 
             if (this.game.userList[this.turn - 1].id == storage.getItem('id')) {
                 
@@ -465,18 +469,17 @@ export default {
                                 if (res.data.result[i] == this.game.word) {
                                     if (this.game.mode == 1) {
                                         flagAI = false;
-                                        this.score[this.turn] = this.score[this.turn] - 20;
+                                        this.score[this.turn] = (this.youShadow) ? this.score[this.turn] + 20 : this.score[this.turn] - 20;
                                         this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
                                     } else if (this.game.mode == 2) {
                                         flagAI = false;
-                                        this.score[this.turn] = this.score[this.turn] - 100;
-                                        this.sendSentence = '누군가가 AI에게 발각되었습니다.';
+                                        this.score[this.turn] = (this.youShadow) ? this.score[this.turn] + 60 : this.score[this.turn] - 60;
                                         this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: true, turn: this.turn }));
                                         // this.turnFinish();
 
                                     }
-                                    break;
                                 }
+                                break;
                             }
                             if (flagAI) {
                                     this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));

@@ -100,9 +100,6 @@ export default {
         images: {
             type: Array,
         },
-        sendSentence: {
-            type: String,
-        },
     },
 
     data() {
@@ -156,28 +153,26 @@ export default {
             }
         }
 
+
         // shadow 여부 확인
         if (this.game.shadow.id == storage.getItem('id')) {
             this.youShadow = true;
         }
 
 
-        if (this.sendSentence != '') {
-            this.firstSentence = this.sendSentence;
-            if (this.youShadow) {
-                this.gameSentence = 'You Win'; 
-            } else {
-                this.gameSentence = 'You Lose'; 
-            }
-        }
-        
         // 게임 종료 여부 확인
         if (this.isFinish) {
-            this.result = true;
+
             this.didYouWin = (this.youShadow) ? true : false;
+            this.firstSentence = '누군가가 AI에게 발각되었습니다.';
+            this.secondSentence = '투표 기회가 없었습니다';
+            this.gameSentence = (this.youShadow) ? 'You Win' : 'You Lose';
+            setTimeout(() => this.result = true, 1000);
+
         } else {
             this.result = false;
         }
+        
         //  턴 넘기기
         this.showTimer = setInterval(this.showPage, 3000);
     },
@@ -312,14 +307,14 @@ export default {
                         this.secondSentence = '당신은 탐정에게 투표했습니다.';
                         this.myScore = this.myScore - 5;
                     }
+                } else if (this.youShadow == true) {
+                    this.secondSentence = '당신은 탐정에게 한 표를 더했습니다.';
                 }
 
             } else {
                 // 기권
                 formData.append('who', null);
-                if (this.youShadow == false) {
-                    this.secondSentence = '당신은 기권했습니다.';
-                }
+                this.secondSentence = '당신은 기권했습니다.';
             }
 
 
@@ -328,8 +323,7 @@ export default {
             .then((res) => {
                 // 투표 결과 받아오기는 첫번째 턴인 사람만 하자
                 if (this.game.userList[0].id == storage.getItem('id')) {
-                    console.log('나 투표 결과 받으러 감')
-                    setTimeout(this.voteResult, 3000);
+                    setTimeout(this.voteResult, 5000);
                 }
             
             })            
@@ -361,89 +355,135 @@ export default {
 
         },
 
-        // 투표 결과가 맞는지 확인
-        resultCheck(data) {
-            // showNumber == 4
-            // this.voteUser.push(this.selectNumber);
+        sendResultVote(data) {
+
+            console.log('data 받아왔다!!', data);
+            this.voteUser = data;
+            console.log('voteUser!!', this.voteUser);
             this.showNumber = this.showNumber + 1;
             this.show[this.showNumber - 1] = false;
             this.show[this.showNumber] = true;
 
-            if (data.length == 1) {
+            setTimeout(this.resultCheck, 4000);
+        },
+
+        // 투표 결과가 맞는지 확인
+        resultCheck() {
+
+            if (this.voteUser == []) {
+                console.log('--------------------voteUser == []');
+                this.finishSentence = '모두 기권했습니다';
+                this.didYouWin = false;
+                this.myScore = this.myScore - 10;
+                this.gameSentence = 'You Lose';
+                this.firstSentence = 'Shadow를 찾지 못했습니다.';
+
+                // 본인이 Shadow라면 성공
+                if (this.youShadow) {
+                    
+                    console.log('--------------------voteUser == [] Shadow');
+                    this.didYouWin = true;
+                    this.myScore = this.myScore + 20; // 앞에서 10점 깎았으므로 10점 보정
+                    this.gameSentence = 'You Win!';
+                    this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
+                }
+                
+            }
+            
+            else if (this.voteUser.length == 1) {
+                    
+                console.log('--------------------voteUser 1명');
                 // Shadow 발각
-                if (this.game.shadow.nickname == this.game.userList[data[0]].nickname) {
+                if (this.game.shadow.nickname == this.game.userList[this.voteUser[0]].nickname) {
+                    
+                    console.log('--------------------voteUser 는 범인이었다!!!!!!');
                     this.finishSentence = 'Shadow를 찾았습니다';
+                    
+                    // 아니면 성공
+                    this.didYouWin = true;
+                    this.myScore = this.myScore + 30;
+                    this.gameSentence = 'You Win!';
+                    this.firstSentence = '탐정들이 Shadow를 검거했습니다.';
 
                     // 본인이 Shadow라면 실패
                     if (this.youShadow) {
+                        
+                        console.log('--------------------voteUser 는 범인이었는데 너구나!!!!');
                         this.didYouWin = false;
-                        this.myScore = this.myScore - 40;
+                        this.myScore = this.myScore - 70; // 30점 더했으므로 30점 보정
                         this.gameSentence = 'You Lose';
                         this.firstSentence = '당신은 Shadow임이 발각되었습니다.';
-                    } else {
-                        // 아니면 성공
-                        this.didYouWin = true;
-                        this.myScore = this.myScore + 30;
-                        this.gameSentence = 'You Win!';
-                        this.firstSentence = '탐정들이 Shadow를 검거했습니다.';
-                    }
+                    } 
                 } 
                 // Shadow 발각 X
                 else {
+                    console.log('--------------------voteUser 가 범인이 아니었다');
                     this.finishSentence = 'Shadow를 찾지 못했습니다.';
+                    // 아니면 실패
+                    this.didYouWin = false;
+                    this.myScore = this.myScore - 30;
+                    this.gameSentence = 'You Lose';
+                    this.firstSentence = 'Shadow를 찾지 못했습니다.';
 
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
+                        
+                        console.log('--------------------voteUser 는 범인이 아니었는데 너 잘 숨네');
                         this.didYouWin = true;
-                        this.myScore = this.myScore + 40;
+                        this.myScore = this.myScore + 70;
                         this.gameSentence = 'You Win!';
                         this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
-                    } else {
-                        // 아니면 실패
-                        this.didYouWin = false;
-                        this.myScore = this.myScore - 30;
-                        this.gameSentence = 'You Lose';
-                        this.firstSentence = 'Shadow를 찾지 못했습니다.';
-                    }
+                    } 
                 }
             } else {
                 var flag = false;
+                
+                console.log('--------------------voteUser 가 여러명이다');
 
-                for (let k; k < data.length; k++) {
-                    if (this.game.shadow.nickname == this.game.userList[data[k]].nickname) {
+                for (let k; k < this.voteUser.length; k++) {
+                    if (this.game.shadow.nickname == this.game.userList[this.voteUser[k]].nickname) {
                         flag = true;
                         break;
                     }
                 }
                 
                 if (flag) {
-                    // 본인이 Shadow라면 성공
-                    if (this.youShadow) {
-                        this.didYouWin = true;
-                        this.myScore = this.myScore + 20;
-                        this.gameSentence = 'You Win';
-                        this.firstSentence = 'Shadow 임무를 간신히 성공했습니다.';
-                    } else {
-                        // 아니면 실패
+                    
+                    console.log('--------------------voteUser 중에 범인이 있었는데 ㅠㅠㅠㅠ');
+                    // 아니면 실패
                         this.didYouWin = false;
                         this.myScore = this.myScore - 20;
                         this.gameSentence = 'You Lose..';
-                        this.finishSentence = 'Shadow를 검거하진 못했습니다.';
-                    }
-                } else {
+                        this.firsthSentence = 'Shadow를 검거하진 못했습니다.';
+
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
+                    
+                        console.log('--------------------voteUser 안에 들었으나 간신히 임무를 완수 했군');
                         this.didYouWin = true;
                         this.myScore = this.myScore + 40;
+                        this.gameSentence = 'You Win';
+                        this.firstSentence = 'Shadow 임무를 간신히 성공했습니다.';
+                    } 
+
+                } else {
+                    // 아니면 실패
+                    
+                    console.log('--------------------voteUser 중에 범인이 없어. 유명한들..');
+                    this.didYouWin = false;
+                    this.myScore = this.myScore - 30;
+                    this.gameSentence = 'You Lose';
+                    this.firstSentence = 'Shadow가 존재하지 않습니다.';
+
+                    // 본인이 Shadow라면 성공
+                    if (this.youShadow) {
+                    
+                        console.log('--------------------voteUser 에도 안들다니 대단하군');
+                        this.didYouWin = true;
+                        this.myScore = this.myScore + 70;
                         this.gameSentence = 'You Win!';
                         this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
-                    } else {
-                        // 아니면 실패
-                        this.didYouWin = false;
-                        this.myScore = this.myScore - 30;
-                        this.gameSentence = 'You Lose';
-                        this.finishSentence = 'Shadow가 존재하지 않습니다.';
-                    }
+                    } 
                 }
 
             }
@@ -478,7 +518,7 @@ export default {
                     }, 10); 
             } 
             // 점수 내려가기
-            else {
+            else if (this.myScore < 0 ) {
                 this.scoreTimer = setInterval(() => {
                     this.score--;
                     if (this.score == this.total) {
@@ -508,6 +548,20 @@ export default {
         // 대기방 돌아가기
         goWaitRoom() {
             
+            console.log('이겼니 ', this.gameSentence);
+            console.log('임무 완수? ', this.firstSentence);
+            console.log('투표? ', this.secondSentence);
+
+            if (this.game.userList[0].id == storage.getItem('id')) {
+                http
+                .post(`vote/voteDelete/${this.game.id}`)
+                .then((res) => {
+                    console.log('OK');
+                })
+
+            }
+            
+
             http
             .put(`game/exitgame/${this.game.id}`)
             .then((res) => {

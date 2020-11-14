@@ -91,7 +91,7 @@ export default {
 
         },
         checkTurn() {
-            if (this.isTurn == this.memNo - 1) {
+            if (this.isTurn == this.memNo) {
                 this.showColor = true;
             } else {
                 this.showColor = false;
