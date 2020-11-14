@@ -1,9 +1,9 @@
 <template>
-  <div id="backGrd">
-    <transition name="fade" appear>
-      <enterLobby v-if="goLobby" style="z-index: 1;"/>
-    
-    <div v-else class="container">
+  <!-- <div id="signupBackGrd"> -->
+    <transition v-if="goSignupLobby" name="fade" appear>
+      <enterLobby style="z-index: 1;"/>
+    </transition>
+    <div v-else class="signupcontainer">
       <form>
         <h1>Signup page</h1>
         <div class="form-item">
@@ -64,22 +64,21 @@
         </div>
       </form>
     </div>
-    </transition>
-  </div>
-  
+  <!-- </div> -->
 </template>
 
 <script>
 //import "../../components/css/user.scss";
 import PV from "password-validator";
-// import Logo from "../../components/user/Logo.vue";
+import enterLobby from './enterLobby.vue'
+
 import http from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
 
 export default {
   components: {
-    // Logo,
+    enterLobby,
   },
   data: () => {
     return {
@@ -93,10 +92,15 @@ export default {
       },
       isSubmit: false,
       nickCheck: false,
-      goLobby: false,
+      goSignupLobby: false,
     };
   },
   created() {
+
+    // 화면 크기 확인
+    window.addEventListener('resize', this.screenResize);
+    this.screenResize();
+
     if (storage.NickName || storage.User) this.$router.replace({name: 'Main'})
     this.component = this;
 
@@ -110,7 +114,24 @@ export default {
       .has()
       .letters();
   },
+
+  watch: {
+        // 보이는 화면 크기 변화 감지
+        window() {
+            window.removeEventListener('resize', this.screenResize);
+        },
+  },
+
   methods: {
+    // 현재 보이는 화면 크기 계산
+    screenResize() {
+        var width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
+        var height = window.innerHeight;
+        let suffix = 'px';
+        document.documentElement.style.setProperty('--widthSize', width + suffix);
+        document.documentElement.style.setProperty('--heightSize', height + suffix);
+    },
+
     setInfo(status, token, info) {
       this.status = status
       this.token = token
@@ -193,7 +214,7 @@ export default {
     },
 
     moveFeed(){
-      this.goLobby = true;
+      this.goSignupLobby = true;
       var go = setTimeout( this.lobbyNext , 6000);
     },
 
@@ -244,29 +265,27 @@ export default {
     box-sizing: border-box;
   }
 
-  body {
-    /* background: black;
-    font: 16px "Helvetica Neue";
-    font-weight: 200;
-    letter-spacing: 1.5px; */
+  :root {
+    --widthSize: 400px;
+    --heightSize: 400px;
   }
 
-  #backGrd{
+  #signupBackGrd{
     background: black;
     width: var(--widthSize);
     height: var(--heightSize);
     padding-top: 13%;
   }
 
-  .container {
-    width: 360px;
+  .signupcontainer {
+    width: 442px;
     background: ivory;
     background-color: #fff;
     margin: 40px auto auto;
     padding: 8px 0 20px 0;
     border-radius: 4px;
-    -webkit-box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);      
-    box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);
+    /* -webkit-box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);       */
+    /* box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75); */
   }
 
   form {
