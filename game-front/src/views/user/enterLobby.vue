@@ -1,21 +1,25 @@
 <template>
     <div id="wrap">
-        <div id="c"></div>
-        <div class="text">
-            <span></span>
-            <span>그</span>
-            <span>리</span>
-            <span>고 아</span>
-            <span>&nbsp;</span>
-            <span>&nbsp;</span>
-            <span>무</span>
-            <span>도 없</span>
-            <span>&nbsp;</span>
-            <span>&nbsp;</span>
-            <span>었</span>
-            <span>다</span>
-            <span></span>
+        <div class="black">
+            <div id="c"></div>
+            <div class="text">
+                <span></span>
+                <span>그</span>
+                <span>리</span>
+                <span>고 아</span>
+                <span>&nbsp;</span>
+                <span>&nbsp;</span>
+                <span>무</span>
+                <span>도 없</span>
+                <span>&nbsp;</span>
+                <span>&nbsp;</span>
+                <span>었</span>
+                <span>다</span>
+                <span></span>
+            </div>
+
         </div>
+
     </div>
   
 </template>
@@ -28,6 +32,7 @@ export default {
                 width: 0,
                 height: 0,
             },
+            start: false,
         }
     },
 
@@ -35,13 +40,9 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
+        this.moveFeed();
+        this.start=true;
     },
-
-    // computed: {
-    //     windowScreen() {
-    //         return this.window
-    //     },
-    // },
 
     watch: {
         // 보이는 화면 크기 변화 감지
@@ -65,6 +66,14 @@ export default {
             document.documentElement.style.setProperty('--heightSize', this.window.height + suffix);
         },
 
+        lobbyNext() {
+            this.$router.push("/lobby");
+        },
+        moveFeed(){
+            this.goLobby = true;
+            var go = setTimeout( this.lobbyNext , 6000);
+        },
+
     }
 }
 </script>
@@ -84,6 +93,10 @@ export default {
     }
 
     #wrap {
+        
+        position: absolute;
+        top:0;
+        left: 0;
         background: black;
         width: var(--widthSize);
         height: var(--heightSize);
@@ -94,6 +107,20 @@ export default {
         overflow: hidden;
         /* animation:page-in ease-out 3s;
         animation-fill-mode:forwards; */
+    }
+
+    .black {
+        -webkit-animation: fadein 2s; /* Safari and Chrome */;
+        
+    }
+
+    @-webkit-keyframes fadein { /* Safari and Chrome */
+        from {
+            opacity:0;
+        }
+        to {
+            opacity:1;
+        }
     }
 
     span {
