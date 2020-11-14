@@ -21,6 +21,5 @@ public class WebStompConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
         registry.enableSimpleBroker("/topic");   // Enables a simple in-memory broker
-
     }
 }

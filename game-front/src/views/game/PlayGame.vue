@@ -248,6 +248,7 @@ export default {
         }
 
         this.connect();
+        this.connectPlay();
 
         
         // 역할 확인 부분
@@ -375,41 +376,53 @@ export default {
 
         // mode 1,2 : 이미지 저장 후 ai로 보내기 / mode 3 : 이미지 저장 후 턴 넘기기
         sendAI(image) {
-
+console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI")
             this.images.push(image);
 
             if (this.game.userList[this.turn].id == storage.getItem('id')) {
+                console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI1")
                 if (this.game.mode == 3) {
-
-                    setTimeout(() => this.socketPlay.send(JSON.stringify({ game: true, isturn: true, finish: false, turn: this.turn })), 500 );
+console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI2")
+                    setTimeout(() => this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn })), 500 );
 
                 } else {
+                    console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI3")
                     let formData = new FormData;
                     formData.append('inputImage', image);
                     formData.append('turn', this.turn);
                     formData.append('roomId', this.game.id);
 
+                    var flagAI = true;
+
                     // ai로 이미지보내기
                     aihttp
                     .post(`objects/image/`, formData)
                     .then((res) => {
+                        console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI4")
+                        console.log(res.data);
                         if (res.data.message) {
                             for (let i=0; i < res.data.result.length; i++) {
                                 if (res.data.result[i] == this.game.word) {
                                     if (this.game.mode == 1) {
+                                        flagAI = false;
                                         this.score[this.turn] = this.score[this.turn] - 20;
-                                        this.socketPlay.send(JSON.stringify({ game: true, isturn: true, finish: false, turn: this.turn }));
+                                        this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
                                     } else if (this.game.mode == 2) {
+                                        flagAI = false;
                                         this.score[this.turn] = this.score[this.turn] - 100;
                                         this.sendSentence = '누군가가 AI에게 발각되었습니다.';
-                                        this.socketPlay.send(JSON.stringify({ game: true, isturn: true, finish: true, turn: this.turn }));
+                                        this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: true, turn: this.turn }));
                                         // this.turnFinish();
+
                                     }
                                     break;
                                 }
                             }
+                            if (flagAI) {
+                                    this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
+                            }
                         } else {
-                            this.socketPlay.send(JSON.stringify({ game: true, isturn: true, finish: false, turn: this.turn }));
+                            this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
                         }
                     })
                     .catch((err) => {
@@ -427,23 +440,28 @@ export default {
             this.socketPlay = new WebSocket(`${socketPlayURL}/${this.game.id}`);
             
             this.socketPlay.onopen = () => {
+
+                this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn, data: '게임 시작합니다.'}));
+
+
                 
                 this.socketPlay.onmessage = ({data}) => {
-                    var PlayData = JSON.parse(data);
-                    if (PlayData.finish) {
-                        this.turnFinish();
-                    } else {
-                        if (PlayData.isturn) {
-                            this.turn = PlayData.turn;
-                            if (this.turn == this.game.cur_count) {
-                                this.end = true;
-                            } else {
-                                this.beforeStartTimer();
-                            }
-                        } else {
-                            console.log(PlayData);
-                        }
-                    }
+                    console.log('play 받음');
+                    // var PlayData = JSON.parse(data);
+                    // if (PlayData.finish) {
+                    //     this.turnFinish();
+                    // } else {
+                    //     if (PlayData.isturn) {
+                    //         this.turn = PlayData.turn;
+                    //         if (this.turn == this.game.cur_count) {
+                    //             this.end = true;
+                    //         } else {
+                    //             this.beforeStartTimer();
+                    //         }
+                    //     } else {
+                    //         console.log(PlayData);
+                    //     }
+                    // }
                     
                 };
             };
