@@ -369,25 +369,9 @@ export default {
         // 투표 결과가 맞는지 확인
         resultCheck() {
 
-            if (this.voteUser == []) {
-                this.finishSentence = '모두 기권했습니다';
-                this.didYouWin = false;
-                this.myScore = this.myScore - 10;
-                this.gameSentence = 'You Lose';
-                this.firstSentence = 'Shadow를 찾지 못했습니다.';
-
-                // 본인이 Shadow라면 성공
-                if (this.youShadow) {
-                    
-                    this.didYouWin = true;
-                    this.myScore = this.myScore + 20; // 앞에서 10점 깎았으므로 10점 보정
-                    this.gameSentence = 'You Win!';
-                    this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
-                }
-                
-            }
+            this.finishSentence = '모두 기권했습니다';
             
-            else if (this.voteUser.length == 1) {
+            if (this.voteUser.length == 1) {
                     
                 // Shadow 발각
                 if (this.game.shadow.nickname == this.game.userList[this.voteUser[0]].nickname) {

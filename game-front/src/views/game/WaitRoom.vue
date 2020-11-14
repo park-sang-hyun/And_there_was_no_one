@@ -534,7 +534,6 @@ export default {
             httplobby
             .get(`user/loginFriend/list/${storage.getItem('id')}`)
             .then((res) => {
-                console.log(res.data);
                 this.myfriends = res.data;
                 this.isPopupFriend = true;
             })
@@ -551,7 +550,7 @@ export default {
             httplobby
             .post('alarm/inviteGame', formData)
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
             })
 
             this.isPopupFriend = false;

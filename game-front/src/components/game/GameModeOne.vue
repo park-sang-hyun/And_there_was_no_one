@@ -148,6 +148,7 @@ export default {
         },
 
         isYourTurn() {
+            this.yourTurn();
             this.checkImage();
             return this.isTurn
         },
@@ -180,10 +181,13 @@ export default {
 
         // 본인의 턴이면 그림 그리기를 할 수 있도록, 아니면 못하도록 막기
         yourTurn() {
-            if (this.game.userList[this.turn].id == storage.getItem('id') ) {
-                this.selectCanvas = false;
-            } else {
-                this.selectCanvas = true;
+            if (this.isTurn != 0) {
+                if (this.game.userList[this.isTurn-1].id == storage.getItem('id')) {
+                    this.selectCanvas = false;
+                } else {
+                    this.selectCanvas = true;
+                }
+
             }
         },
 
@@ -198,7 +202,7 @@ export default {
         },
 
         exitRoom() {
-            console.log('방 나가기');
+            alert('게임 중에는 나갈 수 없습니다.');
         },
 
         imgFile(image) {
@@ -251,10 +255,10 @@ export default {
 .screen__left__block {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: 40px;
     width: var(--leftSize);
-    height: var(--leftBottomSize);
-    z-index: 50;
+    height: calc(var(--leftBottomSize) - 40px);
+    z-index: 11;
 }
 
 /* 우측 전체 사이즈 */

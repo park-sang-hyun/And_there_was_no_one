@@ -324,7 +324,6 @@ export default {
                     } else {
                         if (PlayData.isturn) {
                             this.turn = PlayData.turn;
-                            console.log(this.turn);
                             if (this.turn <= this.game.cur_count) {
                                 setTimeout(this.beforeStartTimer, 1000);
                             } else {
@@ -361,7 +360,6 @@ export default {
             if (this.chatList[idx] === undefined) {
                 alert('메시지를 선택해주세요');
             } else {
-                console.log(this.chatList[idx]);
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
             }
         },
@@ -388,10 +386,10 @@ export default {
             var n = this.timer;
             if (!this.counter) {
                 this.counter = true;   
-                this.showTimer = n;
+                this.showTimer = `남은시간: ${n}`;
             } else if (n > 0) {
                 n = n - 1;
-                this.showTimer = n;
+                this.showTimer = `남은시간: ${n}`;
                 this.timer = n;
             } else {
                 clearInterval(this.interval);
@@ -427,7 +425,7 @@ export default {
             var m = this.before.timer;
             if (!this.before.counter) {
                 this.before.counter = true;
-                this.before.showTimer = `${ this.game.userList[this.turn - 1].nickname } Turn`;     
+                this.before.showTimer = `${ this.game.userList[this.turn - 1].nickname }님의 순서입니다.`;     
             } else if (m > 1) {
                 m = m - 1;
                 this.before.showTimer = `${m}`;
@@ -463,7 +461,6 @@ export default {
                     aihttp
                     .post(`objects/image/`, formData)
                     .then((res) => {
-                        console.log(res.data);
                         if (res.data.message) {
                             for (let i=0; i < res.data.result.length; i++) {
                                 if (res.data.result[i] == this.game.word) {
@@ -546,7 +543,6 @@ export default {
 /* 채팅 부분 */
 .chat__part {
     position: fixed;
-    z-index: 2;
     bottom: 40px;
     left: 0;
     width: 400px;
@@ -563,14 +559,14 @@ export default {
 }
 
 .timer__part {
+    z-index: 11;
     position: fixed;
-    left: 5%;
+    left: 2%;
     top: 10%;
     // transform: translateY(-50%);
 }
 
 .text__part {
-    width: 60px;
     height: 60px;
     color: rgba(255, 255, 255, 0.5);
     font-size: 2.5rem;
@@ -594,11 +590,12 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    color: green;
-    font-size: 4rem;
+    color: rgba(166, 32, 12, 0.7);
+    font-size: 2.5rem;
     font-weight: bold;
     font-family: 'Montserrat', 'Open Sans', sans-serif;
 }
+
 
 /* 투표 등 배경 흐리기 해야할 때 */
 .showScreen {

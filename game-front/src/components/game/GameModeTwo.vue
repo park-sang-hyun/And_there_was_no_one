@@ -24,6 +24,7 @@
                     <draw :window="windowScreen" :turnOff="!turnOff" @imgFile="imgFile" ref="draw" style="margin-right: 20%;"/>
                 </div>
             </div>
+            <div v-if="selectCanvas" class="screen__left__block"></div>
 
         </div>
 
@@ -50,6 +51,10 @@ import draw from '@/components/game/GameDraw.vue';
 import user from '@/components/game/PlayUser.vue';
 import empty from '@/components/game/EmptyUser.vue';
 import none from '@/components/game/NoneUser.vue';
+
+
+const storage = window.sessionStorage;
+
 
 export default {
     name: "GameModeTwo",
@@ -92,6 +97,7 @@ export default {
                 height: 0,
             },
             showWord: '',
+            selectCanvas: false,
         }
     },
 
@@ -142,6 +148,17 @@ export default {
             document.documentElement.style.setProperty('--leftTopSize', (this.window.height * 0.1) + suffix);
             document.documentElement.style.setProperty('--leftBottomSize', (this.window.height * 0.9) + suffix);
         },
+        // 본인의 턴이면 그림 그리기를 할 수 있도록, 아니면 못하도록 막기
+        yourTurn() {
+            if (this.isTurn != 0) {
+                if (this.game.userList[this.isTurn-1].id == storage.getItem('id')) {
+                    this.selectCanvas = false;
+                } else {
+                    this.selectCanvas = true;
+                }
+
+            }
+        },
 
         exitRoom() {
             alert('게임 중에는 나갈 수 없습니다.');
@@ -185,6 +202,15 @@ export default {
     margin: 0px;
     padding: 0px;
     /* background-color: rgba(62, 62, 62, 0.5); */
+}
+
+.screen__left__block {
+    position: absolute;
+    left: 0;
+    bottom: 40px;
+    width: var(--leftSize);
+    height: calc(var(--leftBottomSize) - 40px);
+    z-index: 11;
 }
 
 /* 이어그리기 우측 */
