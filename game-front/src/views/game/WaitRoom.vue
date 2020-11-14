@@ -134,7 +134,7 @@
                     <h1>친구 초대</h1>
 
                     <div class="scrollbar-box2" id="style-1" style="width: 400px" >
-                        <div class="force-overflow" >
+                        <div class="force-overflow2" >
                             <div class="friendList">
                                 <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friend">
                                 
@@ -328,9 +328,6 @@ export default {
                     this.ifFirst = false;
                 }
 
-                console.log(this.room);
-
-
                 // 빈자리 출력을 위해 인원 확인
                 if (this.room.cur_count < this.room.max_count) {
                     this.EmptyCount = this.room.max_count - this.room.cur_count;
@@ -392,18 +389,6 @@ export default {
 
         },
 
-        // 채팅 버튼
-        // chatMessage() {
-        //     var s = document.getElementById("inputMessageSelect");
-        //     var idx = s.options[s.selectedIndex].value;
-        //     if (this.chatList[idx] === undefined) {
-        //         alert('메시지를 선택해주세요');
-        //     } else {
-        //         // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-        //         console.log(this.chatList[idx]);
-        //     }
-        // },
-
         // 대기 방 소켓 연결
         connectRoom() {
             this.socketRoom = new WebSocket(`${socketRoomURL}/${this.room.id}`);
@@ -442,7 +427,6 @@ export default {
             this.socket.onopen = () => {
                 // this.chatLogs.push({ event: "연결 완료", data: 'wss://echo.websocket.org'})
                 
-
                 this.socket.onmessage = ({data}) => {
                     this.chatLogs.push(JSON.parse(data));
                     const chatBox = document.querySelector(".scrollbar-box");
@@ -454,7 +438,6 @@ export default {
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
-            console.log("나 채팅!!")
             if (Data != '' && this.myNickname != '') {
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
             }
@@ -479,9 +462,6 @@ export default {
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
                     this.socketRoom.send(JSON.stringify({ start: true, game: false, room_id: this.room.id, sendGame: res.data }));
-                    // // 로딩화면 띄우기
-                    // this.delayMode = true;
-                    // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -554,7 +534,6 @@ export default {
             httplobby
             .get(`user/loginFriend/list/${storage.getItem('id')}`)
             .then((res) => {
-                console.log(res.data);
                 this.myfriends = res.data;
                 this.isPopupFriend = true;
             })
@@ -562,20 +541,16 @@ export default {
 
         // 친구 초대
         inviteFriend(event) {
-            console.log("sddddd");
             
             var ID = event.target.parentElement.id.split('-');
-            console.log(ID)
             var formData = new FormData;
             formData.append('from_id', storage.getItem('id'));
             formData.append('to_nickname', ID[0]);
             formData.append('room_id', this.room.id);
-            console.log("friend ID");
-            console.log(ID[0]);
             httplobby
             .post('alarm/inviteGame', formData)
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
             })
 
             this.isPopupFriend = false;
@@ -858,18 +833,6 @@ export default {
 	background-color: #555;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 .scrollbar-box2
   {
     height: 330px;
@@ -881,7 +844,7 @@ export default {
 
   }
 
-  .force-overflow
+  .force-overflow2
   {
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
