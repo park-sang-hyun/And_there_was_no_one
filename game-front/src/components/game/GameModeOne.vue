@@ -157,7 +157,7 @@ export default {
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
             this.layoutCal();
         },
 
@@ -189,7 +189,7 @@ export default {
 
         // 이전 턴 그림 띄우기
         checkImage() {
-            if (this.isTurn == 0) {
+            if (this.isTurn < 2) {
                 this.noImage = true;
             } else {
                 this.noImage = false;

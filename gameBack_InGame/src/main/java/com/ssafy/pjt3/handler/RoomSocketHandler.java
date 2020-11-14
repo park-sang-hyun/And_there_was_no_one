@@ -17,7 +17,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt3.dto.Room;
+import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.service.RoomService;
+import com.ssafy.pjt3.service.UserService;
 
 @Component
 public class RoomSocketHandler extends TextWebSocketHandler {
@@ -28,7 +30,10 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 
 	@Autowired
 	RoomService roomService;
-	
+
+	@Autowired
+	UserService userService;
+
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		System.out.println("session ID : " + session);
@@ -86,21 +91,22 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 		// 메시지 발송
 		String msg = message.getPayload();
 		JSONObject obj = jsonToObjectParser(msg);
-		
+
+		System.out.println("fffff:" + obj.toJSONString());
+
 		long t = (long) obj.get("room_id");
 		int temp_rN = (int) t;
-		
-		System.out.println("temp_rN: " + temp_rN);
 
+		System.out.println("temp_rN: " + temp_rN);
 		String rN = String.valueOf(obj.get("room_id")); // 어느 방에 보낼 것 인지.
 		System.out.println("rN: " + rN);
-		
+
 // 		해당하는 번호의 방 정보 갱신되면 그 방에 들어있는 친구들에게 방 정보 브로드캐스팅.
 
 		HashMap<String, Object> temp = new HashMap<String, Object>();
 
 		if (rls.size() > 0) {
-			
+
 			for (int i = 0; i < rls.size(); i++) {
 				String roomNumber = (String) rls.get(i).get("room_id"); // 세션리스트의 저장된 방번호를 가져와서
 
@@ -110,19 +116,34 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				}
 			}
 
-			// db에 접근해서 해당 방에 있는 유저정보를 들고옴.
-			Room room = null;
-			ObjectMapper objectMapper = new ObjectMapper();
-			
-			try {
-				room = roomService.findRoomWithRoomid(temp_rN);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			System.out.println("room_id: " + room.getId());
-		
-			
+//			// db에 접근해서 해당 방에 있는 유저정보를 들고옴.
+//			Room room = new Room();
+//			ObjectMapper objectMapper = new ObjectMapper();
+
+//			try {
+//				room = roomService.findRoomWithRoomid(temp_rN);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			
+//			System.out.println("room_id: " + room.getId());
+
+//			
+//			try {
+//				System.out.println("asdaad");
+////				u = userService.getLeader(3);
+//				room = roomService.findRoomWithRoomid(temp_rN);
+////				List<User> list = roomService.findUserInRoom(3);
+//	
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			
+//			System.out.println("room_id: " + room.getId());
+
+//			String massage = objectMapper.writeValueAsString(room);
+//			System.out.println("massage: " + massage);
+
 			// 해당 방의 세션들만 찾아서 메시지를 발송해준다.
 			for (String k : temp.keySet()) {
 				if (k.equals("room_id")) { // 다만 방번호일 경우에는 건너뛴다.
@@ -132,16 +153,17 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				WebSocketSession wss = (WebSocketSession) temp.get(k);
 				if (wss != null) {
 					try {
-						wss.sendMessage(new TextMessage(objectMapper.writeValueAsString(room)));
+						wss.sendMessage(new TextMessage(obj.toJSONString()));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
+
+		System.out.println("핸들 텍스트 함수 종료!!!!");
 	}
-	
-	
+
 	private static JSONObject jsonToObjectParser(String jsonStr) {
 		JSONParser parser = new JSONParser();
 		JSONObject obj = null;
