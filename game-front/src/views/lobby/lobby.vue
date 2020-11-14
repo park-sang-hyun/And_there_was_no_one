@@ -39,6 +39,18 @@ export default {
     Roomlist,
   },
 
+  data() {
+    return {
+      audioBtn: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'),
+    }
+  },
+
+  created(){
+    this.audioBtn.play();
+  },
+  destroyed(){
+    this.audioBtn.pause();
+  },
   methods: {
 
       // 로그아웃 버튼 눌렀을 때
@@ -52,7 +64,8 @@ export default {
 
       reload() {
         this.$refs.reloadBell.getAlarm();
-      }
+      },
+
   }
 }
 
