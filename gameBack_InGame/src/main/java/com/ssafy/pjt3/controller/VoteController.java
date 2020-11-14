@@ -103,15 +103,17 @@ public class VoteController {
 			});
 			
 			res1.add(res.get(0));
-			
-			int max = res.get(0).getCnt();
-			if(res1.size() != 1) {
-				for(int i = 1; i < res.size(); i++) {
-					if(res.get(i).getCnt() == max) {
-						res1.add(res.get(i));
-					} else break;
-				}
-			}
+	         
+	         int max = res.get(0).getCnt();
+	         
+	         if(res.size() != 1) {
+	            for(int i = 1; i < res.size(); i++) {
+	               System.out.println(res.get(i).getCnt());
+	               if(res.get(i).getCnt() == max) {
+	                  res1.add(res.get(i));
+	               }
+	            }
+	         }
 			
 			System.out.println("selct 끝!!");
 			//voteService.deleteVote(room_id);

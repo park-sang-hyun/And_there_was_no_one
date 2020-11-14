@@ -5,7 +5,9 @@
             <div style="display: none;">{{ nowWindow }}</div>
             <div class="user__left col-4 d-flex justify-content-center align-items-center p-0">
                 <!-- user 래더 or 프로필 -->
-                <div class="user__image"></div>
+                <div class="user__image">
+                    <img src="@/assets/images/detective.png" alt="user image">
+                </div>
             </div>
             <div class="col-8 p-0">
                 <div class="user__right d-flex align-content-center align-items-center p-0">
@@ -141,6 +143,12 @@ export default {
     max-height: 50px;
     border-radius: 50%;
     background-color: black;
+    overflow: hidden;
+}
+
+.user__image > img {
+    width: 100%;
+    height: 100%;
 }
 
 .user__border {

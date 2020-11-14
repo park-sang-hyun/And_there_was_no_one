@@ -1,10 +1,10 @@
 <template>
     <div id="EndScreen">
         <!-- 게임이 완전히 종료된 상황 -->
-        <div v-if="result">
+        <div v-if="result" id="end__page">
             <!-- 중앙 정렬위한 빈 공간 -->
-            <div id="floater"></div>
-            <div class="main__story">
+            <div id="end__mg__top"></div>
+            <div class="end__story">
                 <h1 class="end__h1"><span :class="{ h1Win: didYouWin, h1Lose: !didYouWin}">{{ gameSentence }}</span></h1>
                 <p class="end__p">{{ firstSentence }}</p>
                 <p class="end__p">{{ secondSentence }}</p>
@@ -300,13 +300,12 @@ export default {
                 // 특정 유저 투표(nickname) 보냄
                 formData.append('who', this.game.userList[this.selectNumber].nickname);
                 if (this.youShadow == false) {
+                    this.secondSentence = '당신은 탐정에게 투표했습니다.';
+                    this.myScore = this.myScore - 5;
                     if ( this.game.shadow.id == this.game.userList[this.selectNumber].id) {
                         this.secondSentence = '당신은 Shadow에게 투표했습니다.';
-                        this.myScore = this.myScore + 5;
-                    } else {
-                        this.secondSentence = '당신은 탐정에게 투표했습니다.';
-                        this.myScore = this.myScore - 5;
-                    }
+                        this.myScore = this.myScore + 10;
+                    } 
                 } else if (this.youShadow == true) {
                     this.secondSentence = '당신은 탐정에게 한 표를 더했습니다.';
                 }
@@ -371,7 +370,6 @@ export default {
         resultCheck() {
 
             if (this.voteUser == []) {
-                console.log('--------------------voteUser == []');
                 this.finishSentence = '모두 기권했습니다';
                 this.didYouWin = false;
                 this.myScore = this.myScore - 10;
@@ -381,7 +379,6 @@ export default {
                 // 본인이 Shadow라면 성공
                 if (this.youShadow) {
                     
-                    console.log('--------------------voteUser == [] Shadow');
                     this.didYouWin = true;
                     this.myScore = this.myScore + 20; // 앞에서 10점 깎았으므로 10점 보정
                     this.gameSentence = 'You Win!';
@@ -392,11 +389,9 @@ export default {
             
             else if (this.voteUser.length == 1) {
                     
-                console.log('--------------------voteUser 1명');
                 // Shadow 발각
                 if (this.game.shadow.nickname == this.game.userList[this.voteUser[0]].nickname) {
                     
-                    console.log('--------------------voteUser 는 범인이었다!!!!!!');
                     this.finishSentence = 'Shadow를 찾았습니다';
                     
                     // 아니면 성공
@@ -408,7 +403,6 @@ export default {
                     // 본인이 Shadow라면 실패
                     if (this.youShadow) {
                         
-                        console.log('--------------------voteUser 는 범인이었는데 너구나!!!!');
                         this.didYouWin = false;
                         this.myScore = this.myScore - 70; // 30점 더했으므로 30점 보정
                         this.gameSentence = 'You Lose';
@@ -417,7 +411,6 @@ export default {
                 } 
                 // Shadow 발각 X
                 else {
-                    console.log('--------------------voteUser 가 범인이 아니었다');
                     this.finishSentence = 'Shadow를 찾지 못했습니다.';
                     // 아니면 실패
                     this.didYouWin = false;
@@ -427,8 +420,6 @@ export default {
 
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
-                        
-                        console.log('--------------------voteUser 는 범인이 아니었는데 너 잘 숨네');
                         this.didYouWin = true;
                         this.myScore = this.myScore + 70;
                         this.gameSentence = 'You Win!';
@@ -438,7 +429,6 @@ export default {
             } else {
                 var flag = false;
                 
-                console.log('--------------------voteUser 가 여러명이다');
 
                 for (let k; k < this.voteUser.length; k++) {
                     if (this.game.shadow.nickname == this.game.userList[this.voteUser[k]].nickname) {
@@ -448,8 +438,7 @@ export default {
                 }
                 
                 if (flag) {
-                    
-                    console.log('--------------------voteUser 중에 범인이 있었는데 ㅠㅠㅠㅠ');
+
                     // 아니면 실패
                         this.didYouWin = false;
                         this.myScore = this.myScore - 20;
@@ -459,7 +448,6 @@ export default {
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
                     
-                        console.log('--------------------voteUser 안에 들었으나 간신히 임무를 완수 했군');
                         this.didYouWin = true;
                         this.myScore = this.myScore + 40;
                         this.gameSentence = 'You Win';
@@ -469,7 +457,6 @@ export default {
                 } else {
                     // 아니면 실패
                     
-                    console.log('--------------------voteUser 중에 범인이 없어. 유명한들..');
                     this.didYouWin = false;
                     this.myScore = this.myScore - 30;
                     this.gameSentence = 'You Lose';
@@ -478,7 +465,6 @@ export default {
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
                     
-                        console.log('--------------------voteUser 에도 안들다니 대단하군');
                         this.didYouWin = true;
                         this.myScore = this.myScore + 70;
                         this.gameSentence = 'You Win!';
@@ -548,9 +534,6 @@ export default {
         // 대기방 돌아가기
         goWaitRoom() {
             
-            console.log('이겼니 ', this.gameSentence);
-            console.log('임무 완수? ', this.firstSentence);
-            console.log('투표? ', this.secondSentence);
 
             if (this.game.userList[0].id == storage.getItem('id')) {
                 http
@@ -594,16 +577,47 @@ export default {
     top: 0;
     width: var(--widthSize);
     height: var(--heightSize);
-    background: black;
+    overflow: inherit; 
+}
+
+
+#end__page {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--widthSize);
+    height: var(--heightSize);
+    background-color: black;
     overflow: inherit; 
 }
 
 // 중앙 정렬 위한 floater
-#floater {
+#end__mg__top {
     float: left; 
     height: 45%; 
     margin-bottom: -120px;
 }
+
+.end__story {
+    clear: both; 
+    position: sticky;
+    margin: auto;
+    color: white;
+    font-size:20px;
+    line-height:1.6em;
+    font-family: 'Open Sans', sans-serif, 'Oswald', sans-serif;
+    // font-family:sans-serif;
+    margin: 0;
+    // attributes to accompany the animation
+    opacity:0;
+    position:relative;
+    transform:translateY(1em);
+    // animation stuff
+    animation:page-in ease-out 3s;
+    animation-fill-mode:forwards;
+    text-align: center;
+}
+
 
 .main__story {
     clear: both; 

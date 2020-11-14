@@ -1,6 +1,7 @@
 <template>
     <div id="testpage">
         <!-- 중앙 정렬위한 빈 공간 -->
+        <div id="testid">
         <div id="floater"></div>
         <div class="main__story">
             <h1 class="end__h1"><span :class="{ h1Win: didYouWin, h1Lose: !didYouWin}">{{ gameSentence }}</span></h1>
@@ -10,6 +11,7 @@
             <div class="score js-score">
                 {{ isScore }}
             </div>
+        </div>
         </div>
 
     </div>
@@ -120,6 +122,18 @@ export default {
     // background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
     background: black;
     overflow: inherit; 
+}
+
+#testid {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--widthSize);
+    height: var(--heightSize);
+    // background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
+    background: grey;
+    overflow: inherit; 
+
 }
 
 // 중앙 정렬 위한 floater
