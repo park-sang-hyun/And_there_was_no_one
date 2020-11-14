@@ -14,8 +14,8 @@
 
         <!-- 스토리 -->
         <div class="main__story">
-            <h1>지금부터 당신은 사건 현장으로 이동합니다.</h1>
-            <p>현재 이 방의 사람들 모두 <span class="bold__part">용의자</span>로 의심받고 있습니다.</p>
+            <h1>[공지] 지금 AI는 시스템 점검 중입니다.</h1>
+            <p>지금 당신이 있는 방의 사람들은 모두 <span class="bold__part">용의자</span>로 의심받고 있습니다.</p>
             <strong style="margin: 40px; color: white;"><p>당신들 사이에 범인 Shadow가 숨어있습니다.</p></strong>
             <p class="bold__part" style="font-size: 1.8rem;">다른 사람들과 함께 Shadow를 찾아내 용의선상에서 벗어나세요.</p>
         </div>

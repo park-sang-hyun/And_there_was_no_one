@@ -11,7 +11,7 @@
             v-if="showModal"
             >
           <div class="btn_container">
-            <button @click="cancel" class="button" style="color: rgba(37, 37, 37, 0.788);">X</button>
+            <button @click="cancel" class="button" style="background-color: rgba(61, 61, 61, 0.5);">X</button>
           </div>
           
           <h1>친구 추가</h1>
@@ -27,7 +27,7 @@
               placeholder="닉네임"
             >
             <p>{{ errmsg }}</p>
-            <button @click="addFriend" class="button" style="margin-left:10px; color:rgba(37, 37, 37, 0.788);">요청하기</button>
+            <button @click="addFriend" class="button" style="margin-top:10px; background-color: rgba(48, 48, 48, 1);">요청하기</button>
           </div>
 
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
@@ -55,13 +55,13 @@
           </div>
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div>
-            <h1>친구 추가 요청</h1>
+            <h1>새로운 알림</h1>
 
             <div class="scrollbar-box2" id="style-1" style="width: 400px" >
               <div class="force-overflow" >
                 <div v-for="(alarm, index) in alarms" :key="(alarm.no, index) + 'alarmkey'" class="friend">
-                  <div style="rgba(61, 61, 61, 0.5)">
-                    <p>{{alarm.content}}</p>
+                  <div class="alarmlist">
+                    <p style=" font-weight: bold; font-size: 15px;">{{alarm.content}}</p>
                     <button @click="friendAns('ok', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">수락</button>
                     <button @click="friendAns('no', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">거절</button>
                   </div>
@@ -75,7 +75,7 @@
     <div class="friends-wrapper">
       
       <div class="btn_container" style="justify-content: space-between">
-        <p style="margin-left:20px; color:rgba(255, 254, 254, 0.6);">친구 목록</p>
+        <h4 style="margin-left:20px; color:rgba(255, 254, 254, 0.7);">친구 목록</h4>
         <!-- 친구 추가버튼  -->
         <button @click="showModal = true" class="button" style="margin:10px">+</button>
       </div>
@@ -86,14 +86,12 @@
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
           <div v-for="friend in loginFriends" :key="friend.no + 'loginfriendkey'" class="loginfriend">
-            <p style="margin: 5px">
-              {{ friend.nickname }} {{friend.rank}} ( {{ friend.score }} )
-            </p>
+            <p style="margin-left: 40px; margin-top: 5px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 40px; margin-top: 20px">{{ friend.rank }}</p>
           </div>
           <div v-for="friend in logoutFriends" :key="friend.no + 'logoutfriendkey'" class="logoutfriend">
-            <p style="margin: 5px">
-              {{ friend.nickname }} {{friend.rank}} ( {{ friend.score }} )
-            </p>
+            <p style="margin-left: 40px; margin-top: 5px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 40px; margin-top: 20px">{{ friend.rank }}</p>
           </div>
         </div> 
       </div>
@@ -484,14 +482,22 @@ export default {
   .loginfriend {
     margin: 10px;
     padding: 5px;
-    background :#eceef19f;
+    background :#bbbbbb98;
     border-radius: 10px;
+    font-weight: 500; 
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
   }
   .logoutfriend {
     margin: 10px;
     padding: 5px;
-    background: rgba(255, 248, 220, 0.2);
+    background: rgba(255, 248, 220, 0.164);
     border-radius: 10px;
+    font-weight: 500; 
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
   }
 
   /*scrollbar STYLE 1*/
@@ -535,6 +541,10 @@ export default {
     padding: 5px 10px;
     margin-bottom: 10px;
     opacity:0.9;
+
+    &:hover {
+    background: rgba(255, 255, 255, 0.493);
+  }
   }
 
   .friendmodal {
@@ -596,5 +606,12 @@ export default {
   .pop-leave-to {
     opacity: 0;
     transform: scale(0.3) translateY(-50%);
+  }
+
+  .alarmlist {
+    background: #eceef188;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px 0;
   }
 </style>
