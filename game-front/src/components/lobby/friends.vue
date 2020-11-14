@@ -87,12 +87,12 @@
         <div class="force-overflow" >
           <div v-for="friend in loginFriends" :key="friend.no + 'loginfriendkey'" class="loginfriend">
             <p style="margin: 5px">
-              {{ friend.nickname }} {{ friend.score }}
+              {{ friend.nickname }} {{friend.rank}} ( {{ friend.score }} )
             </p>
           </div>
           <div v-for="friend in logoutFriends" :key="friend.no + 'logoutfriendkey'" class="logoutfriend">
             <p style="margin: 5px">
-              {{ friend.nickname }} {{ friend.score }}
+              {{ friend.nickname }} {{friend.rank}} ( {{ friend.score }} )
             </p>
           </div>
         </div> 
@@ -161,7 +161,7 @@ export default {
       http
       .get("user/friend/list/" + sessionStorage.getItem('id') + "/")
       .then((res) => {
-        console.log(res.data)
+        console.log("2222222:" + res.data)
         // 아래 내용은 서버 기능 만들고 수정하기 
         // this.friends 변수에 친구 목록 데이터 넣기
         this.friends = res.data;
