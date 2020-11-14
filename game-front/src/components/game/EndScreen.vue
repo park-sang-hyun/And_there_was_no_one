@@ -327,8 +327,9 @@ export default {
             .post(`vote/vote/${this.game.id}`, formData)
             .then((res) => {
                 // 투표 결과 받아오기는 첫번째 턴인 사람만 하자
-                if (this.game.userList[0].id == storage.getItem['id']) {
-                    setTimeout(this.voteResult, 5000);
+                if (this.game.userList[0].id == storage.getItem('id')) {
+                    console.log('나 투표 결과 받으러 감')
+                    setTimeout(this.voteResult, 3000);
                 }
             
             })            
@@ -491,13 +492,14 @@ export default {
         // 점수 보내기
         sendMyScore() {
             var formData = new FormData;
-            formData.append('user', storage.getItem('id'));
+            formData.append('user', Number(storage.getItem('id')));
             formData.append('score', this.total);
             var winCnt = (this.didYouWin) ? 1 : 0;
             formData.append('wincount', winCnt)
 
-            httpcommon(`accounts/score`, formData)
-            .post((res) => {
+            httpcommon
+            .post(`accounts/score/`, formData)
+            .then((res) => {
                 this.goWaitRoom();
             })
 
@@ -505,8 +507,6 @@ export default {
 
         // 대기방 돌아가기
         goWaitRoom() {
-
-            this.sendSocket.close();
             
             http
             .put(`game/exitgame/${this.game.id}`)
@@ -542,6 +542,13 @@ export default {
     height: var(--heightSize);
     background: black;
     overflow: inherit; 
+}
+
+// 중앙 정렬 위한 floater
+#floater {
+    float: left; 
+    height: 45%; 
+    margin-bottom: -120px;
 }
 
 .main__story {
@@ -660,11 +667,9 @@ h1 {
     }
 }
 
+
 .score {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    margin-top: 60px;
     font-size: 3rem;
     font-weight: bold;
     color: white;
@@ -673,6 +678,5 @@ h1 {
 .js-score {
     color: white;
 }
-
 
 </style>
