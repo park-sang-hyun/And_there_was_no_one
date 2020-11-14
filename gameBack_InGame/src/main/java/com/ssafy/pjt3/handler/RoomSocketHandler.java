@@ -142,13 +142,13 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				WebSocketSession wss = (WebSocketSession) temp.get(k);
 
 				if (wss != null) {
-					if (game == false) {
+				
 						try {
 							wss.sendMessage(new TextMessage(obj.toJSONString()));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-					}
+		
 				}
 			}
 		}
