@@ -17,17 +17,6 @@
                 <ModeTwo :game="game" :output="output" :isMode="isMode" :isTurn="isTurn" :memCount="sendMemCount" @imgFile="sendAI" ref="modeTwo" />
             </div>
 
-            <div class="chat__part">
-                <div class="input-group">
-                    <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
-                        <option selected style="color:black;">채팅 문구 선택</option>
-                        <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
-                    </select>
-                    <div class="input-group-append">
-                        <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
-                    </div>
-                </div>
-            </div>
 
             <div v-if="timerShow" class="timer__part">
                 <div class="text__part">
@@ -46,7 +35,38 @@
             </div>
 
             <div v-if="end" class="showScreen">
-                <EndScreen :isEnd="end" :isFinish="isFinish" :endScore="score" :game="game" :images="sendImage"/>
+                <EndScreen :isEnd="end" 
+                    :isFinish="isFinish" 
+                    :endScore="score" 
+                    :game="game" 
+                    :images="sendImage" 
+                    :sendSentence="sendSentence"
+                    @submitVoteResult="endVoteResult"
+                    ref="endscreen" />
+            </div>
+
+            
+            <div class="chat__part">
+                <div class="chatting__area">
+                    <div class="scrollbar-box" id="scrollbar__style" >
+                        <div class="force-overflow" >
+                            <br v-for="n in 27" :key="n + 'chatBRKey'"/>
+                            <div v-for="(log, index) in chatLogs" class="log" :key="index + 'chatLogKey'">
+                                <strong style="margin-left: 5px;">{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
+                            </div>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
+                        <option selected style="color:black;">채팅 문구 선택</option>
+                        <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
+                    </select>
+                    <div class="input-group-append">
+                        <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -63,6 +83,8 @@ import aihttp from '@/util/http-ai.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
+const socketURL = 'ws://localhost:8002/chatting';
+const socketPlayURL = 'ws://localhost:8002/renewing';
 
 
 export default {
@@ -79,6 +101,9 @@ export default {
         sendGame: {
             type: undefined,
         },
+        sendSocket: {
+            type: WebSocket,
+        }
     },
 
     data() {
@@ -178,6 +203,15 @@ export default {
                 showTimer: '',
                 timer: 4,
             },
+            
+            // 소켓, 채팅 메시지
+            chatMsg: '',
+            chatLogs: [],
+            socket: null,
+            socketPlay: null,
+            sendSentence: '',
+            myNickname: '',
+            
         }
     },
 
@@ -204,16 +238,27 @@ export default {
         for (let j=0; j < this.game.cur_count; j++) {
             this.score.push(0);
         }
+        
+        // 본인 닉네임 찾기
+        for (let k=0; k < this.game.userList.length; k++) {
+            if (this.game.userList[k].id == storage.getItem('id')) {
+                this.myNickname = this.game.userList[k].nickname;
+                break;
+            }
+        }
+
+        this.connect();
+        this.connectPlay();
 
         
         // 역할 확인 부분
         
         // this.checkRoll = false;
         // this.beforeStartTimer();
+        document.documentElement.style.setProperty('--indexNum', 99);
         
         this.checkRoll = true;
-        var roll = setTimeout( this.goGame , 10000);
-        var timeCheck = setTimeout( this.beforeStartTimer, 10000);
+        setTimeout( this.goGame , 10000);
 
 
         // 설정 값 별로 매칭되는 이름/숫자 넣어주기
@@ -244,7 +289,65 @@ export default {
 
     },
 
+    destroyed() {
+        this.socket.close();
+        this.socketPlay.close();
+    },
+
     methods: {
+        // 게임 시작
+        goGame() {
+            this.checkRoll = false;
+            if (this.game.userList[0].id == storage.getItem('id')) {
+                setTimeout(() =>
+                    this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn, data: '게임을 시작합니다.' }))
+                    , 1000);
+            }
+        },
+
+        // 게임 소켓 연결
+        connectPlay() {
+            this.socketPlay = new WebSocket(`${socketPlayURL}/${this.game.id}`);
+            
+            this.socketPlay.onopen = () => {
+
+                this.socketPlay.onmessage = ({data}) => {
+                    var PlayData = JSON.parse(data);
+                    if (PlayData.finish) {
+                        this.turnFinish();
+                    } else {
+                        if (PlayData.isturn) {
+                            this.turn = PlayData.turn;
+                            console.log(this.turn);
+                            if (this.turn <= this.game.cur_count) {
+                                setTimeout(this.beforeStartTimer, 1000);
+                            } else {
+                                this.end = true;
+                            }
+                        } else {
+                            this.$refs.endscreen.resultCheck(PlayData.vote_result);
+                        }
+                    }
+                    
+                };
+            };
+        },
+
+
+        // 채팅 부분
+        // 소켓 연결
+        connect() {
+            this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
+            this.socket.onopen = () => {
+                
+                this.socket.onmessage = ({data}) => {
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                };
+            };
+        },
+
         // 채팅 버튼
         chatMessage() {
             var s = document.getElementById("inputMessageSelect");
@@ -252,24 +355,20 @@ export default {
             if (this.chatList[idx] === undefined) {
                 alert('메시지를 선택해주세요');
             } else {
-                // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-                this.chat.logs = [...[(this.game.userList[1].nickname, this.chatList[idx])], ...this.chat.logs];
-                console.log(this.chat.logs);
+                console.log(this.chatList[idx]);
+                this.socket.send(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
             }
-        },
-
-        // 게임 시작
-        goGame() {
-            this.checkRoll = false;
         },
 
         // 본인의 턴이면 채팅창의 우선도를 뒤로, 아니면 앞으로
         yourTurn() {
-            if (this.game.userList[this.turn].id == storage.getItem('id') ) {
-                document.documentElement.style.setProperty('--indexNum', -1);
-            } else {
-        
-                document.documentElement.style.setProperty('--indexNum', 99);
+            if (this.turn > 0 && this.turn < this.game.userList.length + 1) {
+                if (this.game.userList[this.turn - 1].id == storage.getItem('id') ) {
+                    document.documentElement.style.setProperty('--indexNum', 1);
+                } else {
+            
+                    document.documentElement.style.setProperty('--indexNum', 99);
+                }
             }
         },
 
@@ -306,6 +405,13 @@ export default {
         
         // before 타이머
         beforeStartTimer() {
+
+            if (this.game.mode == 1) {
+                this.$refs.modeOne.$refs.draw.resetCanvas();
+            } else if (this.game.mode == 3) {
+                this.$refs.modeOne.$refs.draw.resetCanvas();
+            }
+
             this.show = false;
             this.beforeShow = true;
             this.before.interval = setInterval(this.beforeCountDown, 1000);
@@ -315,7 +421,7 @@ export default {
             var m = this.before.timer;
             if (!this.before.counter) {
                 this.before.counter = true;
-                this.before.showTimer = `${ this.game.userList[this.turn].nickname } Turn`;     
+                this.before.showTimer = `${ this.game.userList[this.turn - 1].nickname } Turn`;     
             } else if (m > 1) {
                 m = m - 1;
                 this.before.showTimer = `${m}`;
@@ -332,51 +438,64 @@ export default {
 
         // mode 1,2 : 이미지 저장 후 ai로 보내기 / mode 3 : 이미지 저장 후 턴 넘기기
         sendAI(image) {
-
             this.images.push(image);
+            console.log('this turn:' , this.turn);
+            console.log('image:', this.images[this.turn-1]);
 
-            if (this.game.mode == 3) {
-                var time = setTimeout( this.turnChange, 1000 );
-            } else {
-                let formData = new FormData;
-                formData.append('inputImage', image);
-                formData.append('turn', this.turn);
-                formData.append('roomId', this.game.id);
+            if (this.game.userList[this.turn - 1].id == storage.getItem('id')) {
+                
+                if (this.game.mode == 3) {
+                    setTimeout(() => this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn })), 500 );
 
-                // ai로 이미지보내기
-                aihttp
-                .post(`objects/image/`, formData)
-                .then((res) => {
-                    if (res.data.message) {
-                        for (let i=0; i < res.data.result.length; i++) {
-                            if (res.data.result[i] == this.game.word) {
-                                if (this.game.mode == 1) {
-                                    this.score[this.turn] = this.score[this.turn] - 20;
-                                } else if (this.game.mode == 2) {
-                                    this.score[this.turn] = this.score[this.turn] - 100;
-                                    this.turnFinish();
+                } else {
+                    let formData = new FormData;
+                    formData.append('inputImage', image);
+                    formData.append('turn', this.turn);
+                    formData.append('roomId', this.game.id);
+
+                    var flagAI = true;
+
+                    // ai로 이미지보내기
+                    aihttp
+                    .post(`objects/image/`, formData)
+                    .then((res) => {
+                        console.log(res.data);
+                        if (res.data.message) {
+                            for (let i=0; i < res.data.result.length; i++) {
+                                if (res.data.result[i] == this.game.word) {
+                                    if (this.game.mode == 1) {
+                                        flagAI = false;
+                                        this.score[this.turn] = this.score[this.turn] - 20;
+                                        this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
+                                    } else if (this.game.mode == 2) {
+                                        flagAI = false;
+                                        this.score[this.turn] = this.score[this.turn] - 100;
+                                        this.sendSentence = '누군가가 AI에게 발각되었습니다.';
+                                        this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: true, turn: this.turn }));
+                                        // this.turnFinish();
+
+                                    }
+                                    break;
                                 }
                             }
+                            if (flagAI) {
+                                    this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
+                            }
+                        } else {
+                            this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
                         }
-                    }
-                    if (!this.finish) {
-                        var time = setTimeout( this.turnChange, 1000 );
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
+                }
             }
+
         },
 
-        // 턴 넘기기
-        turnChange() {
-            if (this.turn == this.game.cur_count - 1) {
-                this.end = true;
-            } else {
-                this.turn = this.turn + 1;
-                this.beforeStartTimer();
-            }
+        // 투표 결과 받아오기
+        endVoteResult(data) {
+            this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: false, finish: false, vote_result: data }));
         },
 
         // 게임 종료
@@ -420,18 +539,19 @@ export default {
 /* 채팅 부분 */
 .chat__part {
     position: fixed;
-    z-index: var(--indexNum);
-    bottom: 40;
+    z-index: 2;
+    bottom: 40px;
     left: 0;
-    width: 300px;
-    height: 400px;
+    width: 400px;
+    height: 600px;
 }
 
 .input-group {
     position: fixed;
+    z-index: var(--indexNum);
     bottom: 0;
     left: 0;
-    width: 300px;
+    width: 320px;
     height: 40px;
 }
 
@@ -458,7 +578,6 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, .2);
     display: table;
     transition: opacity .3s ease;
 }
@@ -477,7 +596,7 @@ export default {
 /* 투표 등 배경 흐리기 해야할 때 */
 .showScreen {
     position: fixed;
-    z-index: 999;
+    z-index: 10;
     top: 0;
     left: 0;
     width: 100%;
@@ -486,5 +605,60 @@ export default {
     display: table;
     transition: opacity .3s ease;
 }
+
+// 채팅 부분
+
+.chatting__area {
+    width: 100%;
+    padding: 10px 3px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: white;
+}
+
+
+.scrollbar-box
+{
+    width: 100%;
+    height: 580px;
+	overflow-y: scroll;
+    overflow-x: hidden;
+    white-space: normal;
+    position : relative; 
+    bottom: 0px;
+    direction:rtl; /* css scrollbar left */
+}
+
+
+.force-overflow
+{
+  /* 스크롤바 내부의 글자가 누적되는 창 크기
+  스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
+	min-height: 580px;
+}
+
+// scrollbar__style
+
+#scrollbar__style::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#scrollbar__style::-webkit-scrollbar
+{
+	width: 3px;
+	background-color: #F5F5F500;
+}
+
+#scrollbar__style::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+
 
 </style>

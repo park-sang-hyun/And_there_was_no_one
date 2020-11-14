@@ -68,8 +68,8 @@ public class RoomController {
 		try {
 			list = roomService.findAll();
 			
-			int start = page * 8 - 8;
-			int end = page * 8;
+			int start = page * 6 - 6;
+			int end = page * 6;
 			
 			if(end > list.size()) end = list.size();
 			
@@ -87,10 +87,7 @@ public class RoomController {
 	
 	@PostMapping("/create")
 	@ApiOperation(value = "방 생성", notes = "방 생성 기능을 구현")
-	public Object create(@RequestParam String title, int cur_count, int max_count, int mode, int difficulty, boolean start, String username) {
-		
-		System.out.println("room create!!!!!!!!");
-		System.out.println(username);
+	public Object create(@RequestParam String title, int cur_count, int max_count, int mode, int difficulty, boolean start, int user_id) {
 		final BasicResponse result = new BasicResponse();
 		Room room = new Room();
 		room.setTitle(title);
@@ -105,11 +102,6 @@ public class RoomController {
 		try {
 			roomService.createRoom(room);
 			int room_id = room.getId();
-//			int user_id = userService.findPkId(username);
-			
-			int user_id = Integer.parseInt(username);
-			
-			
 			
 			userroom.setLeader(true);
 			userroom.setUser_id(user_id);
@@ -134,6 +126,48 @@ public class RoomController {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
+			Room room = roomService.findRoomWithRoomid(room_id);
+			if(room.getMax_count() == room.getCur_count()) {
+				result.status = false;
+                result.data = "방에 인원이 가득 찼습니다.";
+                return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			else if(room.isStart()==true) {
+				result.status = false;
+                result.data = "이미 게임이 시작된 방입니다.";
+                return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+			
+			UserRoom userroom = new UserRoom();
+			
+			userroom.setLeader(false);
+			userroom.setUser_id(user_id);
+			userroom.setRoom_id(room_id);
+			
+			// 게임방에 들어가고, 방의 현재 인원수 1증가
+			roomService.enterRoom(userroom);
+		}catch(SQLException e){
+			result.status = false;
+	        result.data = "이미 없어진 방입니다.";
+	        return new ResponseEntity<>(result, HttpStatus.OK);
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		
+		result.status = true;
+        result.data = "방 입장 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@GetMapping("/enterAlarm/{user_id}/")
+	@ApiOperation(value = "친구가 초대 했을 때 방 입장", notes = "친구가 초대 했을 때 방 입장 기능을 구현(유저 가득 찼을 때, 시작됬을 때, 방이 없을 때 고려)")
+	public Object enterAlarm(@PathVariable int user_id, @RequestParam String content) {
+		final BasicResponse result = new BasicResponse();
+		
+		try {
+			String[] str = content.split(" ");
+			int room_id = Integer.parseInt(str[1]);
+			
 			Room room = roomService.findRoomWithRoomid(room_id);
 			if(room.getMax_count() == room.getCur_count()) {
 				result.status = false;

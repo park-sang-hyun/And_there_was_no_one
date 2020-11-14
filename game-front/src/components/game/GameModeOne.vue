@@ -17,10 +17,10 @@
             </div>
 
             <!-- 화면 왼쪽 하단 -->
-            <div class="screen__left__bottom d-flex justify-content-center align-items-center">
-                <div class="p-0 d-flex justify-content-center align-items-center">
+            <div class="screen__left__bottom d-flex justify-content-end align-items-center">
+                <div class="p-0 d-flex justify-content-end align-items-end">
                     <!-- canvas(그림 그리기) -->
-                    <draw :window="windowScreen" :turnOff="turnOff" @imgFile="imgFile" ref="draw" />
+                    <draw :window="windowScreen" :turnOff="turnOff" @imgFile="imgFile" ref="draw" style="margin-right: 20%;"/>
                 </div>
             </div>
             <div v-if="selectCanvas" class="screen__left__block"></div>
@@ -157,7 +157,7 @@ export default {
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
             this.layoutCal();
         },
 
@@ -189,11 +189,11 @@ export default {
 
         // 이전 턴 그림 띄우기
         checkImage() {
-            if (this.isTurn == 0) {
+            if (this.isTurn < 2) {
                 this.noImage = true;
             } else {
                 this.noImage = false;
-                this.showImage = this.images[this.isTurn - 1];
+                this.showImage = this.images[this.isTurn - 2];
             }
         },
 

@@ -14,12 +14,12 @@ public class WaitRoomData {
 	boolean start;
 	User leader;
 	
-	List<User> userList;
+	List<UserData> userList;
 
 	public WaitRoomData(){}
 
 	public WaitRoomData(int id, String title, int max_count, int cur_count, int mode, int difficulty, boolean start,
-			User leader, List<User> userList) {
+			User leader, List<UserData> userList) {
 		this.id = id;
 		this.title = title;
 		this.max_count = max_count;
@@ -95,12 +95,11 @@ public class WaitRoomData {
 		this.leader = leader;
 	}
 
-	public List<User> getUserList() {
+	public List<UserData> getUserList() {
 		return userList;
 	}
 
-	public void setUserList(List<User> userList) {
+	public void setUserList(List<UserData> userList) {
 		this.userList = userList;
 	}
-	
 }

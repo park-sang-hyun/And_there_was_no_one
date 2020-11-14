@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="z-index: 10;">
         <canvas
             id="jsCanvas"
             class="canvas" 
@@ -18,10 +18,11 @@
                 <p style="float:left;">펜 크기 : </p>
                 <input type="range" style="margin-top:21px;" id="jsRange" min="0.2" max="10.0" value="5.0" step="0.2" @input="handleRangeChange"/>
             </div>
+            <!--             
             <div class="controls__btns">
                 <button id="jsMode" @click="handleModeClick">그리기</button>
-                <!-- <button id="jsSave" @click="handleSaveClick">제출하기</button> -->
-            </div>
+                <button id="jsSave" @click="handleSaveClick">제출하기</button>
+            </div> -->
             <div class="controls__colors" id="jsColors">
                 <div class="controls__color jsColor" style="background-color: #2c2c2c" @click="handleColorClick"></div>
                 <div class="controls__color jsColor" style="background-color: white" @click="handleColorClick"></div>
@@ -106,7 +107,7 @@ export default {
     },
     methods:{
          connect() {
-            const serverURL= "http://localhost:8000"
+            const serverURL= "http://localhost:8002"
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             // console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
@@ -120,10 +121,10 @@ export default {
                 // 이런형태를 pub sub 구조라고 합니다.
                 // console.log(this.teamId)
                 this.stompClient.subscribe("/topic/"+"1", res => {
-                 console.log("구독으로 받은 메시지 입니다.", res.body)
+                //  console.log("구독으로 받은 메시지 입니다.", res.body)
 
-                    // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-                    console.log(JSON.parse(res.body))
+                //     // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+                //     console.log(JSON.parse(res.body))
 
                     let r = JSON.parse(res.body)
                     
@@ -228,6 +229,11 @@ export default {
             // this.link.href = this.image;
             // this.link.download = "DrawBoard";
             // this.link.click();
+        },
+        // 초기화
+        resetCanvas(){
+            this.ctx.fillStyle = "white";
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
 };

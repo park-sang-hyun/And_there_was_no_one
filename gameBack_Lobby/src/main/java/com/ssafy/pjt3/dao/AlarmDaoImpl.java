@@ -23,4 +23,16 @@ public class AlarmDaoImpl implements AlarmDao{
 	public List<Alarm> receive(int user_id) throws SQLException {
 		return session.selectList("alarm_mapper.receive", user_id);
 	}
+
+	@Override
+	public void delete(int alarm_id) throws SQLException {
+		// TODO Auto-generated method stub
+		session.delete("alarm_mapper.alarmDelete",alarm_id);
+	}
+
+	@Override
+	public Alarm findOne(int alarm_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return session.selectOne("alarm_mapper.findOne", alarm_id);
+	}
 }

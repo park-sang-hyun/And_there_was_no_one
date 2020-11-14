@@ -1,15 +1,25 @@
 <template>
   <div>
     <div class="room-wrapper">
-      <div class="container" style="justify-content: space-between;">
-        게임방 목록
+      <div class="btn_container" style="justify-content: space-between; color:rgba(255, 254, 254, 0.6); margin-left:3%; font-size: 15px;">
+        <h3 style="color:white;">방 목록</h3>
         <div>
-          <button type="button" class="button" @click="showCreateModal = true">방 만들기</button>
-          <button type="button" class="button" @click="random">빠른 입장</button>  
-          <!-- <button>게임 설명</button> -->
+          <button type="button" class="button" style="color:white;" @click="showCreateModal = true">방 만들기</button>
+          <button type="button" class="button" style="color:white;" @click="random">빠른 입장</button>  
+          <button type="button" class="button" style="color:white;" @click="showGamerule=1">게임 설명</button>
+          <button type="button" class="button" style="color:white;" @click="gameRanking=true">랭킹</button>
         </div>
       </div>
-    
+
+      <transition name="fade" appear>
+        <modeOne v-if="showGamerule===1" @close="close" style="z-index: 1;"/>
+        <modeTwo v-if="showGamerule===2" @close="close" style="z-index: 1;"/>
+        <modeThree v-if="showGamerule===3" @close="close" style="z-index: 1;"/>
+      </transition>
+
+      <transition name="fade" appear>
+        <Ranking v-if="gameRanking===true" @close="rankclose" style="z-index: 1;"/>
+      </transition>
 
       <transition name="fade" appear>
         <div v-if="showCreateModal" @click="showCreateModal = false" class="modal-overlay"></div>
@@ -21,7 +31,7 @@
             v-if="showCreateModal"
           >
           <div class="container" style="width:100%">
-            <button @click="showCreateModal = false" class="button">X</button>
+            <button @click="showCreateModal = false" class="button" style="margin-left:100%">X</button>
           </div>
           
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
@@ -47,7 +57,7 @@
                   @click="setMode('down')"
                 ></button>
                 <div class="number-input" style="text-align: center">
-                  {{ mode }}
+                  {{ modelist[mode-1] }}
                 </div>
                 <button
                   type="button"
@@ -68,7 +78,7 @@
                   @click="setDifficulty('down')"
                 ></button>
                 <div class="number-input">
-                  {{ difficulty }}
+                  {{ difficultylist[difficulty-1] }}
                 </div>
                 <button
                   type="button"
@@ -100,7 +110,7 @@
             </div>
             
 
-            <button type="button" @click="createRoom" class="button">방 생성하기</button>
+            <button type="button" @click="createRoom" class="button" style="margin-left:60%;">방 생성하기</button>
           </div>
         
         </div>
@@ -111,28 +121,19 @@
 
       <!-- 게임방 목록 -->
       <div class="roomcards">
-        <div class="roomcard" v-for="room in roomList" :key="room.no + 'roomkey'">
-          <div class="roomcard__inner" @click="pickRoom(room.no)">
-            <span>No.{{ room.no }} </span> 
-            <span>방 이름: {{ room.roomname }} </span> <br>
-            <span>모드: {{ modelist[room.mode] }} </span> 
-            <span>인원: {{ room.cur_people }} / {{ room.max_people }}</span>
-            <span>난이도: {{ difficultylist[room.difficulty] }}</span>
-            isStart: {{ room.start }}
+        <div class="roomcard" v-for="(room, index) in roomList" :key="(room.no, index) + 'roomkey'">
+          <div v-if="room.no !='none'" class="roomcard__inner" @click="pickRoom(room.no)">
+            <div style="float:left; font-size:22px; text-shadow: 2px 2px 2px gray;">No.{{ room.no }} </div> 
+            <div style="text-align:left; margin-left:20%; font-size:20px;">방 제 : {{ room.roomname }} </div>
+            <div style="text-align:left; margin-left:60%; font-size:15px;">모드 : {{ modelist[room.mode] }} </div> 
+            <div style="text-align:left; margin-left:60%; font-size:15px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
+            <div style="text-align:left; margin-left:60%; font-size:15px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
+            <!-- isStart: {{ room.start }} -->
+          </div>
+          <div v-else class="roomcardNone__inner">
+            <span></span> <br> <br>
           </div>
         </div>
-
-        <!-- 데이터 없는 카드 -->
-        <!-- <div class="roomcardNone" v-for="room in roomList" :key="room.no + 'roomkey'">
-          <div v-if="room.no === 'none'"  class="roomcardNone__inner" @click="pickRoom(room.no)">
-            <span>No.{{ room.no }} </span> 
-            <span>방 이름: {{ room.roomname }} </span> <br>
-            <span>모드: {{ modelist[room.mode] }} </span> 
-            <span>인원: {{ room.cur_people }} / {{ room.max_people }}</span>
-            <span>난이도: {{ difficultylist[room.difficulty] }}</span>
-            isStart: {{ room.start }}
-          </div>
-        </div> -->
       </div>
 
       <!-- 페이지네이션 -->
@@ -148,9 +149,11 @@
 </template>
 
 <script>
-// http axios 요청 주소 lobby 서버로 바꿔야함 
-// js 파일 하나 더 만들든지 해서 아래 부분 처리하고 넘어가기
+import modeOne from './ModeOne.vue';
+import modeTwo from './ModeTwo.vue';
+import modeThree from './ModeThree.vue';
 import http from "../../util/http-lobby.js";
+import Ranking from './Ranking.vue';
 
 // import mode from '@/components/room/modeSetting.vue';
 // import difficulty from '@/components/room/difficultySetting.vue';
@@ -161,33 +164,37 @@ export default {
   
     name: 'Roomlist',
 
-    // components: {
-    //     difficulty,
-    //     mode,
-    // },
+    components: {
+        modeOne,
+        modeTwo,
+        modeThree,
+        Ranking,
+    },
 
     data: () =>{
       return {
-        // 받아온 방 정보 8개 객체를 받아옴
+        // 받아온 방 정보 6개 객체를 받아옴
         roomList: [
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 0, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 1, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+            {no: 2, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 2, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+
 
           ],
         // totalRoom은 생성된 룸 개수
-        totalRoom: 16,
+        totalRoom: 12,
         // 페이지 총 길이
         pageLen: 0,
         // 현재 페이지
         pageNow: 1,
         // 방만들기 모달 활성화
         showCreateModal: false,
+        // 랭킹 모달 활성화
+        gameRanking: false,
+
         roomName: "",
         // 게임방 만들기 버튼 활성화
         isRoomSubmit: false,
@@ -202,7 +209,9 @@ export default {
 
         //mode
         modelist : ['자유그리기', '이어그리기', 'AI제외'],
-        difficultylist: ['하','중', '상'],
+        difficultylist: ['하', '중', '상'],
+
+        showGamerule: false,
       }
     },
     created(){
@@ -218,15 +227,18 @@ export default {
          http
         .get("room/listcount/")
         .then((res) => {
-          //console.log("listcount : " + res.data);
+          console.log("listcount : " + res.data);
+          console.log("listcount : " + this.totalRoom);
           this.totalRoom = res.data;
+          console.log("totalroom : " + this.totalRoom);
+          this.pageLen = Math.ceil(this.totalRoom / 6);
         })
         .catch(err => {
           console.log(err)
         })
 
-        this.pageLen = Math.ceil(this.totalRoom / 8);  // 소수점 올림
-        this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
+        //this.pageLen = Math.ceil(this.totalRoom / 6);  // 소수점 올림
+        //this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
         console.log("pageLen: "+this.pageLen);
         console.log("Enter getRoomInfo");
       },
@@ -236,38 +248,35 @@ export default {
         // Room Read lobby서버에 요청하기 현재 페이지의 룸 정보
         // pageNow 변수에 현재 페이지가 들어있음
 
-
         http
         .get("room/list/"+this.pageNow)
         .then((res) => {
           // 받아온 데이터 출력해보고 아래 수정하기
+          console.log(res.data);
 
           //받아온 데이터 roomList에 집어넣기
-          for(let i=0; i<8; i++){
-            this.roomList[i].no = res.data[i].id;
-            this.roomList[i].roomname = res.data[i].title;
-            this.roomList[i].mode = res.data[i].mode;
-            this.roomList[i].cur_people = res.data[i].cur_count;
-            this.roomList[i].max_people = res.data[i].max_count;
-            this.roomList[i].difficulty = res.data[i].difficulty;
-            this.roomList[i].start = res.data[i].start;
+          for(let i=0; i < 6; i++){
+            if (i < res.data.length) {
+              this.roomList[i].no = res.data[i].id;
+              this.roomList[i].roomname = res.data[i].title;
+              this.roomList[i].mode = res.data[i].mode;
+              this.roomList[i].cur_people = res.data[i].cur_count;
+              this.roomList[i].max_people = res.data[i].max_count;
+              this.roomList[i].difficulty = res.data[i].difficulty;
+              this.roomList[i].start = res.data[i].start;
+            } else {
+              this.roomList[i].no = 'none';
+            }
           }
-
-          // 결과 찍어보기
-          //  for(let i=0; i<8; i++){
-          //   console.log(i + "번째 no : " + this.roomList[i].no);
-          //   console.log(i + "번째 roomname : " + this.roomList[i].roomname);
-          //   console.log(i + "번째 mode : " + this.roomList[i].mode);
-          //   console.log(i + "번째 cur_people : " + this.roomList[i].cur_people);
-          //   console.log(i + "번째 max_people : " + this.roomList[i].max_people);
-          //   console.log(i + "번째 difficulty : " + this.roomList[i].difficulty);
-          //   console.log(i + "번째 start : " + this.roomList[i].start);
-          //  }
 
         })
         .catch(err => {
           console.log(err)
         })
+
+        console.log("Enter getRoomList");
+
+        
 
         console.log("Enter getRoomList");
       },
@@ -293,9 +302,9 @@ export default {
           console.log("roomname: "+this.roomName)
           
           //임의로 정의
-          let username = sessionStorage.getItem("id");
+          let user_id = sessionStorage.getItem("id");
           let title=this.roomName;
-          let cur_count = 1;
+          let cur_count = 0;
           let max_count = this.people;
           let mode = this.mode;
           let difficulty = this.difficulty;
@@ -309,24 +318,24 @@ export default {
           formData.append("mode", mode);
           formData.append("difficulty", difficulty);
           formData.append("start", start);
-          formData.append("username", username);
+          formData.append("user_id", user_id);
 
           http
           .post("room/create", formData)
           .then((res) => {
             //Create요청 후 받은 방 번호로 페이지 이동
             console.log(res)  
-            console.log(res.data)  
+            console.log(res.data)
             console.log("방생성 완료");
-            this.enterRoom(res.data.room_id);
+            this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.room_id }});
           })
           .catch(err => {
             console.log(err)
           })
 
 
-          // 임시로 1번방으로 들어가는 느낌으로 해놓음
-          this.enterRoom(1)
+          // // 임시로 1번방으로 들어가는 느낌으로 해놓음
+          // this.enterRoom(1)
 
           this.showCreateModal = false;
           this.roomName = "";
@@ -401,7 +410,13 @@ export default {
         .catch((err) => {
           console.log(err);
         })                                                                                 
-        // this.$router.push("/room????");
+      },
+
+      close(rule) {
+        this.showGamerule = rule;
+      },
+      rankclose(rule) {
+        this.gameRanking = false;
       },
     },
 }
@@ -418,11 +433,11 @@ export default {
   } */
 
   .room-wrapper {
-    padding-top: 20px;
-    padding-left: 20px;
+    padding-top: 5%;
+    padding-left: 5%;
     position: relative;
     min-width: 900px;
-    min-height: 600px;
+    min-height: 400px;
 
     /* background-color: rgba(221, 250, 193, 0.3); */
     border-radius: 20px;
@@ -434,18 +449,21 @@ export default {
     margin-bottom: 40px;
     display: flex;
     flex-flow: row wrap;
-    min-height: 581px;
+    min-height: 480px;
   }
   /* //Cards */
 
   .roomcard {
+    height: fit-content;
     margin: 10px; 
     width: 47%;
     transition: all 0.2s ease-in-out;
-    
+    color:white;
+    //font-size:10px;
+
     &:hover {
       .roomcard__inner {
-        background-color: #969696;
+        background-color: #aeb0b373;
         transform: scale(1.05);
         border-radius: 20px;
       }
@@ -453,15 +471,15 @@ export default {
 
     &__inner {
       width: 100%;
-      padding: 25px;
+      padding: 15px;
       min-width: 80px;
       min-height: 60px;
       position: relative;
       cursor: pointer;
       border-radius: 20px;
       
-      background-color: #eceef155;
-      color: #eceef155;
+      background-color: #aeb0b32f;
+      color: rgba(255, 254, 254, 0.8);
       font-size: 1.5em;
       text-transform: uppercase;
       text-align: center;
@@ -523,7 +541,7 @@ html {background: #88bfd4; text-align: center}
 #menu li:first-child {margin: 0}
 
 #menu li a {
-	background: #a1d0dd;
+	background:rgba(255, 254, 254, 0.6);
 	display: block;
 	border-radius: 3px;
 	padding: 0 12px;
@@ -532,22 +550,22 @@ html {background: #88bfd4; text-align: center}
 	text-decoration: none;
 	height: 27px;
 	font: 12px / 27px "PT Sans", Arial, sans-serif;
-	box-shadow: 0px 3px #7fafbc, 0px 4px 5px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 3px rgba(255, 254, 254, 0.6), 0px 4px 5px rgba(0, 0, 0, 0.11);
 	transition: all 0.3s ease;
 }
 
 
-#menu li a:hover {background: #bae0ea}
+#menu li a:hover {background: rgba(255, 254, 254, 0.9)}
 #menu li a:active {
-	background: #bae0ea;
+	background:rgba(255, 254, 254, 0.9);
 
 	bottom: -3px;
-	box-shadow: 0px 0px #7fafbc, 0px 1px 3px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 0px rgba(255, 254, 254, 0.9), 0px 1px 3px rgba(0, 0, 0, 0.11);
 }
 
 
 /* 우측정렬용 컨테이너 */
-.container {
+.btn_container {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -556,8 +574,8 @@ html {background: #88bfd4; text-align: center}
 
 .button {
   border: none;
-  color: #FFF;
-  background: #42b983;
+  color: rgba(37, 37, 37, 0.788);
+  background: rgba(255, 254, 254, 0.151);
   appearance: none;
   font: inherit;
   border-radius: .3em;
@@ -640,7 +658,7 @@ html {background: #88bfd4; text-align: center}
   }
 
   .number-input {
-      width: 100%;
+      width: 100px !important;
       text-align: center;
   }
 

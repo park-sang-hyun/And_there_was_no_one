@@ -4,12 +4,17 @@
         </div>
 
         <div v-else>
-            <div v-if="!delayMode">
                 <!-- 화면 상단 -->
                 <div class="screen__top">
                     <!-- 방제목 -->
-                    <div class="room__title">
-                        [{{ room.id }}]번방 {{ sendTitle }} 
+                    <div class="screen__top__left">
+                        <div class="room__title">
+                            [{{ room.id }}]번방 {{ sendTitle }} 
+                        </div>
+                    </div>
+                    <!-- 친구 초대 -->
+                    <div class="friends__invite">
+                        <div class="btn btn-secondary" @click="friendsList">친구 초대</div>
                     </div>
                 </div>
 
@@ -18,7 +23,7 @@
                     <!-- 입장한 유저 목록 -->
                     <div class="user__part">
                         <user v-for="n in room.userList.length" 
-                            :key="n-1 + 'waitUserkey'" 
+                            :key="n-1 + componentLeaderKey" 
                             :number="n-1"
                             :existClick="isUserClick[n-1]"
                             :userData="room.userList[n-1]" 
@@ -31,8 +36,14 @@
                             style="display: inline-block; float:left;">
                             <span style="display: none;">{{ isUserClick[n-1] }}</span>
                         </user>
-                        <empty v-for="n in EmptyCount" :key="n + 'Emptykey'" :window="windowScreen" style="display: inline-block; float:left;"/>
-                        <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block; float:left;"/>
+                        <empty v-for="n in EmptyCount"
+                            :key="n + 'Emptykey'"
+                            :window="windowScreen"
+                            style="display: inline-block; float:left;"/>
+                        <none v-for="n in NoneCount" 
+                            :key="n + 'Nonekey'" 
+                            :window="windowScreen" 
+                            style="display: inline-block; float:left;"/>
                     </div>
                     <!-- 채팅 (상용구) -->
                     <div class="chat__part d-flex justify-content-center">
@@ -60,16 +71,26 @@
                 <div class="screen__right">
                     <!-- 게임 설정 출력 (상중하 / 모드) 방장인 경우에 클릭 가능 -->
                     <div class="setting__part">
-                        <mode :mode="room.mode" :isLeader="leader" @modeChange="modeChange" style="margin-bottom: 20px;"/>
-                        <difficulty :difficulty="room.difficulty" :isLeader="leader" @difficultyChange="difficultyChange"/>
-                        <div v-if="leader" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
+                            <mode :mode="room.mode" :isLeader="leader" :key="componentModeKey" @modeChange="modeChange" style="margin-bottom: 20px;"/>
+                            <difficulty :difficulty="room.difficulty" :key="componentDiffKey" :isLeader="leader" @difficultyChange="difficultyChange"/>
+                        <div v-if="leader" :key="componentModifyKey" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
                             <button @click="roomUpdate">게임 모드 수정</button>
                         </div>
                     </div>
 
                     <!-- 채팅 부분 -->
                     <div class="room__chatting d-flex justify-content-center">
-                        <div class="chatting__area">채팅 내용이 나올 부분</div>
+                        <div v-if="chatStatus" class="chatting__area">
+                            <div class="scrollbar-box" id="scrollbar__style" >
+                                <div class="force-overflow" >
+                                    <!-- <br/> -->
+                                    <div v-for="(log, index) in chatLogs" :key="index + 'chatKey'">
+                                        <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
+                                    </div>
+                                    <!-- <br/> -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 게임 시작 버튼 -->
@@ -78,23 +99,7 @@
                         <button @click="ExitRoom">방 나가기</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- game 화면 이전에 로딩 화면 -->
-            <div v-else>
-                <!-- 자유그리기 모드일 때 -->
-                <div v-if="isMode[0]">
-                    <loadingOne/>
-                </div>
-                <!-- 이어그리기 모드일 때 -->
-                <div v-if="isMode[1]">
-                    <loadingTwo/>
-                </div>
-                <!-- NO AI 모드일 때 -->
-                <div v-if="isMode[2]">
-                    <loadingThree/>
-                </div>
-            </div>
 
             <div v-if="isChangeLeader" class="change__part">
                 <div class="modal__part">
@@ -107,6 +112,43 @@
                     </div>
                 </div>
             </div>
+            
+
+
+            <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
+            <transition name="fade" appear>
+                <div v-if="isPopupFriend" @click="isPopupFriend = false;" class="modal-overlay"></div>
+            </transition>
+            <!-- 친구추가를 눌렀을 때 popup되는 모달  -->
+            <transition name="pop" appear>
+                <div class="inviteFriendmodal" 
+                    role="dialog" 
+                    v-if="isPopupFriend"
+                >
+
+                <div class="btn_container">
+                    <button @click="isPopupFriend = false;" class="button" style="margin-left: 370px;">X</button>
+                </div>
+                <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
+                <div>
+                    <h1>친구 초대</h1>
+
+                    <div class="scrollbar-box2" id="style-1" style="width: 400px" >
+                        <div class="force-overflow" >
+                            <div class="friendList">
+                                <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friend">
+                                
+                                    {{ friend.nickname }}
+                                    <button @click="inviteFriend" class="button" style="margin-left: 120px; background-color: rgba(48, 48, 48, 1)">초대</button>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </transition>
+
         </div>
     </div>
 </template>
@@ -117,13 +159,13 @@ import empty from '@/components/room/EmptyUser.vue'
 import none from '@/components/room/NoneUser.vue'
 import mode from '@/components/room/modeSetting.vue';
 import difficulty from '@/components/room/difficultySetting.vue';
-import loadingOne from '@/components/room/LoadingModeOne.vue';
-import loadingTwo from '@/components/room/LoadingModeTwo.vue';
-import loadingThree from '@/components/room/LoadingModeThree.vue';
 import http from '@/util/http-game.js';
+import httplobby from '@/util/http-lobby.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
+const socketURL = 'ws://localhost:8002/chatting';
+const socketRoomURL = 'ws://localhost:8002/renewing';
 
 
 export default {
@@ -135,9 +177,6 @@ export default {
         none,
         difficulty,
         mode,
-        loadingOne,
-        loadingTwo,
-        loadingThree,
     },
 
     props: {
@@ -148,6 +187,10 @@ export default {
 
     data() {
         return {
+            componentModeKey: 1000,
+            componentDiffKey: 0,
+            componentModifyKey: 10000,
+            componentLeaderKey: 100000,
             room: {},               // room 데이터 받아서 넣기
             defaultroom: {          // 개발용 default 값
                 title: '스겜',
@@ -201,6 +244,10 @@ export default {
             ],
             // 소켓, 채팅 메시지
             chatMsg: '',
+            chatLogs: [],
+            chatStatus: false,
+            socket: null,
+            socketRoom: null,
 
             // 받아온 모드 값
             checked: {
@@ -215,48 +262,18 @@ export default {
             isChangeLeader: false,
             changeLeaderNum: 0,
             myNickname: '',
+            myfriends: [],
+            isPopupFriend: false,
+            ifFirst: true,
         }
     },
 
 
     created() {
+
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
-
-        http
-        .get(`game/waitroom/${this.roomId}`)
-        .then((res) => {
-            this.room = res.data;
-            console.log(this.room);
-            this.isSend = true;
-                
-            // 빈자리 출력을 위해 인원 확인
-            if (this.room.cur_count < this.room.max_count) {
-                this.EmptyCount = this.room.max_count - this.room.cur_count;
-            }
-            // 막아둘 자리 출력을 위한 인원 확인
-            if (this.room.max_count < 8) {
-                this.NoneCount = 8 - this.room.max_count;
-            }
-            
-            // 본인이 방장인지 여부 확인
-            if (this.room.leader.id == storage.getItem('id')) {
-                this.leader = true;
-            } else {
-                this.leader = false;
-            }
-
-            // 본인 닉네임 찾기
-            for (let k=0; k < this.room.userList.length; k++) {
-                if (this.room.userList[k].id == storage.getItem('id')) {
-                    this.myNickname = this.room.userList[k].nickname;
-                    break;
-                }
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+        this.readRoom();
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -264,7 +281,6 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
-
     },
 
     computed: {
@@ -279,6 +295,7 @@ export default {
         sendTitle() {
             return this.room.title
         },
+
     },
 
     watch: {
@@ -288,7 +305,68 @@ export default {
         },
     },
 
+    destroyed() {
+        
+        this.socket.close();
+        this.socketRoom.close();
+
+    },
+
     methods: {
+
+        readRoom() {
+
+            http
+            .get(`game/waitroom/${this.roomId}`)
+            .then((res) => {
+                this.room = res.data;
+                this.isSend = true;
+
+                if (this.ifFirst) {
+                    this.connect();
+                    this.connectRoom();
+                    this.ifFirst = false;
+                }
+
+                console.log(this.room);
+
+
+                // 빈자리 출력을 위해 인원 확인
+                if (this.room.cur_count < this.room.max_count) {
+                    this.EmptyCount = this.room.max_count - this.room.cur_count;
+                }
+
+                // 막아둘 자리 출력을 위한 인원 확인
+                if (this.room.max_count < 8) {
+                    this.NoneCount = 8 - this.room.max_count;
+                }
+                
+                // 본인이 방장인지 여부 확인
+                if (this.room.leader.id == storage.getItem('id')) {
+                    this.leader = true;
+                } else {
+                    this.leader = false;
+                }
+
+                // 본인 닉네임 찾기
+                for (let k=0; k < this.room.userList.length; k++) {
+                    if (this.room.userList[k].id == storage.getItem('id')) {
+                        this.myNickname = this.room.userList[k].nickname;
+                        break;
+                    }
+                }
+
+                this.componentModeKey += 1;
+                this.componentDiffKey += 1;
+                this.componentModifyKey += 1;
+                this.componentLeaderKey += 10000;
+
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+           
+        },
 
         // 방 업데이트
         roomUpdate() {
@@ -305,31 +383,13 @@ export default {
             http
             .put(`game/modify/${this.room.id}`, formData)
             .then((res) => {
-                this.room.mode = this.checked.mode;
-                this.room.difficulty = this.checked.difficulty;
+                this.sendRoomMessage();
                 alert(`방 정보가 수정되었습니다.`)
             })
             .catch((err) => {
                 console.log(err);
             })
 
-        },
-
-        // 현재 보이는 화면 크기 계산
-        screenResize() {
-            this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
-            this.layoutCal();
-        },
-
-        // 넓이 계산해서 style 안에 계산해서 넣어주기
-        layoutCal() {
-            let suffix = 'px';
-            document.documentElement.style.setProperty('--widthSize', this.window.width + suffix);
-            document.documentElement.style.setProperty('--heightSize', this.window.height + suffix);
-            document.documentElement.style.setProperty('--leftSize', ((this.window.width * 0.6) - 20) + suffix);
-            document.documentElement.style.setProperty('--rightSize', ((this.window.width * 0.4) - 20) + suffix);
-            document.documentElement.style.setProperty('--mainSize', (this.window.height - 80 - 20) + suffix);
         },
 
         // 채팅 버튼
@@ -344,13 +404,63 @@ export default {
         //     }
         // },
 
+        // 대기 방 소켓 연결
+        connectRoom() {
+            this.socketRoom = new WebSocket(`${socketRoomURL}/${this.room.id}`);
+            this.socketRoom.onopen = () => {
+
+                this.sendRoomMessage();
+
+                this.socketRoom.onmessage = ({data}) => {
+                    var sendRoomData = { start : false };
+
+                    if (typeof data !== 'undefined') {
+                        sendRoomData = JSON.parse(data);
+                    }
+                    
+                    if (sendRoomData.start) {
+                        this.$router.replace({ name: 'LoadingGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id }});
+                        // this.delayMode = true;
+                        // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id }}), 7000);
+                    } else {
+                        this.readRoom();
+                    }
+                };
+            };
+        },
+        
+        //  
+        sendRoomMessage() {
+            this.socketRoom.send(JSON.stringify({ game: false, start: false, room_id: this.room.id })); 
+        },
+    
+        // 채팅 부분
+        // 소켓 연결
+        connect() {
+            this.chatStatus = true;
+            this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
+            this.socket.onopen = () => {
+                // this.chatLogs.push({ event: "연결 완료", data: 'wss://echo.websocket.org'})
+                
+
+                this.socket.onmessage = ({data}) => {
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                };
+            };
+        },
+
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
-            if (Data != '') {
-                console.log(Data);
+            console.log("나 채팅!!")
+            if (Data != '' && this.myNickname != '') {
+                this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
             }
+            this.chatMsg = "";
         },
+
 
         // 우측 상단 버튼
 
@@ -364,13 +474,14 @@ export default {
                 // 현재 게임 모드를 확인해서 어떤 로딩 화면을 띄울 건지 결정
                 this.isMode = [false, false, false];        // 초기화
                 this.isMode[this.room.mode - 1] = true;     // mode에 맞는 것만 true
-                // 로딩화면 띄우기
-                this.delayMode = true;
 
                 http
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
-                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id }}), 7000);
+                    this.socketRoom.send(JSON.stringify({ start: true, game: false, room_id: this.room.id, sendGame: res.data }));
+                    // // 로딩화면 띄우기
+                    // this.delayMode = true;
+                    // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -383,26 +494,13 @@ export default {
             http
             .delete(`game/leave/${storage.getItem('id')}`)
             .then((res) => {
-                console.log(res.data);
-                // 이건 아마 리더 넘기는 건데.. 여기서 할 게 아니라 소켓 연결해서 새로 방 정보 받아와야함....
-                // if (res.data.object != null) {
-                //     this.room.leader = res.data.object;
-                //     if (this.room.leader.id == storage.getItem('id')) {
-                //         this.leader = true;
-                //     } else {
-                //         this.leader = false;
-                //     }
-                // }
+                this.sendRoomMessage();
                 this.$router.replace({ name: 'Lobby' })
             })
             .catch((err) => {
                 console.log(err);
             })
-        },
-
-        // playgame으로 보내기
-        goPlayGame(data) {
-            this.$router.replace({ name: 'PlayGame' , params: { sendGame: data }});
+            
         },
 
         // 선택한 설정값 변경 (모드 | 난이도)
@@ -439,18 +537,68 @@ export default {
 
         // 리더 위임
         leaderChange() {
-            var formData = new FormData;
-            formData.append('leader', this.room.userList[this.changeLeaderNum].id)
 
-            // http
-            // .put(`game/leader/${this.room.id}`, formData)
-            // .then((res) => {
-            //     console.log(res.data);
-            // })
-            // .catch((err) => {
-            //     console.log(err);
-            // })
-        }
+            http
+            .put(`game/mandate/${this.room.userList[this.changeLeaderNum].id}/${storage.getItem('id')}`)
+            .then((res) => {
+                this.isChangeLeader = false;
+                this.sendRoomMessage();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        },
+
+        // 친구 리스트 가져오기
+        friendsList() {
+            httplobby
+            .get(`user/loginFriend/list/${storage.getItem('id')}`)
+            .then((res) => {
+                console.log(res.data);
+                this.myfriends = res.data;
+                this.isPopupFriend = true;
+            })
+        },
+
+        // 친구 초대
+        inviteFriend(event) {
+            console.log("sddddd");
+            
+            var ID = event.target.parentElement.id.split('-');
+            console.log(ID)
+            var formData = new FormData;
+            formData.append('from_id', storage.getItem('id'));
+            formData.append('to_nickname', ID[0]);
+            formData.append('room_id', this.room.id);
+            console.log("friend ID");
+            console.log(ID[0]);
+            httplobby
+            .post('alarm/inviteGame', formData)
+            .then((res) => {
+                console.log(res.data);
+            })
+
+            this.isPopupFriend = false;
+        },
+        
+
+        // 현재 보이는 화면 크기 계산
+        screenResize() {
+            this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
+            this.layoutCal();
+        },
+
+        // 넓이 계산해서 style 안에 계산해서 넣어주기
+        layoutCal() {
+            let suffix = 'px';
+            document.documentElement.style.setProperty('--widthSize', this.window.width + suffix);
+            document.documentElement.style.setProperty('--heightSize', this.window.height + suffix);
+            document.documentElement.style.setProperty('--leftSize', ((this.window.width * 0.6) - 20) + suffix);
+            document.documentElement.style.setProperty('--rightSize', ((this.window.width * 0.4) - 20) + suffix);
+            document.documentElement.style.setProperty('--mainSize', (this.window.height - 80 - 20) + suffix);
+            document.documentElement.style.setProperty('--chatHeightSize', ((this.window.height * 0.25) - 20) + suffix);
+        },
     },
 
 }
@@ -464,6 +612,7 @@ export default {
     --leftSize: 800px;
     --rightSize: 400px;
     --mainSize: 800px;
+    --chatHeightSize: 400px;
 }
 
 #waitRoom {
@@ -477,6 +626,7 @@ export default {
 
 /* 전체 영역 3부분으로 나눔 상단 | 왼 | 오 */
 .screen__top {
+    position: relative;
     width: var(--widthSize);
     height: 80px;
     font-size: 20px;
@@ -501,6 +651,13 @@ export default {
     height: var(--mainSize);
     margin: 10px;
     /* background-color: skyblue; */
+}
+
+/* 레이아웃 상단 */
+.screen__top__left {
+    position: inline-block;
+    width: var(--leftSize);
+    height: 100%;
 }
 
 
@@ -537,6 +694,22 @@ export default {
 
 
 /* 개별 style */
+/* 상단 우측 버튼 */
+.friends__invite {
+    position: fixed;
+    right: 15px;
+    top: 0px;
+}
+
+.friends__invite__button {
+    padding: 0px 10px;
+    background-color: green;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    height: 50px !important;
+}
+
 
 /* 우측 상단 버튼 */
 .mode__button > button {
@@ -588,7 +761,7 @@ export default {
 // 채팅 인풋
 .input__text__part {
     // width: var(--leftSize);
-    width: calc( var(--leftSize) - 110px );
+    width: calc( var(--leftSize) - 120px );
     padding-left: 10px;
     background-color: rgba(255, 255, 255, 0.3); 
     color: white; 
@@ -599,9 +772,30 @@ export default {
 .chatting__area {
     width: 82%;
     background-color: rgba(255, 255, 255, 0.3);
-    padding: 10px 20px;
+    padding: 10px 10px;
     border-radius: 10px;
+    font-size: 0.9rem;
 }
+
+
+.scrollbar-box
+{
+    width: 100%;
+    height: calc(var(--chatHeightSize) - 30px);
+	overflow-y: scroll;
+    overflow-x: hidden;
+    white-space: normal;
+    position : relative; 
+    bottom: 0px;
+}
+
+.force-overflow
+{
+  /* 스크롤바 내부의 글자가 누적되는 창 크기
+  스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
+	min-height: calc(var(--chatHeightSize) - 30px);
+}
+
 
 .change__part {
     position: fixed;
@@ -630,12 +824,157 @@ export default {
 }
 
 .modal__button > button {
-    padding: 5px;
+    padding: 3px;
     border-radius: 10px;
     color: white;
     background-color: rgba(28, 144, 65, 0.8);
     border: none;
 }
+
+
+// scrollbar__style
+
+#scrollbar__style::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#scrollbar__style::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #F5F5F500;
+}
+
+#scrollbar__style::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.scrollbar-box2
+  {
+    height: 330px;
+    width: 100%;
+    background-color: rgba(0, 41, 0, 0);
+    overflow-y: scroll;
+    position : relative; 
+    bottom: 0px;
+
+  }
+
+  .force-overflow
+  {
+    /* 스크롤바 내부의 글자가 누적되는 창 크기
+    스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
+    min-height: 300px;
+    margin: 15px 10px;
+  }
+
+  .friendList {
+    margin: 10px;
+    padding: 5px;
+    padding-left: 30px;
+    background :#eceef188;
+    color: rgba(37, 37, 37, 0.788);
+    border-radius: 10px;
+  }
+
+  /*scrollbar STYLE 1*/
+  #style-1::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
+    border-radius: 10px;
+    background-color: #eceef155;
+    opacity:0.9;
+  }
+
+  #style-1::-webkit-scrollbar
+  {
+    width: 12px;
+    background-color: #F5F5F500;
+  }
+
+  #style-1::-webkit-scrollbar-thumb
+  {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+  }
+  
+
+  /* 우측정렬용 컨테이너 */
+
+  .button {
+    color: rgba(37, 37, 37, 0.788);
+    background: rgba(255, 254, 254, 0.151);
+    appearance: none;
+    font: inherit;
+    border-radius: .3em;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 5px;
+    opacity:0.9;
+
+    background-color: rgba(61, 61, 61, 0.5);
+    border: none;
+    color: white;
+  }
+
+  .inviteFriendmodal {
+    position: absolute;
+    position: fixed;
+    
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    text-align: center;
+    width: fit-content;
+    height: fit-content;
+    max-width: 50em;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+    background: #FFF;
+    z-index: 999;
+    transform: none;
+  }
+  .inviteFriendmodal h1 {
+    margin: 0 0 1rem;
+    color: black;
+  }
+
+  .modal-overlay {
+    content: '';
+    position: absolute;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 998;
+    background: #414141;
+    opacity: 0.6;
+    cursor: pointer;
+  }
+
+
 
 
 </style>

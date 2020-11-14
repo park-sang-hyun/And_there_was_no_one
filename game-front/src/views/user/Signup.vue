@@ -1,78 +1,84 @@
 <template>
-  <div class="container">
-    <form>
-      <h1>Signup page</h1>
-      <div class="form-item">
+  <!-- <div id="signupBackGrd"> -->
+    <transition v-if="goSignupLobby" name="fade" appear>
+      <enterLobby style="z-index: 1;"/>
+    </transition>
+    <div v-else class="signupcontainer">
+      <form>
+        <h1>Signup page</h1>
+        <div class="form-item">
+          <input
+            v-model="username"
+            type="text"
+            id="username"
+            placeholder="아이디를 입력하세요."
+          />
+        </div>
+        <div class="form-item">
         <input
-          v-model="username"
-          type="text"
-          id="username"
-          placeholder="아이디를 입력하세요."
-        />
-      </div>
-      <div class="form-item">
-      <input
-          v-model="nickname"
-          type="text"
-          id="nickname"
-          placeholder="닉네임을 입력하세요."
-          @keyup="nickCheck=false"
-        />
-      </div>
-      <button type="button" @click="nicknameCheck(nickname)">중복체크</button>
-      <!-- 닉네임 중복체크하기  -->
-      <div class="error-text" v-if="error.password1">{{error.password1}}</div>
-      <div class="form-item">
-        <input
-          v-model="password1"
-          type="password"
-          v-bind:class="{error : error.password1, complete:!error.password1&&password1.length!==0}"
-          id="password1"
-          @keyup="checkPasswordForm"
-          placeholder="비밀번호를 입력하세요."
-        />
-        
-      </div>
-      <!-- 비밀번호 맞는지 체크하기  -->
-      <div class="form-item">
-        <input
-          v-model="password2"
-          type="password"
-          id="password2"
-          @keyup="checkPasswordsame"
-          @keyup.enter="onSignup"
-          placeholder="비밀번호를 다시 입력하세요."
-        />
-      </div>
+            v-model="nickname"
+            type="text"
+            id="nickname"
+            placeholder="닉네임을 입력하세요."
+            @keyup="nickCheck=false"
+          />
+        </div>
+        <button type="button" @click="nicknameCheck(nickname); ">중복체크</button>
+        <!-- 닉네임 중복체크하기  -->
+        <div class="error-text" v-if="error.password1">{{error.password1}}</div>
+        <div class="form-item">
+          <input
+            v-model="password1"
+            type="password"
+            v-bind:class="{error : error.password1, complete:!error.password1&&password1.length!==0}"
+            id="password1"
+            @keyup="checkPasswordForm"
+            placeholder="비밀번호를 입력하세요."
+          />
+          
+        </div>
+        <!-- 비밀번호 맞는지 체크하기  -->
+        <div class="form-item">
+          <input
+            v-model="password2"
+            type="password"
+            id="password2"
+            @keyup="checkPasswordsame"
+            @keyup.enter="onSignup"
+            placeholder="비밀번호를 다시 입력하세요."
+          />
+        </div>
 
-      <button
-        type="button"
-        class="button btn--back btn--signup"
-        @click="onSignup"
-        :disabled="!isSubmit"
-        :class="{disabled : !isSubmit}"
-      >Signup</button>
+        <button
+          type="button"
+          class="button btn--back btn--signup"
+          @click="onSignup"
+          :disabled="!isSubmit"
+          :class="{disabled : !isSubmit}"
+        >Signup</button>
 
-      <div class="add-option mt-4">
-          <div class="wrap">
-            <router-link to="/" class="btn--text">Login</router-link>
-          </div>
-      </div>
-    </form>
-  </div>
+        <div class="add-option mt-4">
+            <div class="wrap">
+              <router-link @click.native="buttonpush()" to="/" class="btn--text">Login</router-link>
+            </div>
+        </div>
+      </form>
+    </div>
+  <!-- </div> -->
 </template>
 
 <script>
 //import "../../components/css/user.scss";
 import PV from "password-validator";
-// import Logo from "../../components/user/Logo.vue";
+import enterLobby from './enterLobby.vue'
+
 import http from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
 
 export default {
   components: {
-    // Logo,
+    enterLobby,
   },
   data: () => {
     return {
@@ -85,10 +91,16 @@ export default {
         password1: false
       },
       isSubmit: false,
-      nickCheck: false
+      nickCheck: false,
+      goSignupLobby: false,
     };
   },
   created() {
+
+    // 화면 크기 확인
+    window.addEventListener('resize', this.screenResize);
+    this.screenResize();
+
     if (storage.NickName || storage.User) this.$router.replace({name: 'Main'})
     this.component = this;
 
@@ -102,7 +114,24 @@ export default {
       .has()
       .letters();
   },
+
+  watch: {
+        // 보이는 화면 크기 변화 감지
+        window() {
+            window.removeEventListener('resize', this.screenResize);
+        },
+  },
+
   methods: {
+    // 현재 보이는 화면 크기 계산
+    screenResize() {
+        var width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
+        var height = window.innerHeight;
+        let suffix = 'px';
+        document.documentElement.style.setProperty('--widthSize', width + suffix);
+        document.documentElement.style.setProperty('--heightSize', height + suffix);
+    },
+
     setInfo(status, token, info) {
       this.status = status
       this.token = token
@@ -179,8 +208,14 @@ export default {
       }
       
     },
+
+    lobbyNext() {
+      this.$router.push("/lobby");
+    },
+
     moveFeed(){
-        this.$router.push("/lobby");
+      this.goSignupLobby = true;
+      var go = setTimeout( this.lobbyNext , 6000);
     },
 
     nicknameCheck(nick) {
@@ -207,6 +242,10 @@ export default {
           })
       }
     },
+    buttonpush(){
+      var bpush = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
+      bpush.play();
+  },
   },
 
  
@@ -226,22 +265,27 @@ export default {
     box-sizing: border-box;
   }
 
-  body {
-    /* background: black;
-    font: 16px "Helvetica Neue";
-    font-weight: 200;
-    letter-spacing: 1.5px; */
+  :root {
+    --widthSize: 400px;
+    --heightSize: 400px;
   }
 
-  .container {
-    width: 360px;
+  #signupBackGrd{
+    background: black;
+    width: var(--widthSize);
+    height: var(--heightSize);
+    padding-top: 13%;
+  }
+
+  .signupcontainer {
+    width: 442px;
     background: ivory;
     background-color: #fff;
     margin: 40px auto auto;
     padding: 8px 0 20px 0;
     border-radius: 4px;
-    -webkit-box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);      
-    box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);
+    /* -webkit-box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);       */
+    /* box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75); */
   }
 
   form {

@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'gameBack.wsgi.application'
 DATABASES = {
     'default' : {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'GAME',
+        'NAME': 'game',
         'USER': 'root',
         'PASSWORD': 'GAME105',
         'HOST': 'localhost',

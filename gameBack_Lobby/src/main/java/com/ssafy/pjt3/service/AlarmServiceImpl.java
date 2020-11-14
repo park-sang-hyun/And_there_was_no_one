@@ -23,4 +23,16 @@ public class AlarmServiceImpl implements AlarmService{
 	public List<Alarm> receive(int user_id) throws SQLException {
 		return alarmDao.receive(user_id);
 	}
+
+	@Override
+	public void delete(int alarm_id) throws SQLException {
+		// TODO Auto-generated method stub
+		alarmDao.delete(alarm_id);
+	}
+
+	@Override
+	public Alarm findOne(int alarm_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return alarmDao.findOne(alarm_id);
+	}
 }

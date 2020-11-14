@@ -1,32 +1,17 @@
 <template>
     <div id="EndScreen">
         <!-- 게임이 완전히 종료된 상황 -->
-        <div v-if="result" class="main__story">
-            <!-- shadow인 경우 -->
-            <div v-if="youShadow">
-                <h1>당신이 이번 판의 Shadow 였습니다.</h1>
-                <div v-if="loseShadow">
-                    <h1>You Lose..</h1>
+        <div v-if="result">
+            <!-- 중앙 정렬위한 빈 공간 -->
+            <div id="floater"></div>
+            <div class="main__story">
+                <h1 class="end__h1"><span :class="{ h1Win: didYouWin, h1Lose: !didYouWin}">{{ gameSentence }}</span></h1>
+                <p class="end__p">{{ firstSentence }}</p>
+                <p class="end__p">{{ secondSentence }}</p>
+                <!-- 점수 (공통) / 정중앙에 출력 -->
+                <div class="score js-score">
+                    {{ isScore }}
                 </div>
-                <div v-else>
-                    <h1>You Win!</h1>
-                </div>
-            </div>
-
-            <!-- 일반 유저인 경우 -->
-            <div v-else>
-                <div v-if="loseShadow">
-                    <h1>You Win!</h1>
-                </div>
-                <div v-else>
-                    <h1>You Lose..</h1>
-                </div>
-
-            </div>
-
-            <!-- 점수 출력 (공통) -->
-            <div>
-                {{ myScore }}
             </div>
         </div>
 
@@ -91,6 +76,7 @@
 
 <script>
 import http from '@/util/http-game.js';
+import httpcommon from '@/util/http-common.js';
 
 const storage = window.sessionStorage;
 
@@ -113,6 +99,9 @@ export default {
         },
         images: {
             type: Array,
+        },
+        sendSentence: {
+            type: String,
         },
     },
 
@@ -140,6 +129,13 @@ export default {
             showVoteResult: false,
             finishSentence: '',
             myScore: 0,
+            total: 0,
+            score: 0,
+            scoreTimer: '',
+            gameSentence: '',
+            firstSentence: '',
+            secondSentence: '',
+            didYouWin: false,
         }
     },
 
@@ -148,11 +144,15 @@ export default {
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
 
+
         for (let step = 0 ; step < this.game.userList.length; step++) {
             // 처음에 사람 수만큼 클릭할 수 있도록 채워두기
             this.isClick.push(false);
             if (this.game.userList[step].id == storage.getItem('id')) {
+                // 게임 중 깍인 점수를 넣는다.
                 this.myScore = this.endScore[step];
+                // 원래 점수를 넣는다
+                this.score = this.game.userList[step].score;
             }
         }
 
@@ -161,11 +161,20 @@ export default {
             this.youShadow = true;
         }
 
+
+        if (this.sendSentence != '') {
+            this.firstSentence = this.sendSentence;
+            if (this.youShadow) {
+                this.gameSentence = 'You Win'; 
+            } else {
+                this.gameSentence = 'You Lose'; 
+            }
+        }
         
         // 게임 종료 여부 확인
         if (this.isFinish) {
             this.result = true;
-            this.loseShadow = false;
+            this.didYouWin = (this.youShadow) ? true : false;
         } else {
             this.result = false;
         }
@@ -191,11 +200,13 @@ export default {
         },
 
         isGameFinish() {
-            this.goWaitRoom();
+            this.showScoreAnimation();
             return this.result
+        },
+        
+        isScore() {
+            return this.score;
         }
-
-
     },
 
     methods: {
@@ -222,7 +233,7 @@ export default {
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
             let suffix = 'px';
             var num = this.game.userList.length % 4;
             if (num == 0) {
@@ -293,24 +304,38 @@ export default {
             if (this.selectNumber != null) {
                 // 특정 유저 투표(nickname) 보냄
                 formData.append('who', this.game.userList[this.selectNumber].nickname);
+                if (this.youShadow == false) {
+                    if ( this.game.shadow.id == this.game.userList[this.selectNumber].id) {
+                        this.secondSentence = '당신은 Shadow에게 투표했습니다.';
+                        this.myScore = this.myScore + 5;
+                    } else {
+                        this.secondSentence = '당신은 탐정에게 투표했습니다.';
+                        this.myScore = this.myScore - 5;
+                    }
+                }
 
             } else {
                 // 기권
                 formData.append('who', null);
-
+                if (this.youShadow == false) {
+                    this.secondSentence = '당신은 기권했습니다.';
+                }
             }
 
 
             http
             .post(`vote/vote/${this.game.id}`, formData)
             .then((res) => {
-                setTimeout(this.voteResult, 4000);
+                // 투표 결과 받아오기는 첫번째 턴인 사람만 하자
+                if (this.game.userList[0].id == storage.getItem('id')) {
+                    console.log('나 투표 결과 받으러 감')
+                    setTimeout(this.voteResult, 3000);
+                }
             
             })            
             .catch((err) => {
                 console.log(err);
             })
-            // setTimeout(this.nextVote, 4000);
 
         },
 
@@ -327,7 +352,8 @@ export default {
                         }
                     }
                 }
-                this.nextVote();
+                // 받은 결과를 위로 올려준다
+                this.$emit('submitVoteResult', this.voteUser);
             })
             .catch((err) => {
                 console.log(err);
@@ -335,72 +361,162 @@ export default {
 
         },
 
-        // 연결 후에는 finishVote에서 res.data 받는 부분으로 바꿀 것
-        nextVote() {
+        // 투표 결과가 맞는지 확인
+        resultCheck(data) {
             // showNumber == 4
             // this.voteUser.push(this.selectNumber);
             this.showNumber = this.showNumber + 1;
             this.show[this.showNumber - 1] = false;
             this.show[this.showNumber] = true;
-            
-            setTimeout(this.resultCheck, 4000);
-        },
 
-        // 맞는지 확인
-        resultCheck() {
-            this.loseShadow = false;
-
-            if (this.voteUser.length == 1) {
-                if (this.game.shadow.nickname == this.game.userList[this.voteUser[0]].nickname) {
-                    this.loseShadow = true;
+            if (data.length == 1) {
+                // Shadow 발각
+                if (this.game.shadow.nickname == this.game.userList[data[0]].nickname) {
                     this.finishSentence = 'Shadow를 찾았습니다';
-                } else {
+
+                    // 본인이 Shadow라면 실패
+                    if (this.youShadow) {
+                        this.didYouWin = false;
+                        this.myScore = this.myScore - 40;
+                        this.gameSentence = 'You Lose';
+                        this.firstSentence = '당신은 Shadow임이 발각되었습니다.';
+                    } else {
+                        // 아니면 성공
+                        this.didYouWin = true;
+                        this.myScore = this.myScore + 30;
+                        this.gameSentence = 'You Win!';
+                        this.firstSentence = '탐정들이 Shadow를 검거했습니다.';
+                    }
+                } 
+                // Shadow 발각 X
+                else {
                     this.finishSentence = 'Shadow를 찾지 못했습니다.';
-                }
-            } else {
-                this.finishSentence = 'Shadow가 존재하지 않습니다.';
-                for (let k; k < this.voteUser.length; k++) {
-                    if (this.game.shadow.nickname == this.game.userList[this.voteUser[k]].nickname) {
-                        this.finishSentence = 'Shadow가 존재하지만 검거하진 못했습니다.';
+
+                    // 본인이 Shadow라면 성공
+                    if (this.youShadow) {
+                        this.didYouWin = true;
+                        this.myScore = this.myScore + 40;
+                        this.gameSentence = 'You Win!';
+                        this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
+                    } else {
+                        // 아니면 실패
+                        this.didYouWin = false;
+                        this.myScore = this.myScore - 30;
+                        this.gameSentence = 'You Lose';
+                        this.firstSentence = 'Shadow를 찾지 못했습니다.';
                     }
                 }
-            }
+            } else {
+                var flag = false;
 
-            // 점수 산정
-            // 섀도우인 경우
-            if (this.youShadow) {
-                // 실패 | 성공
-                if (this.loseShadow) {
-                    this.myScore = this.myScore - 40;
-                } else {
-                    this.myScore = this.myScore + 40;
+                for (let k; k < data.length; k++) {
+                    if (this.game.shadow.nickname == this.game.userList[data[k]].nickname) {
+                        flag = true;
+                        break;
+                    }
                 }
-            }
-            // 섀도우가 아닌 경우
-            else {
-                // 성공 | 실패
-                if (this.loseShadow) {
-                    this.myScore = this.myScore + 30;
+                
+                if (flag) {
+                    // 본인이 Shadow라면 성공
+                    if (this.youShadow) {
+                        this.didYouWin = true;
+                        this.myScore = this.myScore + 20;
+                        this.gameSentence = 'You Win';
+                        this.firstSentence = 'Shadow 임무를 간신히 성공했습니다.';
+                    } else {
+                        // 아니면 실패
+                        this.didYouWin = false;
+                        this.myScore = this.myScore - 20;
+                        this.gameSentence = 'You Lose..';
+                        this.finishSentence = 'Shadow를 검거하진 못했습니다.';
+                    }
                 } else {
-                    this.myScore = this.myScore - 30;
+                    // 본인이 Shadow라면 성공
+                    if (this.youShadow) {
+                        this.didYouWin = true;
+                        this.myScore = this.myScore + 40;
+                        this.gameSentence = 'You Win!';
+                        this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
+                    } else {
+                        // 아니면 실패
+                        this.didYouWin = false;
+                        this.myScore = this.myScore - 30;
+                        this.gameSentence = 'You Lose';
+                        this.finishSentence = 'Shadow가 존재하지 않습니다.';
+                    }
                 }
-            }
 
+            }
 
             this.showVoteResult = true;
 
-            setTimeout(this.finishGame, 4000);
+            setTimeout(() => this.result = true, 4000);
         },
 
-        finishGame() {
-            this.result = true; 
-        },
-
-        goWaitRoom() {
+        showScoreAnimation() {
             if (this.result == true) {
-                setTimeout(() => this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }}), 7000);
+                
+                // 점수 올리기 | 내리기
+                setTimeout(this.changeScore, 1000);
+
+                setTimeout(this.sendMyScore, 9000);
             }
-        }
+        },
+        
+        // 점수 올리거나 내리는 시뮬레이션
+        changeScore() {
+            this.total = this.score + this.myScore;
+
+            // 점수 올라가기
+            if (this.myScore > 0) {
+                this.scoreTimer = setInterval(() => {
+                        this.score++;
+                        if (this.score == this.total) {
+                            clearInterval(this.scoreTimer);
+                            document.querySelector('.js-score').classList.add("animated", "bounceIn");
+                        }
+                    }, 10); 
+            } 
+            // 점수 내려가기
+            else {
+                this.scoreTimer = setInterval(() => {
+                    this.score--;
+                    if (this.score == this.total) {
+                        clearInterval(this.scoreTimer);
+                        document.querySelector('.js-score').classList.add("animated", "bounceIn");
+                    }
+                }, 10); 
+            }
+        },
+
+        // 점수 보내기
+        sendMyScore() {
+            var formData = new FormData;
+            formData.append('user', Number(storage.getItem('id')));
+            formData.append('score', this.total);
+            var winCnt = (this.didYouWin) ? 1 : 0;
+            formData.append('wincount', winCnt)
+
+            httpcommon
+            .post(`accounts/score/`, formData)
+            .then((res) => {
+                this.goWaitRoom();
+            })
+
+        },
+
+        // 대기방 돌아가기
+        goWaitRoom() {
+            
+            http
+            .put(`game/exitgame/${this.game.id}`)
+            .then((res) => {
+                this.$router.replace({ name: 'WaitRoom', params: { roomId: this.game.id }});
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        },
 
     }
 
@@ -424,22 +540,57 @@ export default {
     top: 0;
     width: var(--widthSize);
     height: var(--heightSize);
+    background: black;
+    overflow: inherit; 
+}
+
+// 중앙 정렬 위한 floater
+#floater {
+    float: left; 
+    height: 45%; 
+    margin-bottom: -120px;
 }
 
 .main__story {
     clear: both; 
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: sticky;
     margin: auto;
+    color: white;
     font-size:20px;
+    line-height:1.6em;
     font-family: 'Open Sans', sans-serif, 'Oswald', sans-serif;
+    // font-family:sans-serif;
     margin: 0;
+    // attributes to accompany the animation
     opacity:0;
+    position:relative;
     transform:translateY(1em);
+    // animation stuff
     animation:page-in ease-out 3s;
     animation-fill-mode:forwards;
+    text-align: center;
 }
+
+
+.end__h1 {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.h1Win {
+    color: rgb(54, 181, 12);
+}
+
+.h1Lose {
+    color: rgb(255, 0, 0);
+}
+
+.end__p {
+    margin: 20px 0px;
+    color: white;
+    font-size: 1.2rem;
+}
+
 
 .zero__middle {
     line-height: var(--heightSize);
@@ -479,6 +630,9 @@ h1 {
     width: var(--imageSize);
     height: var(--imageSize);
     background-color: rgba(255, 0, 0, 0.5);
+    background-image: url('../../assets/images/check.png');
+    background-repeat : no-repeat;
+    background-size : cover;
 }
 
 .user__part {
@@ -514,5 +668,15 @@ h1 {
 }
 
 
+.score {
+    margin-top: 60px;
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+}
+
+.js-score {
+    color: white;
+}
 
 </style>

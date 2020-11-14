@@ -12,6 +12,7 @@
                 <div class="row mt-4">{{ userData.nickname }}</div>
             </div>
             <div v-if="isClick" class="click__part">
+                <div class="mt-4 count__part">랭크 : {{ userData.rank}}({{ userData.score}})</div>
                 <div class="count__part">{{ userData.playcount}}게임({{ userData.wincount}}승|{{ losecount }}패)</div>
                 <div v-if="youLeader">
                     <button v-if="!isYou" @click="changeLeader" class="leader__part">팀장 위임</button>

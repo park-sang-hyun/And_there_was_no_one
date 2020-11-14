@@ -23,6 +23,7 @@ import com.ssafy.pjt3.dto.Topic;
 import com.ssafy.pjt3.dto.User;
 import com.ssafy.pjt3.model.BasicResponse;
 import com.ssafy.pjt3.model.GameData;
+import com.ssafy.pjt3.model.UserData;
 import com.ssafy.pjt3.model.WaitRoomData;
 import com.ssafy.pjt3.service.GameService;
 import com.ssafy.pjt3.service.UserService;
@@ -52,6 +53,7 @@ public class GameController {
 	public WaitRoomData wait(@PathVariable int room_id) {
 		Room room = new Room();
 		List<User> userList = new ArrayList<>();
+		List<UserData> userListWithRank = new ArrayList<>();
 		User leader = new User();
 		WaitRoomData waitroomdata = new WaitRoomData();
 		
@@ -69,7 +71,21 @@ public class GameController {
 			waitroomdata.setStart(room.isStart());
 			waitroomdata.setLeader(leader);
 			
-			waitroomdata.setUserList(userList);
+			for(int i=0; i< userList.size(); i++) {
+				UserData ud = new UserData();
+				
+				ud.setId(userList.get(i).getId());
+				ud.setUsername(userList.get(i).getUsername());
+				ud.setNickname(userList.get(i).getNickname());
+				ud.setPlaycount(userList.get(i).getPlaycount());
+				ud.setScore(userList.get(i).getScore());
+				ud.setWincount(userList.get(i).getWincount());
+				ud.setRank(userService.getRank(userList.get(i).getId()));
+				
+				userListWithRank.add(ud);
+			}
+			
+			waitroomdata.setUserList(userListWithRank);
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,7 +172,7 @@ public class GameController {
 		return gamedata;
 	}
 	
-	@GetMapping("/exitgame/{room_id}")
+	@PutMapping("/exitgame/{room_id}")
 	@ApiOperation(value = "게임 끝", notes = "게임이 끝났을 때 필요한 정보를 변경")
 	public Object exitgame(@PathVariable int room_id) {
 		final BasicResponse result = new BasicResponse();
@@ -185,6 +201,9 @@ public class GameController {
 			
 			List<User> userList = gameService.findUserInRoom(room_id);
 			System.out.println("userlist: "+ userList);
+			
+//			System.out.println("방안의 모든 유저 : " );
+//			for(int i=0;i<userList.size();i++) System.out.println();
 			
 			if(isLeader == true) {
 				//게임방에 유저가 2명 이상이면 방장을 위임하고 나가고, 본인 한명 뿐이면 그냥 나가게 된다
@@ -256,14 +275,12 @@ public class GameController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@PutMapping("/mandate/{username}/{leader_username}")
+	@PutMapping("/mandate/{user_id}/{leader_user_id}")
 	@ApiOperation(value = "방장 위임", notes = "방장 위임 기능 구현")
-	public Object mandate(@PathVariable String username, @PathVariable String leader_username) {
+	public Object mandate(@PathVariable int user_id, @PathVariable int leader_user_id) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
-			int user_id = userService.findPkId(username);
-			int leader_user_id = userService.findPkId(leader_username);
 			
 			gameService.mandateLeader(leader_user_id, user_id);
 		}catch(SQLException e){
@@ -276,14 +293,12 @@ public class GameController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/kickout/{username}")
+	@DeleteMapping("/kickout/{user_id}")
 	@ApiOperation(value = "유저 강제 퇴장", notes = "방장이 유저를 강제 퇴장 시키는 기능을 구현")
-	public Object kickout(@PathVariable String username) {
+	public Object kickout(@PathVariable int user_id) {
 		final BasicResponse result = new BasicResponse();
 		
 		try {
-			int user_id = userService.findPkId(username);
-			
 			gameService.kickoutUser(user_id);
 		}catch(SQLException e){
 			// TODO Auto-generated catch block
@@ -292,6 +307,29 @@ public class GameController {
 		
 		result.status = true;
         result.data = "강제 퇴장 완료";
+        return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@GetMapping("/score/{user_id}/{score}/{win}")
+	@ApiOperation(value = "게임이 끝난 후 점수 변경", notes = "게임이 끝난 후 점수 변경하는 기능을 구현")
+	public Object score(@PathVariable int user_id, int score, boolean win) {
+		final BasicResponse result = new BasicResponse();
+		User user = new User();
+		
+		try {
+			user = userService.getUserwithUserId(user_id);
+			user.setPlaycount(user.getPlaycount() + 1);
+			user.setScore(score);
+			if(win == true) user.setWincount(user.getWincount() + 1);
+			
+			userService.changeScore(user);
+		}catch(SQLException e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		result.status = true;
+        result.data = "점수 변경 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }
