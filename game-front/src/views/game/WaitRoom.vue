@@ -306,7 +306,6 @@ export default {
     },
 
     destroyed() {
-        
         this.socket.close();
         this.socketRoom.close();
 
