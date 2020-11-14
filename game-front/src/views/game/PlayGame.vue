@@ -376,13 +376,13 @@ export default {
 
         // mode 1,2 : 이미지 저장 후 ai로 보내기 / mode 3 : 이미지 저장 후 턴 넘기기
         sendAI(image) {
-console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI")
+            console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI")
             this.images.push(image);
 
             if (this.game.userList[this.turn].id == storage.getItem('id')) {
                 console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI1")
                 if (this.game.mode == 3) {
-console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI2")
+                console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI2")
                     setTimeout(() => this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn })), 500 );
 
                 } else {
@@ -447,21 +447,21 @@ console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI2")
                 
                 this.socketPlay.onmessage = ({data}) => {
                     console.log('play 받음');
-                    // var PlayData = JSON.parse(data);
-                    // if (PlayData.finish) {
-                    //     this.turnFinish();
-                    // } else {
-                    //     if (PlayData.isturn) {
-                    //         this.turn = PlayData.turn;
-                    //         if (this.turn == this.game.cur_count) {
-                    //             this.end = true;
-                    //         } else {
-                    //             this.beforeStartTimer();
-                    //         }
-                    //     } else {
-                    //         console.log(PlayData);
-                    //     }
-                    // }
+                    var PlayData = JSON.parse(data);
+                    if (PlayData.finish) {
+                        this.turnFinish();
+                    } else {
+                        if (PlayData.isturn) {
+                            this.turn = PlayData.turn;
+                            if (this.turn == this.game.cur_count) {
+                                this.end = true;
+                            } else {
+                                this.beforeStartTimer();
+                            }
+                        } else {
+                            console.log(PlayData);
+                        }
+                    }
                     
                 };
             };
