@@ -17,7 +17,7 @@
     </delete>
 
     <select id="findOne" resultType="com.ssafy.pjt3.dto.Alarm">
-    	select * from alarm where alarm_id=#{alarm_id}
+    	select * from alarm where id=#{alarm_id}
     </select>
 
 

@@ -4,7 +4,6 @@
         </div>
 
         <div v-else>
-            <div v-if="!delayMode">
                 <!-- 화면 상단 -->
                 <div class="screen__top">
                     <!-- 방제목 -->
@@ -14,7 +13,7 @@
                         </div>
                     </div>
                     <div class="friends__invite">
-                        <div class="friends__invite__button">친구 초대</div>
+                        <div class="btn btn-secondary" @click="friendsList">친구 초대</div>
                     </div>
                 </div>
 
@@ -23,7 +22,7 @@
                     <!-- 입장한 유저 목록 -->
                     <div class="user__part">
                         <user v-for="n in room.userList.length" 
-                            :key="n-1 + 'waitUserkey'" 
+                            :key="n-1 + componentLeaderKey" 
                             :number="n-1"
                             :existClick="isUserClick[n-1]"
                             :userData="room.userList[n-1]" 
@@ -65,9 +64,9 @@
                 <div class="screen__right">
                     <!-- 게임 설정 출력 (상중하 / 모드) 방장인 경우에 클릭 가능 -->
                     <div class="setting__part">
-                        <mode :mode="room.mode" :isLeader="leader" @modeChange="modeChange" style="margin-bottom: 20px;"/>
-                        <difficulty :difficulty="room.difficulty" :isLeader="leader" @difficultyChange="difficultyChange"/>
-                        <div v-if="leader" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
+                            <mode :mode="room.mode" :isLeader="leader" :key="componentModeKey" @modeChange="modeChange" style="margin-bottom: 20px;"/>
+                            <difficulty :difficulty="room.difficulty" :key="componentDiffKey" :isLeader="leader" @difficultyChange="difficultyChange"/>
+                        <div v-if="leader" :key="componentModifyKey" class="mode__button d-flex justify-content-center" style="margin-top: 20px;">
                             <button @click="roomUpdate">게임 모드 수정</button>
                         </div>
                     </div>
@@ -93,23 +92,7 @@
                         <button @click="ExitRoom">방 나가기</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- game 화면 이전에 로딩 화면 -->
-            <div v-else>
-                <!-- 자유그리기 모드일 때 -->
-                <div v-if="isMode[0]">
-                    <loadingOne/>
-                </div>
-                <!-- 이어그리기 모드일 때 -->
-                <div v-if="isMode[1]">
-                    <loadingTwo/>
-                </div>
-                <!-- NO AI 모드일 때 -->
-                <div v-if="isMode[2]">
-                    <loadingThree/>
-                </div>
-            </div>
 
             <div v-if="isChangeLeader" class="change__part">
                 <div class="modal__part">
@@ -119,6 +102,17 @@
                     <div class="modal__button d-flex justify-content-center">
                         <button @click="exitLeader">닫기</button>
                         <button @click="leaderChange" class="ml-2">팀장 위임</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div v-if="isPopupFriend" class="change__part">
+                <div class="freinds__part">
+                    <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="modal__text" @click="inviteFriend">
+                        {{ friend.nickname }}
+                    </div>
+                    <div class="modal__button">
+                        <button @click="isPopupFriend = false;">닫기</button>
                     </div>
                 </div>
             </div>
@@ -132,10 +126,8 @@ import empty from '@/components/room/EmptyUser.vue'
 import none from '@/components/room/NoneUser.vue'
 import mode from '@/components/room/modeSetting.vue';
 import difficulty from '@/components/room/difficultySetting.vue';
-import loadingOne from '@/components/room/LoadingModeOne.vue';
-import loadingTwo from '@/components/room/LoadingModeTwo.vue';
-import loadingThree from '@/components/room/LoadingModeThree.vue';
 import http from '@/util/http-game.js';
+import httplobby from '@/util/http-lobby.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
@@ -152,9 +144,6 @@ export default {
         none,
         difficulty,
         mode,
-        loadingOne,
-        loadingTwo,
-        loadingThree,
     },
 
     props: {
@@ -165,6 +154,10 @@ export default {
 
     data() {
         return {
+            componentModeKey: 1000,
+            componentDiffKey: 0,
+            componentModifyKey: 10000,
+            componentLeaderKey: 100000,
             room: {},               // room 데이터 받아서 넣기
             defaultroom: {          // 개발용 default 값
                 title: '스겜',
@@ -236,6 +229,9 @@ export default {
             isChangeLeader: false,
             changeLeaderNum: 0,
             myNickname: '',
+            myfriends: [],
+            isPopupFriend: false,
+            ifFirst: true,
         }
     },
 
@@ -244,22 +240,7 @@ export default {
 
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
-        
-        http
-        .get(`game/waitroom/${this.roomId}`)
-        .then((res) => {
-            this.room = res.data;
-            this.isSend = true;
-                
-            this.checkRoom();
-
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-
-        this.connect();
-        this.connectRoom();
+        this.readRoom();
 
         // 로딩 화면 막아 놓기
         this.delayMode = false;
@@ -267,7 +248,6 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
-
     },
 
     computed: {
@@ -282,6 +262,7 @@ export default {
         sendTitle() {
             return this.room.title
         },
+
     },
 
     watch: {
@@ -291,33 +272,67 @@ export default {
         },
     },
 
+    destroyed() {
+        
+        this.socket.close();
+        this.socketRoom.close();
+
+    },
+
     methods: {
 
-        checkRoom() {
-            // 빈자리 출력을 위해 인원 확인
-            if (this.room.cur_count < this.room.max_count) {
-                this.EmptyCount = this.room.max_count - this.room.cur_count;
-            }
+        readRoom() {
 
-            // 막아둘 자리 출력을 위한 인원 확인
-            if (this.room.max_count < 8) {
-                this.NoneCount = 8 - this.room.max_count;
-            }
-            
-            // 본인이 방장인지 여부 확인
-            if (this.room.leader.id == storage.getItem('id')) {
-                this.leader = true;
-            } else {
-                this.leader = false;
-            }
+            http
+            .get(`game/waitroom/${this.roomId}`)
+            .then((res) => {
+                this.room = res.data;
+                this.isSend = true;
 
-            // 본인 닉네임 찾기
-            for (let k=0; k < this.room.userList.length; k++) {
-                if (this.room.userList[k].id == storage.getItem('id')) {
-                    this.myNickname = this.room.userList[k].nickname;
-                    break;
+                if (this.ifFirst) {
+                    this.connect();
+                    this.connectRoom();
+                    this.ifFirst = false;
                 }
-            }
+
+                console.log(this.room);
+
+
+                // 빈자리 출력을 위해 인원 확인
+                if (this.room.cur_count < this.room.max_count) {
+                    this.EmptyCount = this.room.max_count - this.room.cur_count;
+                }
+
+                // 막아둘 자리 출력을 위한 인원 확인
+                if (this.room.max_count < 8) {
+                    this.NoneCount = 8 - this.room.max_count;
+                }
+                
+                // 본인이 방장인지 여부 확인
+                if (this.room.leader.id == storage.getItem('id')) {
+                    this.leader = true;
+                } else {
+                    this.leader = false;
+                }
+
+                // 본인 닉네임 찾기
+                for (let k=0; k < this.room.userList.length; k++) {
+                    if (this.room.userList[k].id == storage.getItem('id')) {
+                        this.myNickname = this.room.userList[k].nickname;
+                        break;
+                    }
+                }
+
+                this.componentModeKey += 1;
+                this.componentDiffKey += 1;
+                this.componentModifyKey += 1;
+                this.componentLeaderKey += 10000;
+
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+           
         },
 
         // 방 업데이트
@@ -358,29 +373,36 @@ export default {
 
         // 대기 방 소켓 연결
         connectRoom() {
-            console.log('대기방 소켓 연결');
             this.socketRoom = new WebSocket(`${socketRoomURL}/${this.room.id}`);
             this.socketRoom.onopen = () => {
-                
+
                 this.sendRoomMessage();
 
                 this.socketRoom.onmessage = ({data}) => {
-                    console.log('대기방 소켓');
-                    this.room = JSON.parse(data);
-                    this.checkRoom();
+                    var sendRoomData = { start : false };
+                    if (typeof data !== 'undefined') {
+                        sendRoomData = JSON.parse(data);
+                    }
+                    
+                    if (sendRoomData.start) {
+                        this.$router.replace({ name: 'LoadingGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id }});
+                        // this.delayMode = true;
+                        // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: sendRoomData.sendGame, roomId: this.room.id }}), 7000);
+                    } else {
+                        this.readRoom();
+                    }
                 };
             };
         },
         
-        //  채팅 보내기
+        //  
         sendRoomMessage() {
-            this.socketRoom.send(JSON.stringify({ room_id: this.room.id }));
+            this.socketRoom.send(JSON.stringify({ start: false, game: false, room_id: this.room.id })); 
         },
 
         // 채팅 부분
         // 소켓 연결
         connect() {
-            console.log('채팅 소켓 연결');
             this.chatStatus = true;
             this.socket = new WebSocket(`${socketURL}/${this.room.id}`);
             this.socket.onopen = () => {
@@ -388,7 +410,6 @@ export default {
                 
 
                 this.socket.onmessage = ({data}) => {
-                    console.log('채팅 소켓');
                     this.chatLogs.push(JSON.parse(data));
                     const chatBox = document.querySelector(".scrollbar-box");
                     chatBox.scrollTop = chatBox.scrollHeight;
@@ -399,6 +420,7 @@ export default {
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
+            console.log("나 채팅!!")
             if (Data != '' && this.myNickname != '') {
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
             }
@@ -418,13 +440,14 @@ export default {
                 // 현재 게임 모드를 확인해서 어떤 로딩 화면을 띄울 건지 결정
                 this.isMode = [false, false, false];        // 초기화
                 this.isMode[this.room.mode - 1] = true;     // mode에 맞는 것만 true
-                // 로딩화면 띄우기
-                this.delayMode = true;
 
                 http
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
-                    setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
+                    this.socketRoom.send(JSON.stringify({ start: true, game: false, room_id: this.room.id, sendGame: res.data }));
+                    // // 로딩화면 띄우기
+                    // this.delayMode = true;
+                    // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -434,20 +457,10 @@ export default {
 
         // 방 나가기
         ExitRoom() {
-
             http
             .delete(`game/leave/${storage.getItem('id')}`)
             .then((res) => {
                 this.sendRoomMessage();
-                // 이건 아마 리더 넘기는 건데.. 여기서 할 게 아니라 소켓 연결해서 새로 방 정보 받아와야함....
-                // if (res.data.object != null) {
-                //     this.room.leader = res.data.object;
-                //     if (this.room.leader.id == storage.getItem('id')) {
-                //         this.leader = true;
-                //     } else {
-                //         this.leader = false;
-                //     }
-                // }
                 this.$router.replace({ name: 'Lobby' })
             })
             .catch((err) => {
@@ -494,18 +507,46 @@ export default {
             http
             .put(`game/mandate/${this.room.userList[this.changeLeaderNum].id}/${storage.getItem('id')}`)
             .then((res) => {
+                this.isChangeLeader = false;
                 this.sendRoomMessage();
             })
             .catch((err) => {
                 console.log(err);
             })
         },
+
+        // 친구 리스트 가져오기
+        friendsList() {
+            httplobby
+            .get(`user/loginFriend/list/${storage.getItem('id')}`)
+            .then((res) => {
+                console.log(res.data);
+                this.myfriends = res.data;
+                this.isPopupFriend = true;
+            })
+        },
+
+        // 친구 초대
+        inviteFriend(event) {
+            var ID = event.target.id.split('-');
+            var formData = new FormData;
+            formData.append('from_id', storage.getItem('id'));
+            formData.append('to_nickname', ID[0]);
+            formData.append('room_id', this.room.id);
+
+            httplobby
+            .post('alarm/inviteGame', formData)
+            .then((res) => {
+                console.log(res.data);
+            })
+
+        },
         
 
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
             this.layoutCal();
         },
 
@@ -616,19 +657,18 @@ export default {
 /* 개별 style */
 /* 상단 우측 버튼 */
 .friends__invite {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    position: fixed;
+    right: 15px;
+    top: 0px;
 }
 
 .friends__invite__button {
-    padding: 10px;
+    padding: 0px 10px;
     background-color: green;
     border: none;
     border-radius: 20px;
-    height: 50%;
     color: white;
+    height: 50px !important;
 }
 
 
