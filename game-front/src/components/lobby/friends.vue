@@ -462,7 +462,7 @@ export default {
   
   .scrollbar-box2
   {
-    height: 330px;
+    height: 285px;
     width: 100%;
     background-color: rgba(0, 41, 0, 0);
     overflow-y: scroll;

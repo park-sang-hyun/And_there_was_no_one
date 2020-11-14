@@ -68,8 +68,8 @@ public class RoomController {
 		try {
 			list = roomService.findAll();
 			
-			int start = page * 8 - 8;
-			int end = page * 8;
+			int start = page * 6 - 6;
+			int end = page * 6;
 			
 			if(end > list.size()) end = list.size();
 			

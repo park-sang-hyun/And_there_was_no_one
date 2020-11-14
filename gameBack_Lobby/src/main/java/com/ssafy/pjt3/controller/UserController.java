@@ -222,5 +222,52 @@ public class UserController {
 
 		return login;
 	}
+	
+	@GetMapping("/rank/listcount")
+	@ApiOperation(value = "전체 유저 수 세기", notes = "전체 유저 수 세기 기능 구현")
+	public int usercount() {
+		List<User> userList = new ArrayList<>();
+		int listcount = 0;
+		try {
+			userList = userService.findAllUser();
+			
+			listcount = userList.size();
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return listcount;
+	}
+	
+	@GetMapping("/rank/list")
+	@ApiOperation(value = "랭킹 목록", notes = "친구 목록 보여주기 기능 구현")
+	public List<UserData> rank() {
+		List<User> userList = new ArrayList<>();
+		List<UserData> rank = new ArrayList<>();
+
+		try {
+			userList = userService.findAllUser();
+			
+			for (int i = 0; i < userList.size(); i++) {
+				UserData ud = new UserData();
+				
+				ud.setId(userList.get(i).getId());
+				ud.setUsername(userList.get(i).getUsername());
+				ud.setNickname(userList.get(i).getNickname());
+				ud.setPlaycount(userList.get(i).getPlaycount());
+				ud.setScore(userList.get(i).getScore());
+				ud.setWincount(userList.get(i).getWincount());
+				ud.setRank(userService.getRank(userList.get(i).getId()));
+				
+				rank.add(ud);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return rank;
+	}
 
 }
