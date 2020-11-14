@@ -107,8 +107,8 @@
                         {{ room.userList[changeLeaderNum].nickname }}에게 방장을 넘기겠습니까?
                     </div>
                     <div class="modal__button d-flex justify-content-center">
-                        <button @click="exitLeader">닫기</button>
-                        <button @click="leaderChange" class="ml-2">팀장 위임</button>
+                        <button @click="leaderChange" class="mr-3" style="padding: 5px; background-color: rgba(48, 48, 48, 1)">팀장 위임</button>
+                        <button @click="exitLeader" style="padding: 5px; background-color: rgba(48, 48, 48, 1)">닫기</button>
                     </div>
                 </div>
             </div>
@@ -789,8 +789,8 @@ export default {
     position: fixed;
     left: 50%;
     top: 50%;
-    height: 100px;
-    padding: 0px 50px;
+    height: 140px;
+    padding: 20px 50px;
     transform: translate(-50%, -50%);
     border-radius: 20px;
     background-color: white;
@@ -804,6 +804,7 @@ export default {
 
 .modal__button > button {
     padding: 3px;
+    margin-top: 10px;
     border-radius: 10px;
     color: white;
     background-color: rgba(28, 144, 65, 0.8);
