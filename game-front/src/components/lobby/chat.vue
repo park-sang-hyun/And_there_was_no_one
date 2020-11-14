@@ -116,6 +116,10 @@ export default {
     padding: 5px 10px;
     margin-bottom: 10px;
     margin-left:10px;
+    
+    &:hover {
+    background: rgba(255, 255, 255, 0.493);
+  }
   }
   
 

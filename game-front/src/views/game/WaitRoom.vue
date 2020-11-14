@@ -135,9 +135,9 @@
 
                     <div class="scrollbar-box2" id="style-1" style="width: 400px" >
                         <div class="force-overflow2" >
-                            <div class="friendList">
-                                <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friend">
-                                
+                            
+                            <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friend">
+                                <div class="friendList">
                                     {{ friend.nickname }}
                                     <button @click="inviteFriend" class="button" style="margin-left: 120px; background-color: rgba(48, 48, 48, 1)">초대</button>
                                 </div>

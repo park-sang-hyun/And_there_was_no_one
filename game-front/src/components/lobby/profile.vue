@@ -2,8 +2,6 @@
   <div>
     
     <div class="profile-wrapper">
-      프로필
-
       <div>
         <div class="btn_container">
           <button class="button" style="margin-left:2%;" @click="logout">게임 종료</button>
@@ -21,8 +19,8 @@
       </div>
       <!-- 유저 정보 불러오기  -->
       <div class="info">
-        <p>Nickname: {{ nickname }}</p>
-        <p>Rank: {{rank}} ( {{ score }} )</p> 
+        <h3 style="color: white;">{{ nickname }} </h3>
+        <h4>{{rank}} ( score: {{ score }} )</h4> 
       </div>
     </div>
   </div>
@@ -35,8 +33,8 @@ import httpLobby from "../../util/http-lobby.js";
 export default {
   data: () => {
     return {
-      nickname: "Hello Anonymous User",
-      score: 999,
+      nickname: "Hello, Anonymous User",
+      score: 0,
       rank:'F',
       alarmCnt: 0,
     };
@@ -110,7 +108,7 @@ export default {
     height: 220px; 
     border-radius: 70%;
     overflow: hidden;
-    margin-left:20%;
+    margin-left:23%;
     opacity:0.9;
 }
 .profile {
@@ -125,16 +123,16 @@ export default {
   padding: 20px;
   color :rgba(255, 254, 254, 0.6);
   font-size:20px;
-  margin-left: 20%;
   margin-top: 20px;
   padding-bottom: 16px;
+  text-align: center;
 }
 .profile-wrapper {
   width: 80%;
   background-color: #aeb0b32f;
   border-radius: 20px;
   margin: 20px;
-  padding-top: 5px;
+  padding-top: 30px;
   padding-left: 20px;
   padding-right: 20px;
   height: 90%;
@@ -151,7 +149,7 @@ export default {
 .button {
     border: none;
     color: #FFF;
-    background: rgba(255, 254, 254, 0.151);
+    background: rgba(255, 254, 254, 0.205);
     appearance: none;
     font: inherit;
     border-radius: .3em;
@@ -159,6 +157,10 @@ export default {
     padding: 5px 10px;
     margin-bottom: 10px;
     opacity:0.9;
+    
+    &:hover {
+    background: rgba(255, 255, 255, 0.493);
+  }
 }
 .img {
   width: 80%;
@@ -185,7 +187,7 @@ export default {
   animation: notification 3.2s ease;
 }
 .bell{
-  opacity:0.6;
+  opacity:0.75;
 
 }
 </style>

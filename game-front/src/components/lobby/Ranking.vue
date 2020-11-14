@@ -11,7 +11,7 @@
         
         <!-- 스토리 -->
         <div class="main__story">
-            <table style="margin-left:5%;">
+            <table style="margin-left:12%;">
                 <tr>
                     <th style="font-size:20px; color:white; width:20%; text-align:center;">순 서 </th> 
                     <th style="font-size:20px; color:white; width:25%; text-align:center;">닉네임 </th>
@@ -170,7 +170,7 @@ export default {
 
 #LoadingModeRank {
     position: fixed;
-    left: 0;
+    left: 30px;
     top: 0;
     width: var(--widthSize);
     height: var(--heightSize);
@@ -217,13 +217,12 @@ export default {
 html {background: #88bfd4; text-align: center}
 
 #menu {
-  //position: absolute;
-  bottom: -45px;
 	list-style: none;
 	padding: 0px; 
   margin: 0;
 	background: #5c8a9700;
-  margin-left: 41%;
+  margin-left: 46%;
+  margin-top: 90px;
 	display: inline-block;
 	height: 50px;
 	overflow: hidden;
