@@ -2,15 +2,16 @@
     <div id="EndScreen">
         <!-- 게임이 완전히 종료된 상황 -->
         <div v-if="result">
+            <!-- 중앙 정렬위한 빈 공간 -->
+            <div id="floater"></div>
             <div class="main__story">
-                <h1>{{ gameSentence }}</h1>
-                <p>{{ firstSentence }}</p>
-                <p>{{ secondSentence }}</p>
-            </div>
-
-            <!-- 점수 (공통) / 정중앙에 출력 -->
-            <div class="score">
-                <span v-if="myScore < 0">-</span><span class="js-score">{{ isScore }}</span>
+                <h1 class="end__h1"><span :class="{ h1Win: didYouWin, h1Lose: !didYouWin}">{{ gameSentence }}</span></h1>
+                <p class="end__p">{{ firstSentence }}</p>
+                <p class="end__p">{{ secondSentence }}</p>
+                <!-- 점수 (공통) / 정중앙에 출력 -->
+                <div class="score js-score">
+                    {{ isScore }}
+                </div>
             </div>
         </div>
 
@@ -75,6 +76,7 @@
 
 <script>
 import http from '@/util/http-game.js';
+import httpcommon from '@/util/http-common.js';
 
 const storage = window.sessionStorage;
 
@@ -100,9 +102,6 @@ export default {
         },
         sendSentence: {
             type: String,
-        },
-        sendSocket: {
-            type: WebSocket,
         },
     },
 
@@ -136,7 +135,7 @@ export default {
             gameSentence: '',
             firstSentence: '',
             secondSentence: '',
-            
+            didYouWin: false,
         }
     },
 
@@ -150,7 +149,10 @@ export default {
             // 처음에 사람 수만큼 클릭할 수 있도록 채워두기
             this.isClick.push(false);
             if (this.game.userList[step].id == storage.getItem('id')) {
+                // 게임 중 깍인 점수를 넣는다.
                 this.myScore = this.endScore[step];
+                // 원래 점수를 넣는다
+                this.score = this.game.userList[step].score;
             }
         }
 
@@ -172,7 +174,7 @@ export default {
         // 게임 종료 여부 확인
         if (this.isFinish) {
             this.result = true;
-            this.loseShadow = false;
+            this.didYouWin = (this.youShadow) ? true : false;
         } else {
             this.result = false;
         }
@@ -198,7 +200,7 @@ export default {
         },
 
         isGameFinish() {
-            this.goWaitRoom();
+            this.showScoreAnimation();
             return this.result
         },
         
@@ -231,7 +233,7 @@ export default {
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
             let suffix = 'px';
             var num = this.game.userList.length % 4;
             if (num == 0) {
@@ -324,7 +326,10 @@ export default {
             http
             .post(`vote/vote/${this.game.id}`, formData)
             .then((res) => {
-                setTimeout(this.voteResult, 4000);
+                // 투표 결과 받아오기는 첫번째 턴인 사람만 하자
+                if (this.game.userList[0].id == storage.getItem['id']) {
+                    setTimeout(this.voteResult, 5000);
+                }
             
             })            
             .catch((err) => {
@@ -346,7 +351,8 @@ export default {
                         }
                     }
                 }
-                this.nextVote();
+                // 받은 결과를 위로 올려준다
+                this.$emit('submitVoteResult', this.voteUser);
             })
             .catch((err) => {
                 console.log(err);
@@ -354,38 +360,32 @@ export default {
 
         },
 
-        // 연결 후에는 finishVote에서 res.data 받는 부분으로 바꿀 것
-        nextVote() {
+        // 투표 결과가 맞는지 확인
+        resultCheck(data) {
             // showNumber == 4
             // this.voteUser.push(this.selectNumber);
             this.showNumber = this.showNumber + 1;
             this.show[this.showNumber - 1] = false;
             this.show[this.showNumber] = true;
-            
-            setTimeout(this.resultCheck, 4000);
-        },
 
-        // 맞는지 확인
-        resultCheck() {
-            this.loseShadow = false;
-
-            if (this.voteUser.length == 1) {
+            if (data.length == 1) {
                 // Shadow 발각
-                if (this.game.shadow.nickname == this.game.userList[this.voteUser[0]].nickname) {
+                if (this.game.shadow.nickname == this.game.userList[data[0]].nickname) {
                     this.finishSentence = 'Shadow를 찾았습니다';
 
                     // 본인이 Shadow라면 실패
                     if (this.youShadow) {
+                        this.didYouWin = false;
                         this.myScore = this.myScore - 40;
                         this.gameSentence = 'You Lose';
                         this.firstSentence = '당신은 Shadow임이 발각되었습니다.';
                     } else {
                         // 아니면 성공
+                        this.didYouWin = true;
                         this.myScore = this.myScore + 30;
                         this.gameSentence = 'You Win!';
                         this.firstSentence = '탐정들이 Shadow를 검거했습니다.';
                     }
-                    this.loseShadow = true;
                 } 
                 // Shadow 발각 X
                 else {
@@ -393,11 +393,13 @@ export default {
 
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
+                        this.didYouWin = true;
                         this.myScore = this.myScore + 40;
                         this.gameSentence = 'You Win!';
                         this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
                     } else {
                         // 아니면 실패
+                        this.didYouWin = false;
                         this.myScore = this.myScore - 30;
                         this.gameSentence = 'You Lose';
                         this.firstSentence = 'Shadow를 찾지 못했습니다.';
@@ -406,8 +408,8 @@ export default {
             } else {
                 var flag = false;
 
-                for (let k; k < this.voteUser.length; k++) {
-                    if (this.game.shadow.nickname == this.game.userList[this.voteUser[k]].nickname) {
+                for (let k; k < data.length; k++) {
+                    if (this.game.shadow.nickname == this.game.userList[data[k]].nickname) {
                         flag = true;
                         break;
                     }
@@ -416,11 +418,13 @@ export default {
                 if (flag) {
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
+                        this.didYouWin = true;
                         this.myScore = this.myScore + 20;
                         this.gameSentence = 'You Win';
                         this.firstSentence = 'Shadow 임무를 간신히 성공했습니다.';
                     } else {
                         // 아니면 실패
+                        this.didYouWin = false;
                         this.myScore = this.myScore - 20;
                         this.gameSentence = 'You Lose..';
                         this.finishSentence = 'Shadow를 검거하진 못했습니다.';
@@ -428,11 +432,13 @@ export default {
                 } else {
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {
+                        this.didYouWin = true;
                         this.myScore = this.myScore + 40;
                         this.gameSentence = 'You Win!';
                         this.firstSentence = 'Shadow 임무를 무사히 완수했습니다.';
                     } else {
                         // 아니면 실패
+                        this.didYouWin = false;
                         this.myScore = this.myScore - 30;
                         this.gameSentence = 'You Lose';
                         this.finishSentence = 'Shadow가 존재하지 않습니다.';
@@ -446,18 +452,59 @@ export default {
             setTimeout(() => this.result = true, 4000);
         },
 
-        goWaitRoom() {
+        showScoreAnimation() {
             if (this.result == true) {
                 
-                // 점수 올라가기
-                this.total = Math.abs(this.myScore);
+                // 점수 올리기 | 내리기
                 setTimeout(this.changeScore, 1000);
 
-                setTimeout(this.goRoom, 9000);
+                setTimeout(this.sendMyScore, 9000);
+            }
+        },
+        
+        // 점수 올리거나 내리는 시뮬레이션
+        changeScore() {
+            this.total = this.score + this.myScore;
+
+            // 점수 올라가기
+            if (this.myScore > 0) {
+                this.scoreTimer = setInterval(() => {
+                        this.score++;
+                        if (this.score == this.total) {
+                            clearInterval(this.scoreTimer);
+                            document.querySelector('.js-score').classList.add("animated", "bounceIn");
+                        }
+                    }, 10); 
+            } 
+            // 점수 내려가기
+            else {
+                this.scoreTimer = setInterval(() => {
+                    this.score--;
+                    if (this.score == this.total) {
+                        clearInterval(this.scoreTimer);
+                        document.querySelector('.js-score').classList.add("animated", "bounceIn");
+                    }
+                }, 10); 
             }
         },
 
-        goRoom() {
+        // 점수 보내기
+        sendMyScore() {
+            var formData = new FormData;
+            formData.append('user', storage.getItem('id'));
+            formData.append('score', this.total);
+            var winCnt = (this.didYouWin) ? 1 : 0;
+            formData.append('wincount', winCnt)
+
+            httpcommon(`accounts/score`, formData)
+            .post((res) => {
+                this.goWaitRoom();
+            })
+
+        },
+
+        // 대기방 돌아가기
+        goWaitRoom() {
 
             this.sendSocket.close();
             
@@ -470,18 +517,6 @@ export default {
                 console.log(err);
             })
         },
-        
-
-
-        changeScore() {
-            this.scoreTimer = setInterval(() => {
-                    this.score++;
-                    if (this.score == this.total) {
-                        clearInterval(this.scoreTimer);
-                        document.querySelector('.js-score').classList.add("animated", "bounceIn");
-                    }
-                }, 10); 
-        }
 
     }
 
@@ -505,21 +540,48 @@ export default {
     top: 0;
     width: var(--widthSize);
     height: var(--heightSize);
+    background: black;
+    overflow: inherit; 
 }
 
 .main__story {
     clear: both; 
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: sticky;
     margin: auto;
+    color: white;
     font-size:20px;
+    line-height:1.6em;
     font-family: 'Open Sans', sans-serif, 'Oswald', sans-serif;
+    // font-family:sans-serif;
     margin: 0;
+    // attributes to accompany the animation
     opacity:0;
+    position:relative;
     transform:translateY(1em);
+    // animation stuff
     animation:page-in ease-out 3s;
     animation-fill-mode:forwards;
+    text-align: center;
+}
+
+
+.end__h1 {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.h1Win {
+    color: rgb(54, 181, 12);
+}
+
+.h1Lose {
+    color: rgb(255, 0, 0);
+}
+
+.end__p {
+    margin: 20px 0px;
+    color: white;
+    font-size: 1.2rem;
 }
 
 

@@ -12,6 +12,7 @@
                             [{{ room.id }}]번방 {{ sendTitle }} 
                         </div>
                     </div>
+                    <!-- 친구 초대 -->
                     <div class="friends__invite">
                         <div class="btn btn-secondary" @click="friendsList">친구 초대</div>
                     </div>
@@ -112,6 +113,7 @@
                 </div>
             </div>
             
+            <!-- 친구초대 모달? -->
             <div v-if="isPopupFriend" class="change__part">
                 <div class="freinds__part">
                     <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="modal__text" @click="inviteFriend">
@@ -404,7 +406,7 @@ export default {
         
         //  
         sendRoomMessage() {
-            this.socketRoom.send(JSON.stringify({ start: false, game: false, room_id: this.room.id })); 
+            this.socketRoom.send(JSON.stringify({ game: false, start: false, room_id: this.room.id })); 
         },
     
         // 채팅 부분
