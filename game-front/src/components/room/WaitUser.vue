@@ -6,7 +6,10 @@
             <div style="display: none;">{{ nowWindow }}</div>
             <div class="user__left col-5 d-flex justify-content-center align-items-center p-0">
                 <!-- user 왼편 래더 or 프로필? -->
-                <div class="user__image"></div>
+                <div class="user__image">
+                    <img v-if="isLeader" src="@/assets/images/detective.png" alt="user image">
+                    <img v-else src="@/assets/images/detective.png" alt="user image">
+                </div>
             </div>
             <div class="user__right col-7">
                 <div class="row mt-4">{{ userData.nickname }}</div>
@@ -173,6 +176,11 @@ export default {
     max-height: 95px;
     border-radius: 50%;
     background-color: black;
+}
+
+.user__image > img {
+    width: 100%;
+    height: 100%;
 }
 
 .click__part {

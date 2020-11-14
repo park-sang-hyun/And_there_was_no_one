@@ -242,7 +242,7 @@ public class UserController {
 	
 	@GetMapping("/rank/list/{page}")
 	@ApiOperation(value = "랭킹 목록", notes = "친구 목록 보여주기 기능 구현")
-	public List<UserData> rank(@PathVariable int page) {
+	public List<UserData> ranklist(@PathVariable int page) {
 		List<User> userList = new ArrayList<>();
 		List<UserData> rank = new ArrayList<>();
 		List<UserData> pagenavigation = new ArrayList<>();
@@ -280,6 +280,24 @@ public class UserController {
 		System.out.println("rank 길이 : " + rank.size());
 
 		return pagenavigation;
+	}
+	
+	@GetMapping("/rank/{user_id}")
+	@ApiOperation(value = "랭킹 목록", notes = "친구 목록 보여주기 기능 구현")
+	public Object rank(@PathVariable int user_id) {
+		final BasicResponse result = new BasicResponse();
+		String rank="";
+
+		try {
+			rank = userService.getRank(user_id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println(rank);
+		result.status = true;
+		result.data = "랭크 넘기기 완료";
+		result.object = rank;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 }

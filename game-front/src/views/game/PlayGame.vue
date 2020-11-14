@@ -31,7 +31,9 @@
             </div>
 
             <div v-if="show" class="showScreen">
-
+                <div v-if="game.mode != 3"> 
+                    <img v-if="playing" src="@/assets/images/blink.gif" alt="ai_image">
+                </div>
             </div>
 
             <div v-if="end" class="showScreen">
@@ -39,8 +41,7 @@
                     :isFinish="isFinish" 
                     :endScore="score" 
                     :game="game" 
-                    :images="sendImage" 
-                    :sendSentence="sendSentence"
+                    :images="sendImage"
                     @submitVoteResult="endVoteResult"
                     ref="endscreen" />
             </div>
@@ -162,7 +163,7 @@ export default {
                 '',
                 '자유그리기',
                 '이어그리기',
-                'NO AI',
+                'AI 점검중',
                 ],
                 difficulty: [
                     '',
@@ -209,8 +210,9 @@ export default {
             chatLogs: [],
             socket: null,
             socketPlay: null,
-            sendSentence: '',
             myNickname: '',
+            youShadow: false,
+            playing: true,
             
         }
     },
@@ -238,6 +240,13 @@ export default {
         for (let j=0; j < this.game.cur_count; j++) {
             this.score.push(0);
         }
+
+        
+        // shadow 여부 확인
+        if (this.game.shadow.id == storage.getItem('id')) {
+            this.youShadow = true;
+        }
+
         
         // 본인 닉네임 찾기
         for (let k=0; k < this.game.userList.length; k++) {
@@ -318,14 +327,14 @@ export default {
                     } else {
                         if (PlayData.isturn) {
                             this.turn = PlayData.turn;
-                            console.log(this.turn);
                             if (this.turn <= this.game.cur_count) {
                                 setTimeout(this.beforeStartTimer, 1000);
                             } else {
                                 this.end = true;
+                                this.playing = false;
                             }
                         } else {
-                            this.$refs.endscreen.resultCheck(PlayData.vote_result);
+                            this.$refs.endscreen.sendResultVote(PlayData.vote_result);
                         }
                     }
                     
@@ -355,7 +364,6 @@ export default {
             if (this.chatList[idx] === undefined) {
                 alert('메시지를 선택해주세요');
             } else {
-                console.log(this.chatList[idx]);
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
             }
         },
@@ -382,10 +390,10 @@ export default {
             var n = this.timer;
             if (!this.counter) {
                 this.counter = true;   
-                this.showTimer = n;
+                this.showTimer = `남은시간: ${n}`;
             } else if (n > 0) {
                 n = n - 1;
-                this.showTimer = n;
+                this.showTimer = `남은시간: ${n}`;
                 this.timer = n;
             } else {
                 clearInterval(this.interval);
@@ -421,7 +429,7 @@ export default {
             var m = this.before.timer;
             if (!this.before.counter) {
                 this.before.counter = true;
-                this.before.showTimer = `${ this.game.userList[this.turn - 1].nickname } Turn`;     
+                this.before.showTimer = `${ this.game.userList[this.turn - 1].nickname }님의 순서입니다.`;     
             } else if (m > 1) {
                 m = m - 1;
                 this.before.showTimer = `${m}`;
@@ -439,8 +447,6 @@ export default {
         // mode 1,2 : 이미지 저장 후 ai로 보내기 / mode 3 : 이미지 저장 후 턴 넘기기
         sendAI(image) {
             this.images.push(image);
-            console.log('this turn:' , this.turn);
-            console.log('image:', this.images[this.turn-1]);
 
             if (this.game.userList[this.turn - 1].id == storage.getItem('id')) {
                 
@@ -459,24 +465,22 @@ export default {
                     aihttp
                     .post(`objects/image/`, formData)
                     .then((res) => {
-                        console.log(res.data);
                         if (res.data.message) {
                             for (let i=0; i < res.data.result.length; i++) {
                                 if (res.data.result[i] == this.game.word) {
                                     if (this.game.mode == 1) {
                                         flagAI = false;
-                                        this.score[this.turn] = this.score[this.turn] - 20;
+                                        this.score[this.turn] = (this.youShadow) ? this.score[this.turn] + 20 : this.score[this.turn] - 20;
                                         this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
                                     } else if (this.game.mode == 2) {
                                         flagAI = false;
-                                        this.score[this.turn] = this.score[this.turn] - 100;
-                                        this.sendSentence = '누군가가 AI에게 발각되었습니다.';
+                                        this.score[this.turn] = (this.youShadow) ? this.score[this.turn] + 60 : this.score[this.turn] - 60;
                                         this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: true, turn: this.turn }));
                                         // this.turnFinish();
 
                                     }
-                                    break;
                                 }
+                                break;
                             }
                             if (flagAI) {
                                     this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
@@ -500,6 +504,7 @@ export default {
 
         // 게임 종료
         turnFinish() {
+            this.playing = false;
             this.end = true;
             this.finish = true;
         }
@@ -543,7 +548,6 @@ export default {
 /* 채팅 부분 */
 .chat__part {
     position: fixed;
-    z-index: 2;
     bottom: 40px;
     left: 0;
     width: 400px;
@@ -560,14 +564,14 @@ export default {
 }
 
 .timer__part {
+    z-index: 11;
     position: fixed;
-    left: 5%;
+    left: 2%;
     top: 10%;
     // transform: translateY(-50%);
 }
 
 .text__part {
-    width: 60px;
     height: 60px;
     color: rgba(255, 255, 255, 0.5);
     font-size: 2.5rem;
@@ -591,11 +595,12 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    color: green;
-    font-size: 4rem;
+    color: rgba(166, 32, 12, 0.7);
+    font-size: 2.5rem;
     font-weight: bold;
     font-family: 'Montserrat', 'Open Sans', sans-serif;
 }
+
 
 /* 투표 등 배경 흐리기 해야할 때 */
 .showScreen {
@@ -661,6 +666,13 @@ export default {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #555;
+}
+
+.showScreen > div > img {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 

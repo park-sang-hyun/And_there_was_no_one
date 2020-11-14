@@ -3,7 +3,6 @@ import Signup from './views/user/Signup.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import LoadingGame from './views/game/loadingGame.vue'
-import testpage from './views/game/testpage.vue'
 import Lobby from './views/lobby/lobby.vue'
 import forbidden from './views/forbidden/forbidden404.vue'
 import Auth from './views/user/Auth.vue'
@@ -47,11 +46,6 @@ export default [
         path : '/enterlobby',
         name : 'enterlobby',
         component : enterLobby,
-    },
-    {
-        path: '/page',
-        name: 'testpage',
-        component: testpage,
     },
     // Auth 
     {
