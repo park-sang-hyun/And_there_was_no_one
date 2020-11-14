@@ -33,7 +33,7 @@
         <button
           type="button"
           class="button"
-          @click="onLogin;"
+          @click="onLogin();buttonpush()"
           :disabled="!isSubmit"
           :class="{disabled : !isSubmit}"
         >Login</button>
@@ -91,7 +91,6 @@ export default {
     };
   },
   created() {
-
     // 화면 크기 확인
     window.addEventListener('resize', this.screenResize);
     this.screenResize();
@@ -151,8 +150,7 @@ export default {
 
     // 로그인 요청 - 토큰 받아서 local storage에 넣기
     onLogin() {
-      var bpush = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
-      bpush.play();
+      console.log("나 로그인중!!")
       if (this.isSubmit) {
 
         storage.setItem("token", "");
