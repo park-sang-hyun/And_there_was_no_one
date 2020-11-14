@@ -185,7 +185,7 @@ export default {
 
           ],
         // totalRoom은 생성된 룸 개수
-        totalRoom: 6,
+        totalRoom: 12,
         // 페이지 총 길이
         pageLen: 0,
         // 현재 페이지
@@ -227,15 +227,18 @@ export default {
          http
         .get("room/listcount/")
         .then((res) => {
-          //console.log("listcount : " + res.data);
+          console.log("listcount : " + res.data);
+          console.log("listcount : " + this.totalRoom);
           this.totalRoom = res.data;
+          console.log("totalroom : " + this.totalRoom);
+          this.pageLen = Math.ceil(this.totalRoom / 6);
         })
         .catch(err => {
           console.log(err)
         })
 
-        this.pageLen = Math.ceil(this.totalRoom / 6);  // 소수점 올림
-        this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
+        //this.pageLen = Math.ceil(this.totalRoom / 6);  // 소수점 올림
+        //this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
         console.log("pageLen: "+this.pageLen);
         console.log("Enter getRoomInfo");
       },
@@ -245,6 +248,33 @@ export default {
         // Room Read lobby서버에 요청하기 현재 페이지의 룸 정보
         // pageNow 변수에 현재 페이지가 들어있음
 
+        http
+        .get("room/list/"+this.pageNow)
+        .then((res) => {
+          // 받아온 데이터 출력해보고 아래 수정하기
+          console.log(res.data);
+
+          //받아온 데이터 roomList에 집어넣기
+          for(let i=0; i < 6; i++){
+            if (i < res.data.length) {
+              this.roomList[i].no = res.data[i].id;
+              this.roomList[i].roomname = res.data[i].title;
+              this.roomList[i].mode = res.data[i].mode;
+              this.roomList[i].cur_people = res.data[i].cur_count;
+              this.roomList[i].max_people = res.data[i].max_count;
+              this.roomList[i].difficulty = res.data[i].difficulty;
+              this.roomList[i].start = res.data[i].start;
+            } else {
+              this.roomList[i].no = 'none';
+            }
+          }
+
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+        console.log("Enter getRoomList");
 
         
 
