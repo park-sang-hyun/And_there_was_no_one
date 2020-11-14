@@ -46,8 +46,21 @@ public class VoteController {
 			if(!who.equals(null)) {
 				Vote v = new Vote(room_id, who);
 				voteService.insertVote(v);
-				System.out.println("insert 끝!!");
+				System.out.println(" 끝!!");
 			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@PostMapping("/voteDelete/{room_id}")
+	@ApiOperation(value = "투표끝", notes = "투표끝")
+	public void vote(@PathVariable int room_id) {
+		try {
+			voteService.deleteVote(room_id);
+			System.out.println(" 끝!!");
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,7 +114,7 @@ public class VoteController {
 			}
 			
 			System.out.println("selct 끝!!");
-			voteService.deleteVote(room_id);
+			//voteService.deleteVote(room_id);
 			System.out.println("delete 끝!!");
 			
 		} catch (SQLException e) {
