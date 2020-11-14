@@ -613,6 +613,7 @@ export default {
     background-color: rgba(0, 0, 0, .7);
     display: table;
     transition: opacity .3s ease;
+    z-index: 50;
 }
 
 // 채팅 부분

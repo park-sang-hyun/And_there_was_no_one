@@ -113,7 +113,7 @@ export default {
                 left: 0,
                 right: 0,
             },
-            selectCanvas: false,
+            selectCanvas: true,
             showWord: '',
             showImage: '',
             noImage: false,

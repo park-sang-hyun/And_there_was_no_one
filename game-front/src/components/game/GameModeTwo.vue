@@ -97,7 +97,7 @@ export default {
                 height: 0,
             },
             showWord: '',
-            selectCanvas: false,
+            selectCanvas: true,
         }
     },
 
