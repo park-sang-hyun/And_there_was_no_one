@@ -50,8 +50,8 @@
             v-if="showFriendReq"
           >
 
-          <div class="btn_container">
-            <button @click="showFriendReq = false" class="button">X</button>
+          <div class="btn_container" >
+            <button @click="showFriendReq = false" class="button" style="background-color: rgba(61, 61, 61, 0.5)">X</button>
           </div>
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div>
@@ -60,9 +60,11 @@
             <div class="scrollbar-box2" id="style-1" style="width: 400px" >
               <div class="force-overflow" >
                 <div v-for="(alarm, index) in alarms" :key="(alarm.no, index) + 'alarmkey'" class="friend">
-                  <p>{{alarm.content}}</p>
-                  <button @click="friendAns('ok', index), showFriendReq = false" class="button" style="margin: 5px">수락</button>
-                  <button @click="friendAns('no', index), showFriendReq = false" class="button" style="margin: 5px">거절</button>
+                  <div style="rgba(61, 61, 61, 0.5)">
+                    <p>{{alarm.content}}</p>
+                    <button @click="friendAns('ok', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">수락</button>
+                    <button @click="friendAns('no', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">거절</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -454,15 +456,16 @@ export default {
     background-color: #aeb0b32f;
     height: 80%;
     width: 80%;
-    margin: 0px 20px;
     padding: 20px;
     opacity:0.9;
+    margin-left: 10%;
+    margin-top: 20px;
   }
   
   .scrollbar-box2
   {
-    height: 285px;
-    width: 100%;
+    height: 275px;
+    width: 97%;
     background-color: rgba(0, 41, 0, 0);
     overflow-y: scroll;
     position : relative; 
@@ -481,7 +484,7 @@ export default {
   .loginfriend {
     margin: 10px;
     padding: 5px;
-    background :#eceef188;
+    background :#eceef19f;
     border-radius: 10px;
   }
   .logoutfriend {

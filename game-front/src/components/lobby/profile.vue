@@ -5,17 +5,19 @@
       프로필
 
       <div>
-        <button class="notification bell" style="float:left;" @click="bellclick">
-          <img class="img" src="../../assets/images/bell.svg">
-          <span v-if="alarmCnt" class="notification--num">{{ alarmCnt }}</span>
-        </button>
-      
-        <button class="button" style="margin-left:50%" @click="logout">게임 종료</button>
+        <div class="btn_container">
+          <button class="button" style="margin-left:2%;" @click="logout">게임 종료</button>
+          <button class="notification bell" @click="bellclick">
+            <img class="img" src="../../assets/images/bell.svg">
+            <span v-if="alarmCnt" class="notification--num">{{ alarmCnt }}</span>
+          </button>
+        </div>
+          
       </div>
 
       <!-- 프로필 이미지 불러오기 -->
-      <div class="box" style="background: #BDBDBD;">
-        <img class="profile" src="https://pbs.twimg.com/profile_images/1184827741884973057/V0F3blnl.jpg">
+      <div class="box" style="background: black;">
+        <img class="profile" src="../../assets/images/detective.png">
       </div>
       <!-- 유저 정보 불러오기  -->
       <div class="info">
@@ -81,18 +83,20 @@ export default {
 
 <style lang="scss" scoped>
 .box {
-    width: 200px;
-    height: 200px; 
+  padding-left: 3px;
+    width: 220px;
+    height: 220px; 
     border-radius: 70%;
     overflow: hidden;
     margin-left:20%;
     opacity:0.9;
 }
 .profile {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity:0.9;
+  margin-top: 20px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity:0.9;
 }
 .info {
   /* background-color: rgba(255, 255, 255, 0.6); */
@@ -100,17 +104,28 @@ export default {
   color :rgba(255, 254, 254, 0.6);
   font-size:20px;
   margin-left: 20%;
+  margin-top: 20px;
+  padding-bottom: 16px;
 }
 .profile-wrapper {
   width: 80%;
   background-color: #aeb0b32f;
   border-radius: 20px;
   margin: 20px;
-  padding-top: 20px;
+  padding-top: 5px;
   padding-left: 20px;
   padding-right: 20px;
   height: 90%;
+  margin-left: 10%;
 }
+
+/* 우측정렬용 컨테이너 */
+.btn_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .button {
     border: none;
     color: #FFF;
@@ -128,7 +143,7 @@ export default {
 }
 .notification {
   position: relative;
-  width: 20%;
+  width: 15%;
   border: none;
   border-radius: 50px;
   background: none;

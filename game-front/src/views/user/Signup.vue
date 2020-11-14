@@ -1,85 +1,77 @@
 <template>
-  <!-- <div id="signupBackGrd"> -->
-    <transition v-if="goSignupLobby" name="fade" appear>
-      <enterLobby style="z-index: 1;"/>
-    </transition>
-    <div v-else class="signupcontainer">
-      <form>
-        <h1>Signup page</h1>
-        <div class="form-item">
-          <input
-            v-model="username"
-            type="text"
-            id="username"
-            placeholder="아이디를 입력하세요."
-          />
-        </div>
-        <div class="form-item">
+  <div class="signupcontainer">
+    <form>
+      <h1>Signup page</h1>
+      <div class="form-item">
         <input
-            v-model="nickname"
-            type="text"
-            id="nickname"
-            placeholder="닉네임을 입력하세요."
-            @keyup="nickCheck=false"
-          />
-        </div>
-        <button type="button" @click="nicknameCheck(nickname); ">중복체크</button>
-        <!-- 닉네임 중복체크하기  -->
-        <div class="error-text" v-if="error.password1">{{error.password1}}</div>
-        <div class="form-item">
-          <input
-            v-model="password1"
-            type="password"
-            v-bind:class="{error : error.password1, complete:!error.password1&&password1.length!==0}"
-            id="password1"
-            @keyup="checkPasswordForm"
-            placeholder="비밀번호를 입력하세요."
-          />
-          
-        </div>
-        <!-- 비밀번호 맞는지 체크하기  -->
-        <div class="form-item">
-          <input
-            v-model="password2"
-            type="password"
-            id="password2"
-            @keyup="checkPasswordsame"
-            @keyup.enter="onSignup"
-            placeholder="비밀번호를 다시 입력하세요."
-          />
-        </div>
+          v-model="username"
+          type="text"
+          id="username"
+          placeholder="아이디를 입력하세요."
+        />
+      </div>
+      <div class="form-item">
+      <input
+          v-model="nickname"
+          type="text"
+          id="nickname"
+          placeholder="닉네임을 입력하세요."
+          @keyup="nickCheck=false"
+          style="width:270px; padding-top: 5px"
+        />
+        <button type="button" @click="nicknameCheck(nickname);" style="margin-bottom:5px">중복체크</button>
+      </div>
+      
+      <!-- 닉네임 중복체크하기  -->
+      <div class="error-text" v-if="error.password1">{{error.password1}}</div>
+      <div class="form-item">
+        <input
+          v-model="password1"
+          type="password"
+          v-bind:class="{error : error.password1, complete:!error.password1&&password1.length!==0}"
+          id="password1"
+          @keyup="checkPasswordForm"
+          placeholder="비밀번호를 입력하세요."
+        />
+        
+      </div>
+      <!-- 비밀번호 맞는지 체크하기  -->
+      <div class="form-item">
+        <input
+          v-model="password2"
+          type="password"
+          id="password2"
+          @keyup="checkPasswordsame"
+          @keyup.enter="onSignup"
+          placeholder="비밀번호를 다시 입력하세요."
+        />
+      </div>
 
-        <button
-          type="button"
-          class="button btn--back btn--signup"
-          @click="onSignup"
-          :disabled="!isSubmit"
-          :class="{disabled : !isSubmit}"
-        >Signup</button>
+      <button
+        type="button"
+        class="button btn--back btn--signup"
+        @click="onSignup"
+        :disabled="!isSubmit"
+        :class="{disabled : !isSubmit}"
+      >Signup</button>
 
-        <div class="add-option mt-4">
-            <div class="wrap">
-              <router-link @click.native="buttonpush()" to="/" class="btn--text">Login</router-link>
-            </div>
-        </div>
-      </form>
-    </div>
-  <!-- </div> -->
+      <div class="add-option mt-4">
+          <div class="wrap">
+            <p @click="goto(), buttonpush()" class="btn--text">Login</p>
+          </div>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
-//import "../../components/css/user.scss";
 import PV from "password-validator";
-import enterLobby from './enterLobby.vue'
 
 import http from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
 
 export default {
-  components: {
-    enterLobby,
-  },
   data: () => {
     return {
       username: "",
@@ -210,12 +202,11 @@ export default {
     },
 
     lobbyNext() {
-      this.$router.push("/lobby");
+      this.$router.push("/enterlobby");
     },
 
     moveFeed(){
-      this.goSignupLobby = true;
-      var go = setTimeout( this.lobbyNext , 6000);
+      var go = setTimeout( this.lobbyNext , 100);
     },
 
     nicknameCheck(nick) {
@@ -242,10 +233,15 @@ export default {
           })
       }
     },
+    
     buttonpush(){
       var bpush = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
       bpush.play();
-  },
+    },
+
+    goto() {
+      this.$emit('login', true);
+    }
   },
 
  
@@ -268,13 +264,6 @@ export default {
   :root {
     --widthSize: 400px;
     --heightSize: 400px;
-  }
-
-  #signupBackGrd{
-    background: black;
-    width: var(--widthSize);
-    height: var(--heightSize);
-    padding-top: 13%;
   }
 
   .signupcontainer {
