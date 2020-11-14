@@ -19,8 +19,8 @@
       </div>
       <!-- 유저 정보 불러오기  -->
       <div class="info">
-        <h3 style="color: white;">{{ nickname }}</h3>
-        <h4>score: {{ score }}</h4> 
+        <h3 style="color: white;">{{ nickname }} </h3>
+        <h4>{{rank}} ( score: {{ score }} )</h4> 
       </div>
     </div>
   </div>

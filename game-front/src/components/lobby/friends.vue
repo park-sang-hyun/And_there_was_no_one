@@ -11,7 +11,7 @@
             v-if="showModal"
             >
           <div class="btn_container">
-            <button @click="cancel" class="button" style="color: rgba(37, 37, 37, 0.788);">X</button>
+            <button @click="cancel" class="button" style="background-color: rgba(61, 61, 61, 0.5);">X</button>
           </div>
           
           <h1>친구 추가</h1>
@@ -27,7 +27,7 @@
               placeholder="닉네임"
             >
             <p>{{ errmsg }}</p>
-            <button @click="addFriend" class="button" style="margin-left:10px; color:rgba(37, 37, 37, 0.788);">요청하기</button>
+            <button @click="addFriend" class="button" style="margin-top:10px; background-color: rgba(48, 48, 48, 1);">요청하기</button>
           </div>
 
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
@@ -61,7 +61,7 @@
               <div class="force-overflow" >
                 <div v-for="(alarm, index) in alarms" :key="(alarm.no, index) + 'alarmkey'" class="friend">
                   <div class="alarmlist">
-                    <p style=" font-weight: bold; font-size: 20px;">{{alarm.content}}</p>
+                    <p style=" font-weight: bold; font-size: 15px;">{{alarm.content}}</p>
                     <button @click="friendAns('ok', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">수락</button>
                     <button @click="friendAns('no', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">거절</button>
                   </div>
@@ -612,5 +612,6 @@ export default {
     background: #eceef188;
     border-radius: 20px;
     padding: 10px;
+    margin: 10px 0;
   }
 </style>

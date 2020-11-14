@@ -31,12 +31,12 @@
             v-if="showCreateModal"
           >
           <div class="container" style="width:100%">
-            <button @click="showCreateModal = false" class="button" style="margin-left:100%">X</button>
+            <button @click="showCreateModal = false" class="button" style="margin-left:108%; background-color: rgba(61, 61, 61, 0.5); color: white;">X</button>
           </div>
           
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div class="inmodal">
-            <h1>게임 방 만들기</h1>
+            <h1 style="margin-bottom: 30px">게임 방 만들기</h1>
             <p>방 이름을 입력하세요</p>
             <input 
               v-model="roomName"
@@ -44,6 +44,7 @@
               maxlength="15"
               placeholder="방 이름"
               @keyup.enter="createRoom"
+              style="margin-bottom: 20px"
             >
 
             <p>{{ roomCreateErr }}</p>
@@ -58,7 +59,7 @@
                   @click="setMode('down')"
                 ></button>
                 <div class="number-input" style="text-align: center">
-                  {{ modelist[mode-1] }}
+                  {{ modelist[mode] }}
                 </div>
                 <button
                   type="button"
@@ -111,7 +112,7 @@
             </div>
             
 
-            <button type="button" @click="createRoom" class="button" style="margin-left:60%;">방 생성하기</button>
+            <button type="button" @click="createRoom" class="button" style="margin-top: 40px; margin-left:34%; background-color: rgba(48, 48, 48, 1); color: white;">방 생성하기</button>
           </div>
         
         </div>
@@ -597,10 +598,10 @@ html {background: #88bfd4; text-align: center}
   left: 0;
   margin: auto;
   /* text-align: center; */
-  width: 35%;
+  width: 450px;
   height: fit-content;
   /* max-width: 200em; */
-  padding: 40px;
+  padding: 20px 60px;
   border-radius: 1rem;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
   background: #FFF;
