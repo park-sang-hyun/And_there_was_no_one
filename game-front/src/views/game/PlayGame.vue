@@ -46,12 +46,12 @@
 
             
             <div class="chat__part">
-                <div v-if="chatStatus" class="chatting__area">
+                <div class="chatting__area">
                     <div class="scrollbar-box" id="scrollbar__style" >
                         <div class="force-overflow" >
-                            <!-- <br/> -->
+                            <br v-for="n in 27" :key="n + 'chatBRKey'"/>
                             <div v-for="(log, index) in chatLogs" class="log" :key="index + 'chatLogKey'">
-                                <strong>{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
+                                <strong style="margin-left: 5px;">{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
                             </div>
                             <br/>
                         </div>
@@ -206,7 +206,6 @@ export default {
             // 소켓, 채팅 메시지
             chatMsg: '',
             chatLogs: [],
-            chatStatus: false,
             socket: null,
             socketPlay: null,
             sendSentence: '',
@@ -248,6 +247,7 @@ export default {
         }
 
         this.connect();
+        this.connectPlay();
 
         
         // 역할 확인 부분
@@ -299,7 +299,7 @@ export default {
         yourTurn() {
             if (this.turn != 0) {
                 if (this.game.userList[this.turn - 1].id == storage.getItem('id') ) {
-                    document.documentElement.style.setProperty('--indexNum', -1);
+                    document.documentElement.style.setProperty('--indexNum', 1);
                 } else {
             
                     document.documentElement.style.setProperty('--indexNum', 99);
@@ -417,7 +417,6 @@ export default {
                     })
                 }
             }
-    
             
         },
 
@@ -453,7 +452,6 @@ export default {
         // 채팅 부분
         // 소켓 연결
         connect() {
-            this.chatStatus = true;
             this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
             this.socket.onopen = () => {
                 
@@ -472,25 +470,14 @@ export default {
             if (this.chatList[idx] === undefined) {
                 alert('메시지를 선택해주세요');
             } else {
-                this.socket.sendMessage(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
+                console.log(this.chatList[idx]);
+                this.socket.send(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
             }
         },
 
-        //  채팅 보내기
-        sendMessage(Data) {
-            // websocketsend(Data) 와 동일
-
-            const chatBox = document.querySelector(".scrollbar-box");
-            
-            // this.chatLogs.push({ event: this.myNickname, data: Data });
-            chatBox.scrollTop = (chatBox.scrollHeight);
-        
-            this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.game.id }));
-        },
-
-
         // 턴 넘기기
         turnChange() {
+
         },
 
         // 게임 종료
@@ -534,18 +521,19 @@ export default {
 /* 채팅 부분 */
 .chat__part {
     position: fixed;
-    z-index: var(--indexNum);
-    bottom: 40;
+    z-index: 2;
+    bottom: 40px;
     left: 0;
-    width: 300px;
-    height: 400px;
+    width: 400px;
+    height: 600px;
 }
 
 .input-group {
     position: fixed;
+    z-index: var(--indexNum);
     bottom: 0;
     left: 0;
-    width: 300px;
+    width: 320px;
     height: 40px;
 }
 
@@ -572,7 +560,6 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, .2);
     display: table;
     transition: opacity .3s ease;
 }
@@ -605,7 +592,7 @@ export default {
 
 .chatting__area {
     width: 100%;
-    padding: 10px 10px;
+    padding: 10px 3px;
     border-radius: 10px;
     font-size: 0.9rem;
     color: white;
@@ -615,12 +602,13 @@ export default {
 .scrollbar-box
 {
     width: 100%;
-    height: 380px;
+    height: 580px;
 	overflow-y: scroll;
     overflow-x: hidden;
     white-space: normal;
     position : relative; 
     bottom: 0px;
+    direction:rtl; /* css scrollbar left */
 }
 
 
@@ -628,10 +616,8 @@ export default {
 {
   /* 스크롤바 내부의 글자가 누적되는 창 크기
   스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
-	min-height: 380px;
+	min-height: 580px;
 }
-
-
 
 // scrollbar__style
 
@@ -644,7 +630,7 @@ export default {
 
 #scrollbar__style::-webkit-scrollbar
 {
-	width: 5px;
+	width: 3px;
 	background-color: #F5F5F500;
 }
 

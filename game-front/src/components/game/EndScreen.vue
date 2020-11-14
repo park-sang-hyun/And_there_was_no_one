@@ -10,7 +10,7 @@
 
             <!-- 점수 (공통) / 정중앙에 출력 -->
             <div class="score">
-                <span v-if="myScore < 0">-</span><span class="js-score">{{ isScore }}</span>
+                <span class="js-score">{{ isScore }}</span>
             </div>
         </div>
 
@@ -75,6 +75,7 @@
 
 <script>
 import http from '@/util/http-game.js';
+import httpcommon from '@/util/http-common.js';
 
 const storage = window.sessionStorage;
 
@@ -150,7 +151,10 @@ export default {
             // 처음에 사람 수만큼 클릭할 수 있도록 채워두기
             this.isClick.push(false);
             if (this.game.userList[step].id == storage.getItem('id')) {
+                // 게임 중 깍인 점수를 넣는다.
                 this.myScore = this.endScore[step];
+                // 원래 점수를 넣는다
+                this.score = this.game.userList[step].score;
             }
         }
 
@@ -198,7 +202,7 @@ export default {
         },
 
         isGameFinish() {
-            this.goWaitRoom();
+            this.showScoreAnimation();
             return this.result
         },
         
@@ -231,7 +235,7 @@ export default {
         // 현재 보이는 화면 크기 계산
         screenResize() {
             this.window.width = (window.innerWidth < 1024) ? 1024 : window.innerWidth;
-            this.window.height = window.innerHeight;
+            this.window.height = (window.innerHeight < 724) ? 724 : window.innerHeight;
             let suffix = 'px';
             var num = this.game.userList.length % 4;
             if (num == 0) {
@@ -446,18 +450,59 @@ export default {
             setTimeout(() => this.result = true, 4000);
         },
 
-        goWaitRoom() {
+        showScoreAnimation() {
             if (this.result == true) {
                 
-                // 점수 올라가기
-                this.total = Math.abs(this.myScore);
+                // 점수 올리기 | 내리기
                 setTimeout(this.changeScore, 1000);
 
-                setTimeout(this.goRoom, 9000);
+                setTimeout(this.sendMyScore, 9000);
+            }
+        },
+        
+        // 점수 올리거나 내리는 시뮬레이션
+        changeScore() {
+            this.total = this.score + this.myScore;
+
+            // 점수 올라가기
+            if (this.myScore > 0) {
+                this.scoreTimer = setInterval(() => {
+                        this.score++;
+                        if (this.score == this.total) {
+                            clearInterval(this.scoreTimer);
+                            document.querySelector('.js-score').classList.add("animated", "bounceIn");
+                        }
+                    }, 10); 
+            } 
+            // 점수 내려가기
+            else {
+                this.scoreTimer = setInterval(() => {
+                    this.score--;
+                    if (this.score == this.total) {
+                        clearInterval(this.scoreTimer);
+                        document.querySelector('.js-score').classList.add("animated", "bounceIn");
+                    }
+                }, 10); 
             }
         },
 
-        goRoom() {
+        // 점수 보내기
+        sendMyScore() {
+            var formData = new FormData;
+            formData.append('user', storage.getItem('id'));
+            formData.append('score', this.total);
+            var winCnt = (this.myScore > 0) ? 1 : 0;
+            formData.append('wincount', winCnt)
+
+            httpcommon(`accounts/score`, formData)
+            .post((res) => {
+                this.goWaitRoom();
+            })
+
+        },
+
+        // 대기방 돌아가기
+        goWaitRoom() {
 
             this.sendSocket.close();
             
@@ -470,18 +515,6 @@ export default {
                 console.log(err);
             })
         },
-        
-
-
-        changeScore() {
-            this.scoreTimer = setInterval(() => {
-                    this.score++;
-                    if (this.score == this.total) {
-                        clearInterval(this.scoreTimer);
-                        document.querySelector('.js-score').classList.add("animated", "bounceIn");
-                    }
-                }, 10); 
-        }
 
     }
 
@@ -505,21 +538,48 @@ export default {
     top: 0;
     width: var(--widthSize);
     height: var(--heightSize);
+    background: black;
+    overflow: inherit; 
 }
 
 .main__story {
     clear: both; 
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: sticky;
     margin: auto;
+    color: white;
     font-size:20px;
+    line-height:1.6em;
     font-family: 'Open Sans', sans-serif, 'Oswald', sans-serif;
+    // font-family:sans-serif;
     margin: 0;
+    // attributes to accompany the animation
     opacity:0;
+    position:relative;
     transform:translateY(1em);
+    // animation stuff
     animation:page-in ease-out 3s;
     animation-fill-mode:forwards;
+    text-align: center;
+}
+
+
+.end__h1 {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.h1Win {
+    color: rgb(54, 181, 12);
+}
+
+.h1Lose {
+    color: rgb(255, 0, 0);
+}
+
+.end__p {
+    margin: 20px 0px;
+    color: white;
+    font-size: 1.2rem;
 }
 
 

@@ -18,10 +18,10 @@
             </div>
 
             <!-- 화면 왼쪽 하단 -->
-            <div class="row screen__left__bottom">
-                <div class="col-12 p-0 d-flex justify-content-center align-items-center">
+            <div class="screen__left__bottom d-flex justify-content-end align-items-center">
+                <div class="p-0 d-flex justify-content-end align-items-end">
                     <!-- canvas(그림 그리기) -->
-                    <draw :window="windowScreen" :turnOff="!turnOff" @imgFile="imgFile" ref="draw"/>
+                    <draw :window="windowScreen" :turnOff="!turnOff" @imgFile="imgFile" ref="draw" style="margin-right: 20%;"/>
                 </div>
             </div>
 

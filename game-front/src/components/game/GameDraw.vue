@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="z-index: 10;">
         <canvas
             id="jsCanvas"
             class="canvas" 
@@ -18,10 +18,11 @@
                 <p style="float:left;">펜 크기 : </p>
                 <input type="range" style="margin-top:21px;" id="jsRange" min="0.2" max="10.0" value="5.0" step="0.2" @input="handleRangeChange"/>
             </div>
+            <!--             
             <div class="controls__btns">
                 <button id="jsMode" @click="handleModeClick">그리기</button>
-                <!-- <button id="jsSave" @click="handleSaveClick">제출하기</button> -->
-            </div>
+                <button id="jsSave" @click="handleSaveClick">제출하기</button>
+            </div> -->
             <div class="controls__colors" id="jsColors">
                 <div class="controls__color jsColor" style="background-color: #2c2c2c" @click="handleColorClick"></div>
                 <div class="controls__color jsColor" style="background-color: white" @click="handleColorClick"></div>
