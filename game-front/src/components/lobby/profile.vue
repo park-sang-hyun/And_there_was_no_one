@@ -4,14 +4,14 @@
     <div class="profile-wrapper">
       프로필
 
-      <div class="bell" >
-        <button class="notification" @click="bellclick">
+      <div>
+        <button class="notification bell" style="float:left;" @click="bellclick">
           <img class="img" src="../../assets/images/bell.svg">
           <span v-if="alarmCnt" class="notification--num">{{ alarmCnt }}</span>
         </button>
-      </div>
-
       
+        <button class="button" style="margin-left:50%" @click="logout">게임 종료</button>
+      </div>
 
       <!-- 프로필 이미지 불러오기 -->
       <div class="box" style="background: #BDBDBD;">
@@ -22,7 +22,6 @@
         <p>nickname: {{ nickname }}</p>
         <p>score: {{ score }}</p> 
       </div>
-      <button class="button" @click="logout">게임 종료</button>
     </div>
   </div>
 </template>
@@ -82,11 +81,11 @@ export default {
 
 <style lang="scss" scoped>
 .box {
-    width: 250px;
-    height: 250px; 
+    width: 200px;
+    height: 200px; 
     border-radius: 70%;
     overflow: hidden;
-    margin:auto;
+    margin-left:20%;
     opacity:0.9;
 }
 .profile {
@@ -110,7 +109,7 @@ export default {
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
-  
+  height: 90%;
 }
 .button {
     border: none;
@@ -125,7 +124,7 @@ export default {
     opacity:0.9;
 }
 .img {
-  width: 100%;
+  width: 80%;
 }
 .notification {
   position: relative;
@@ -150,5 +149,6 @@ export default {
 }
 .bell{
   opacity:0.6;
+
 }
 </style>
