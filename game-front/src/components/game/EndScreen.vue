@@ -299,6 +299,7 @@ export default {
             if (this.selectNumber != null) {
                 // 특정 유저 투표(nickname) 보냄
                 formData.append('who', this.game.userList[this.selectNumber].nickname);
+                formData.append('flag', 1);
                 if (this.youShadow == false) {
                     this.secondSentence = '당신은 탐정에게 투표했습니다.';
                     this.myScore = this.myScore - 5;
@@ -308,11 +309,15 @@ export default {
                     } 
                 } else if (this.youShadow == true) {
                     this.secondSentence = '당신은 탐정에게 한 표를 더했습니다.';
+                    if (this.game.userList[this.selectNumber].nickname == storage.getItem('id')) {
+                        this.secondSentence = '스스로를 선택하셨습니다.';
+                    }
                 }
 
             } else {
                 // 기권
                 formData.append('who', null);
+                formData.append('flag', 0);
                 this.secondSentence = '당신은 기권했습니다.';
             }
 
@@ -369,7 +374,7 @@ export default {
         // 투표 결과가 맞는지 확인
         resultCheck() {
 
-            this.finishSentence = '모두 기권했습니다';
+            this.finishSentence = '투표 동률로 Shadow가 누군지 알 수 없습니다';
             
             if (this.voteUser.length == 1) {
                     
@@ -395,7 +400,7 @@ export default {
                 } 
                 // Shadow 발각 X
                 else {
-                    this.finishSentence = 'Shadow를 찾지 못했습니다.';
+                    this.finishSentence = 'Shadow를 찾지 못했습니다';
                     // 아니면 실패
                     this.didYouWin = false;
                     this.myScore = this.myScore - 30;
@@ -411,8 +416,8 @@ export default {
                     } 
                 }
             } else {
+
                 var flag = false;
-                
 
                 for (let k; k < this.voteUser.length; k++) {
                     if (this.game.shadow.nickname == this.game.userList[this.voteUser[k]].nickname) {
@@ -427,7 +432,7 @@ export default {
                         this.didYouWin = false;
                         this.myScore = this.myScore - 20;
                         this.gameSentence = 'You Lose..';
-                        this.firsthSentence = 'Shadow를 검거하진 못했습니다.';
+                        this.firstSentence = 'Shadow를 검거하진 못했습니다.';
 
                     // 본인이 Shadow라면 성공
                     if (this.youShadow) {

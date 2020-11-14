@@ -38,25 +38,26 @@ public class VoteController {
 	@Autowired
 	private VoteService voteService;
 
-	@PostMapping("/vote/{room_id}")
-	@ApiOperation(value = "투표시작", notes = "투표시작")
-	public void vote(@PathVariable int room_id, @RequestParam String who) {
-		try {
-			System.out.println("insert 중~~~");
-			if(!who.equals(null)) {
-				Vote v = new Vote(room_id, who);
-				voteService.insertVote(v);
-				System.out.println(" 끝!!");
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	   @PostMapping("/vote/{room_id}")
+	   @ApiOperation(value = "투표시작", notes = "투표시작")
+	   public void vote(@PathVariable int room_id, @RequestParam String who, int flag) {
+	      try {
+	         if (flag == 1) {
+	            System.out.println("insert 중~~~");
+	            Vote v = new Vote(room_id, who);
+	            voteService.insertVote(v);
+	            System.out.println(" 끝!!");
+
+	         }
+	      } catch (SQLException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      }
+	   }
 	
 	@PostMapping("/voteDelete/{room_id}")
 	@ApiOperation(value = "투표끝", notes = "투표끝")
-	public void vote(@PathVariable int room_id) {
+	public void voteDelete(@PathVariable int room_id) {
 		try {
 			voteService.deleteVote(room_id);
 			System.out.println(" 끝!!");
