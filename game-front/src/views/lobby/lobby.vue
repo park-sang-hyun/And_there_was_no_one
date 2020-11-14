@@ -1,25 +1,10 @@
 <template>
   <div class="lobby" >
-
-    <!-- <div v-if="status === 'connected'"> -->
-      <!-- <div>
-      <form @submit.prevent="webSocketSend" action="#">
-        <input v-model="message"><button type="submit">메세지 전송</button>
-      </form>
-            <ul id="logs">
-        <li v-for="(log, index) in logs" class="log" :key="index">
-                {{ log.event }}: {{ log.data }}
-        </li>
-            </ul>
-      </div> -->
-    <!-- </div> -->
-
     <div class="gerstner-2">
       <div class="comp">
         
         <Profile class="profile" @logout="logout" @bell="bell" ref="reloadBell"/>
         <!-- 소켓 props -->
-        <!-- 대흠님이 ref 메서드 멀로 해놨을까?그거에 맞춰서 ref 쓰기  -->
         <Friends class="friends" ref="out" @reload="reload"></Friends>
       </div>
       <div class="comp">
@@ -76,6 +61,7 @@ export default {
 
 <style lang="scss" scoped>
   .lobby /deep/ { 
+    
     border: none;
 
     background: url('../../assets/images/background.jpg') no-repeat center center fixed;
@@ -84,7 +70,19 @@ export default {
       -o-background-size: cover;
       background-size: cover;
   }
+
+  
+  @-webkit-keyframes fadein { /* Safari and Chrome */
+      from {
+          opacity:0;
+      }
+      to {
+          opacity:1;
+      }
+  }
+
   .gerstner-2 {
+    -webkit-animation: fadein 1s; /* Safari and Chrome */
     display: grid;
     grid-template-columns: 1fr 2.5fr;
     /* grid-column-gap: 1em; */

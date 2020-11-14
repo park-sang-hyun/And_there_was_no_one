@@ -6,8 +6,8 @@
           <div class="pop__up__pieces"></div>
           <div class="pop__up__content">
             <div class="pop__up__close" @click="closeHandler"></div>
-            <!-- <Login/> -->
-            <Signup/>
+            <Login v-if="isLogin" @login="login" />
+            <Signup v-else @login="login" />
           </div>
         </div>
       </div>
@@ -28,8 +28,14 @@ import Signup from "./Signup.vue"
 var frag = document.createDocumentFragment();
 
 export default {
+    data() {
+        return {
+          isLogin: true,
+        }
+    },
+
     components: {
-      // Login,
+      Login,
       Signup
     },
 
@@ -51,6 +57,10 @@ export default {
     },
 
     methods: {
+        login(login) {
+          this.isLogin = login;
+        },
+
         insertInnerPieces($el, innerPieces) {
             for (var i = 0; i < innerPieces; i++) {
                 var $inner = document.createElement('div');
