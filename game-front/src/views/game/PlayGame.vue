@@ -41,7 +41,8 @@
                     :game="game" 
                     :images="sendImage" 
                     :sendSentence="sendSentence"
-                    :sendSocket="socket" />
+                    @submitVoteResult="endVoteResult"
+                    ref="endscreen" />
             </div>
 
             
@@ -257,8 +258,8 @@ export default {
         document.documentElement.style.setProperty('--indexNum', 99);
         
         this.checkRoll = true;
-        var roll = setTimeout( this.goGame , 10000);
-        var timeCheck = setTimeout( this.beforeStartTimer, 10000);
+        setTimeout( this.goGame , 10000);
+        // var timeCheck = setTimeout( this.beforeStartTimer, 10000);
 
 
         // 설정 값 별로 매칭되는 이름/숫자 넣어주기
@@ -289,10 +290,73 @@ export default {
 
     },
 
+    destroyed() {
+        this.socket.close();
+        this.socketPlay.close();
+    },
+
     methods: {
         // 게임 시작
         goGame() {
             this.checkRoll = false;
+            this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn }));
+        },
+
+        // 게임 소켓 연결
+        connectPlay() {
+            this.socketPlay = new WebSocket(`${socketPlayURL}/${this.game.id}`);
+            
+            this.socketPlay.onopen = () => {
+
+                this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn, data: '게임 시작합니다.'}));
+
+
+                this.socketPlay.onmessage = ({data}) => {
+                    var PlayData = JSON.parse(data);
+                    if (PlayData.finish) {
+                        this.turnFinish();
+                    } else {
+                        if (PlayData.isturn) {
+                            this.turn = PlayData.turn;
+                            if (this.turn - 1 == this.game.cur_count) {
+                                this.end = true;
+                            } else {
+                                this.beforeStartTimer();
+                            }
+                        } else {
+                            this.$refs.endscreen.nextVote(PlayData.vote_result);
+                        }
+                    }
+                    
+                };
+            };
+        },
+
+
+        // 채팅 부분
+        // 소켓 연결
+        connect() {
+            this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
+            this.socket.onopen = () => {
+                
+                this.socket.onmessage = ({data}) => {
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                };
+            };
+        },
+
+        // 채팅 버튼
+        chatMessage() {
+            var s = document.getElementById("inputMessageSelect");
+            var idx = s.options[s.selectedIndex].value;
+            if (this.chatList[idx] === undefined) {
+                alert('메시지를 선택해주세요');
+            } else {
+                console.log(this.chatList[idx]);
+                this.socket.send(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
+            }
         },
 
         // 본인의 턴이면 채팅창의 우선도를 뒤로, 아니면 앞으로
@@ -338,8 +402,6 @@ export default {
         },
 
         
-
-        
         // before 타이머
         beforeStartTimer() {
 
@@ -375,17 +437,14 @@ export default {
 
         // mode 1,2 : 이미지 저장 후 ai로 보내기 / mode 3 : 이미지 저장 후 턴 넘기기
         sendAI(image) {
-console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI")
             this.images.push(image);
 
             if (this.game.userList[this.turn].id == storage.getItem('id')) {
-                console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI1")
+                
                 if (this.game.mode == 3) {
-console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI2")
                     setTimeout(() => this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn })), 500 );
 
                 } else {
-                    console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI3")
                     let formData = new FormData;
                     formData.append('inputImage', image);
                     formData.append('turn', this.turn);
@@ -397,7 +456,6 @@ console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI2")
                     aihttp
                     .post(`objects/image/`, formData)
                     .then((res) => {
-                        console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI4")
                         console.log(res.data);
                         if (res.data.message) {
                             for (let i=0; i < res.data.result.length; i++) {
@@ -432,69 +490,9 @@ console.log("AIAIAIAIAAIAIAIAIAIAIAIAIIAIAAI2")
             
         },
 
-        
-        // 게임 소켓 연결
-        connectPlay() {
-            this.socketPlay = new WebSocket(`${socketPlayURL}/${this.game.id}`);
-            
-            this.socketPlay.onopen = () => {
-
-                this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: true, finish: false, turn: this.turn, data: '게임 시작합니다.'}));
-
-
-                
-                this.socketPlay.onmessage = ({data}) => {
-                    console.log('play 받음');
-                    // var PlayData = JSON.parse(data);
-                    // if (PlayData.finish) {
-                    //     this.turnFinish();
-                    // } else {
-                    //     if (PlayData.isturn) {
-                    //         this.turn = PlayData.turn;
-                    //         if (this.turn == this.game.cur_count) {
-                    //             this.end = true;
-                    //         } else {
-                    //             this.beforeStartTimer();
-                    //         }
-                    //     } else {
-                    //         console.log(PlayData);
-                    //     }
-                    // }
-                    
-                };
-            };
-        },
-
-
-        // 채팅 부분
-        // 소켓 연결
-        connect() {
-            this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
-            this.socket.onopen = () => {
-                
-                this.socket.onmessage = ({data}) => {
-                    this.chatLogs.push(JSON.parse(data));
-                    const chatBox = document.querySelector(".scrollbar-box");
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                };
-            };
-        },
-
-        // 채팅 버튼
-        chatMessage() {
-            var s = document.getElementById("inputMessageSelect");
-            var idx = s.options[s.selectedIndex].value;
-            if (this.chatList[idx] === undefined) {
-                alert('메시지를 선택해주세요');
-            } else {
-                console.log(this.chatList[idx]);
-                this.socket.send(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
-            }
-        },
-
-        // 턴 넘기기
-        turnChange() {
-
+        // 투표 결과 받아오기
+        endVoteResult(data) {
+            this.socketPlay.send(JSON.stringify({ game: true, room_id: this.game.id, isturn: false, finish: false, vote_result: data }));
         },
 
         // 게임 종료
