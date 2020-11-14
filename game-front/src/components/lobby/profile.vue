@@ -21,8 +21,8 @@
       </div>
       <!-- 유저 정보 불러오기  -->
       <div class="info">
-        <p>nickname: {{ nickname }}</p>
-        <p>score: {{ score }}</p> 
+        <p>Nickname: {{ nickname }}</p>
+        <p>Rank: {{rank}} ( {{ score }} )</p> 
       </div>
     </div>
   </div>
@@ -37,11 +37,13 @@ export default {
     return {
       nickname: "Hello Anonymous User",
       score: 999,
+      rank:'F',
       alarmCnt: 0,
     };
   },
   created() {
     this.getProfile();
+    this.getRank();
     this.getAlarm();
   },
   methods: {
@@ -55,13 +57,28 @@ export default {
         this.nickname = res.data.nickname
         this.score = res.data.score
       })
-
+      .catch((err) => {
+          console.log(err);
+      })
 
       console.log("Enter getProfile");
     },
 
     logout() {
       this.$emit('logout', 'logout');
+    },
+
+    getRank(){
+      httpLobby
+      .get("user/rank/" + sessionStorage.getItem("id"))
+      .then((res) => {
+        console.log("111111 : " + res.data.object);
+        this.rank = res.data.object;
+      })
+      .catch((err) => {
+          console.log(err);
+      })
+
     },
 
     getAlarm() {
@@ -72,7 +89,12 @@ export default {
         console.log(res.data)
         this.alarmCnt = res.data;
       })
+      .catch((err) => {
+          console.log(err);
+      })
     },
+
+
 
     bellclick() {
       this.$emit('bell', 'bell');
