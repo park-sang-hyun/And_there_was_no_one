@@ -31,7 +31,9 @@
             </div>
 
             <div v-if="show" class="showScreen">
-
+                <div v-if="game.mode != 3"> 
+                    <img v-if="playing" src="@/assets/images/blink.gif" alt="ai_image">
+                </div>
             </div>
 
             <div v-if="end" class="showScreen">
@@ -161,7 +163,7 @@ export default {
                 '',
                 '자유그리기',
                 '이어그리기',
-                'NO AI',
+                'AI 점검중',
                 ],
                 difficulty: [
                     '',
@@ -210,6 +212,7 @@ export default {
             socketPlay: null,
             myNickname: '',
             youShadow: false,
+            playing: true,
             
         }
     },
@@ -328,6 +331,7 @@ export default {
                                 setTimeout(this.beforeStartTimer, 1000);
                             } else {
                                 this.end = true;
+                                this.playing = false;
                             }
                         } else {
                             this.$refs.endscreen.sendResultVote(PlayData.vote_result);
@@ -500,6 +504,7 @@ export default {
 
         // 게임 종료
         turnFinish() {
+            this.playing = false;
             this.end = true;
             this.finish = true;
         }
@@ -661,6 +666,13 @@ export default {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #555;
+}
+
+.showScreen > div > img {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 

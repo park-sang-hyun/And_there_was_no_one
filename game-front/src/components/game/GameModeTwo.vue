@@ -123,6 +123,7 @@ export default {
             return this.window
         },
         isYourTurn() {
+            this.yourTurn();
             return this.isTurn
         },
     },

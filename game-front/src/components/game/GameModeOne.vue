@@ -181,6 +181,7 @@ export default {
 
         // 본인의 턴이면 그림 그리기를 할 수 있도록, 아니면 못하도록 막기
         yourTurn() {
+            console.log(this.isTurn);
             if (this.isTurn != 0) {
                 if (this.game.userList[this.isTurn-1].id == storage.getItem('id')) {
                     this.selectCanvas = false;
