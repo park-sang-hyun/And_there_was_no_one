@@ -23,7 +23,7 @@
             @keyup="nickCheck=false"
           />
         </div>
-        <button type="button" @click="nicknameCheck(nickname)">중복체크</button>
+        <button type="button" @click="nicknameCheck(nickname); ">중복체크</button>
         <!-- 닉네임 중복체크하기  -->
         <div class="error-text" v-if="error.password1">{{error.password1}}</div>
         <div class="form-item">
@@ -59,7 +59,7 @@
 
         <div class="add-option mt-4">
             <div class="wrap">
-              <router-link to="/" class="btn--text">Login</router-link>
+              <router-link @click.native="buttonpush()" to="/" class="btn--text">Login</router-link>
             </div>
         </div>
       </form>
@@ -221,6 +221,10 @@ export default {
           })
       }
     },
+    buttonpush(){
+      var bpush = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
+      bpush.play();
+  },
   },
 
  
