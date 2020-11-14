@@ -3,11 +3,11 @@
     <div id="LoadingModeOne">
         <div class=flexContainer>
             <div>
-                <button class="button" @click="closeRule(1)">1</button>
-                <button class="button" @click="closeRule(2)">2</button>
-                <button class="button" @click="closeRule(3)">3</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(1)">1</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(2)">2</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(3)">3</button>
             </div>
-            <button class="button" @click="closeRule(0)">X</button>
+            <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(0)">X</button>
         </div>
         
         

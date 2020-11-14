@@ -240,11 +240,12 @@ public class UserController {
 		return listcount;
 	}
 	
-	@GetMapping("/rank/list")
+	@GetMapping("/rank/list/{page}")
 	@ApiOperation(value = "랭킹 목록", notes = "친구 목록 보여주기 기능 구현")
-	public List<UserData> rank() {
+	public List<UserData> rank(@PathVariable int page) {
 		List<User> userList = new ArrayList<>();
 		List<UserData> rank = new ArrayList<>();
+		List<UserData> pagenavigation = new ArrayList<>();
 
 		try {
 			userList = userService.findAllUser();
@@ -263,11 +264,22 @@ public class UserController {
 				rank.add(ud);
 			}
 			
+			int start = page * 10 - 10;
+			int end = page * 10;
+			
+			if(end > rank.size()) end = rank.size();
+			
+			for(int i = start; i < end; i++) {
+				pagenavigation.add(rank.get(i));
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println("rank 길이 : " + rank.size());
 
-		return rank;
+		return pagenavigation;
 	}
 
 }

@@ -39,14 +39,6 @@
         </div>
       </transition>
 
-    <div class="friends-wrapper">
-      
-      <div class="btn_container" style="justify-content: space-between">
-        <p style="margin-left:20px; color:rgba(255, 254, 254, 0.6);">친구 목록</p>
-        <!-- 친구 추가버튼  -->
-        <button @click="showModal = true" class="button" style="margin:10px">+</button>
-      </div>
-
       <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
         <div v-if="showFriendReq" @click="showFriendReq = false" class="modal-overlay"></div>
@@ -78,6 +70,13 @@
         </div>
       </transition>
 
+    <div class="friends-wrapper">
+      
+      <div class="btn_container" style="justify-content: space-between">
+        <p style="margin-left:20px; color:rgba(255, 254, 254, 0.6);">친구 목록</p>
+        <!-- 친구 추가버튼  -->
+        <button @click="showModal = true" class="button" style="margin:10px">+</button>
+      </div>
 
       <!-- 친구 리스트 -->
       <!-- 친구 리스트에 스크롤바 두니까 아래로 안움직임 -->

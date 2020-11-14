@@ -16,7 +16,7 @@ def score(request):
     # post 요청으로 user id, user win,lose정보, score값 받아올 것
     user = get_object_or_404(User, id=request.data['user'])
     user.score = request.data['score']
-    user.wincount += request.data['wincount']
+    user.wincount += int(request.data['wincount'])
     user.playcount += 1
     user.save()
     return JsonResponse({'message':'SUCCESS'})
