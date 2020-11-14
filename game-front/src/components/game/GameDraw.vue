@@ -121,10 +121,10 @@ export default {
                 // 이런형태를 pub sub 구조라고 합니다.
                 // console.log(this.teamId)
                 this.stompClient.subscribe("/topic/"+"1", res => {
-                 console.log("구독으로 받은 메시지 입니다.", res.body)
+                //  console.log("구독으로 받은 메시지 입니다.", res.body)
 
-                    // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-                    console.log(JSON.parse(res.body))
+                //     // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+                //     console.log(JSON.parse(res.body))
 
                     let r = JSON.parse(res.body)
                     

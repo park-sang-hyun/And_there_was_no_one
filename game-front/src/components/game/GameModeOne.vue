@@ -193,7 +193,7 @@ export default {
                 this.noImage = true;
             } else {
                 this.noImage = false;
-                this.showImage = this.images[this.isTurn - 1];
+                this.showImage = this.images[this.isTurn - 2];
             }
         },
 
