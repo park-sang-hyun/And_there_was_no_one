@@ -202,6 +202,9 @@ public class GameController {
 			List<User> userList = gameService.findUserInRoom(room_id);
 			System.out.println("userlist: "+ userList);
 			
+//			System.out.println("방안의 모든 유저 : " );
+//			for(int i=0;i<userList.size();i++) System.out.println();
+			
 			if(isLeader == true) {
 				//게임방에 유저가 2명 이상이면 방장을 위임하고 나가고, 본인 한명 뿐이면 그냥 나가게 된다
 				if(userList.size() > 1) {
