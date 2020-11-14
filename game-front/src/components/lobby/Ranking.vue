@@ -2,7 +2,7 @@
     <!-- 게임 로딩 화면 (자유그리기 모드) -->
     <div id="LoadingModeOne">
         <div class=flexContainer>
-            <button class="button" @click="closeRule(0)">X</button>
+            <button class="button" style="margin-left:100%" @click="closeRule(0)">X</button>
         </div>
         
         
@@ -11,15 +11,7 @@
         
         <!-- 스토리 -->
         <div class="main__story">
-            <h1>[주의] 지금부터 당신은 AI와 연결됩니다.</h1>
-            <p>당신들 중 하나는 제시어를 알지 못하는 Shadow로 임명됩니다.</p>
-            <strong style="margin: 40px; color: white;"><p>Shadow를 찾으면 AI와의 연결을 해제할 수 있습니다.</p></strong>
-            <p>Shadow는 당신들 사이에 숨어있습니다.</p>
-            <p>제시어를 사용해서 Shadow를 찾아내세요.</p>
-            <strong style="margin: 40px;"><p>AI가 제시어를 알게 되면 불이익이 있습니다.</p>
-            <p style="color: white;">Shadow에게 Hint를 주지 않도록 조심하세요.</p></strong>
-            <p>Shadow가 제시어를 알게되면 Shadow를 제외한 사람들이 패배합니다.</p>
-            <p class="bold__part" style="font-size: 1.8rem;">동료들과 함께 Shadow를 찾아 접속을 해제하세요.</p>
+            
         </div>
         
         <!-- 매트릭스 배경 -->
@@ -28,15 +20,25 @@
 </template>
 
 <script>
+import http from "../../util/http-lobby.js";
+
 export default {
     name: "ModeOne",
 
+    data: () =>{
+        return {
+            userList:[
+                {no: 0, nickname: 0, playcount: 0, wincount : 0,  rank: "F", score:10},
+            ]
+        }
+    },    
     created() {
         console.log("sdfasjdkfhxc kjsdhzxcusehdiwejef");
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
 
+        this.getRank();
     },
 
     watch: {
@@ -60,8 +62,27 @@ export default {
 
         closeRule(page) {
             this.$emit('close', page);
-        }
+        },
 
+        getRank(){
+            http
+            .get("room/list/"+this.pageNow)
+            .then((res) => {
+
+            for(let i=0; i<8; i++){
+                this.roomList[i].no = res.data[i].id;
+                this.roomList[i].roomname = res.data[i].title;
+                this.roomList[i].mode = res.data[i].mode;
+                this.roomList[i].cur_people = res.data[i].cur_count;
+                this.roomList[i].max_people = res.data[i].max_count;
+                this.roomList[i].difficulty = res.data[i].difficulty;
+                this.roomList[i].start = res.data[i].start;
+            }
+            })
+            .catch(err => {
+            console.log(err)
+            })
+        }
     },
 }
 </script>
@@ -82,7 +103,11 @@ export default {
     height: var(--heightSize);
     min-width:1024px;
     background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
-    background: black;
+    background: url('../../assets/images/background.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
     overflow: inherit; 
 }
 

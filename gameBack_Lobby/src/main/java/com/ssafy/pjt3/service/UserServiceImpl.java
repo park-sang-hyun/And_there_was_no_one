@@ -90,4 +90,9 @@ public class UserServiceImpl implements UserService{
 		
 		return rank;
 	}
+
+	@Override
+	public List<User> findAllUser() throws SQLException {
+		return userDao.findAllUser();
+	}
 }
