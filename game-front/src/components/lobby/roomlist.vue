@@ -18,96 +18,7 @@
       </transition>
 
       <transition name="fade" appear>
-        <div v-if="gameRanking" @click="gameRanking = false" class="modal-overlay"></div>
-      </transition>
-      <!-- 방 만들기 버튼 눌렀을 때 생기는 모달 -->
-      <transition name="pop" appear>
-        <div class="roommodal" 
-            role="dialog" 
-            v-if="gameRanking"
-          >
-          <div class="container" style="width:100%">
-            <button @click="gameRanking = false" class="button">X</button>
-          </div>
-          
-          <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
-          <div class="inmodal">
-            <h1>게임 방 만들기</h1>
-            <p>방 이름을 입력하세요</p>
-            <input 
-              v-model="roomName"
-              type="text"
-              placeholder="방 이름"
-              @keyup.enter="createRoom"
-            >
-
-            <p>{{ roomCreateErr }}</p>
-            <div >
-              <div>
-                <label for="mode">Mode</label>
-              </div>
-              <div class="number-input-container">
-                <button
-                  type="button"
-                  class="button-decrement"
-                  @click="setMode('down')"
-                ></button>
-                <div class="number-input" style="text-align: center;">
-                  {{ modelist[mode-1] }}
-                </div>
-                <button
-                  type="button"
-                  class="button-increment"
-                  @click="setMode('up')"
-                ></button>
-              </div>
-            </div>
-
-            <div>
-              <div>
-                <label for="difficulty">Difficulty</label>
-              </div>
-              <div class="number-input-container">
-                <button
-                  type="button"
-                  class="button-decrement"
-                  @click="setDifficulty('down')"
-                ></button>
-                <div class="number-input">
-                  {{ difficultylist[difficulty-1] }}
-                </div>
-                <button
-                  type="button"
-                  class="button-increment"
-                  @click="setDifficulty('up')"
-                ></button>
-              </div>
-            </div>
-
-            <div>
-              <div>
-                <label for="people">Number of People</label>
-              </div>
-              <div class="number-input-container">
-                <button
-                  type="button"
-                  class="button-decrement"
-                  @click="setPeople('down')"
-                ></button>
-                <div class="number-input">
-                  {{ people }}
-                </div>
-                <button
-                  type="button"
-                  class="button-increment"
-                  @click="setPeople('up')"
-                ></button>
-              </div>
-            </div>
-
-          </div>
-        
-        </div>
+        <Ranking v-if="gameRanking===true" @close="rankclose" style="z-index: 1;"/>
       </transition>
 
       <transition name="fade" appear>
@@ -214,9 +125,9 @@
           <div v-if="room.no !='none'" class="roomcard__inner" @click="pickRoom(room.no)">
             <div style="float:left; font-size:22px; text-shadow: 2px 2px 2px gray;">No.{{ room.no }} </div> 
             <div style="text-align:left; margin-left:20%; font-size:20px;">방 제 : {{ room.roomname }} </div>
-            <div style="text-align:left; margin-left:70%; font-size:15px;">모드 : {{ modelist[room.mode] }} </div> 
-            <div style="text-align:left; margin-left:70%; font-size:15px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
-            <div style="text-align:left; margin-left:70%; font-size:15px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
+            <div style="text-align:left; margin-left:60%; font-size:15px;">모드 : {{ modelist[room.mode] }} </div> 
+            <div style="text-align:left; margin-left:60%; font-size:15px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
+            <div style="text-align:left; margin-left:60%; font-size:15px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
             <!-- isStart: {{ room.start }} -->
           </div>
           <div v-else class="roomcardNone__inner">
@@ -242,6 +153,7 @@ import modeOne from './ModeOne.vue';
 import modeTwo from './ModeTwo.vue';
 import modeThree from './ModeThree.vue';
 import http from "../../util/http-lobby.js";
+import Ranking from './Ranking.vue';
 
 // import mode from '@/components/room/modeSetting.vue';
 // import difficulty from '@/components/room/difficultySetting.vue';
@@ -256,11 +168,12 @@ export default {
         modeOne,
         modeTwo,
         modeThree,
+        Ranking,
     },
 
     data: () =>{
       return {
-        // 받아온 방 정보 8개 객체를 받아옴
+        // 받아온 방 정보 6개 객체를 받아옴
         roomList: [
             {no: 0, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
             {no: 1, roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
@@ -268,12 +181,11 @@ export default {
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 2, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
             {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 3, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
-            {no: 'none', roomname: 0, mode: 0, cur_people : 0, max_people: 1, difficulty: 1, start: false},
+
 
           ],
         // totalRoom은 생성된 룸 개수
-        totalRoom: 16,
+        totalRoom: 12,
         // 페이지 총 길이
         pageLen: 0,
         // 현재 페이지
@@ -315,15 +227,18 @@ export default {
          http
         .get("room/listcount/")
         .then((res) => {
-          //console.log("listcount : " + res.data);
+          console.log("listcount : " + res.data);
+          console.log("listcount : " + this.totalRoom);
           this.totalRoom = res.data;
+          console.log("totalroom : " + this.totalRoom);
+          this.pageLen = Math.ceil(this.totalRoom / 6);
         })
         .catch(err => {
           console.log(err)
         })
 
-        this.pageLen = Math.ceil(this.totalRoom / 8);  // 소수점 올림
-        this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
+        //this.pageLen = Math.ceil(this.totalRoom / 6);  // 소수점 올림
+        //this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
         console.log("pageLen: "+this.pageLen);
         console.log("Enter getRoomInfo");
       },
@@ -333,26 +248,35 @@ export default {
         // Room Read lobby서버에 요청하기 현재 페이지의 룸 정보
         // pageNow 변수에 현재 페이지가 들어있음
 
-
         http
         .get("room/list/"+this.pageNow)
         .then((res) => {
           // 받아온 데이터 출력해보고 아래 수정하기
+          console.log(res.data);
 
           //받아온 데이터 roomList에 집어넣기
-          for(let i=0; i<8; i++){
-            this.roomList[i].no = res.data[i].id;
-            this.roomList[i].roomname = res.data[i].title;
-            this.roomList[i].mode = res.data[i].mode;
-            this.roomList[i].cur_people = res.data[i].cur_count;
-            this.roomList[i].max_people = res.data[i].max_count;
-            this.roomList[i].difficulty = res.data[i].difficulty;
-            this.roomList[i].start = res.data[i].start;
+          for(let i=0; i < 6; i++){
+            if (i < res.data.length) {
+              this.roomList[i].no = res.data[i].id;
+              this.roomList[i].roomname = res.data[i].title;
+              this.roomList[i].mode = res.data[i].mode;
+              this.roomList[i].cur_people = res.data[i].cur_count;
+              this.roomList[i].max_people = res.data[i].max_count;
+              this.roomList[i].difficulty = res.data[i].difficulty;
+              this.roomList[i].start = res.data[i].start;
+            } else {
+              this.roomList[i].no = 'none';
+            }
           }
+
         })
         .catch(err => {
           console.log(err)
         })
+
+        console.log("Enter getRoomList");
+
+        
 
         console.log("Enter getRoomList");
       },
@@ -491,6 +415,9 @@ export default {
       close(rule) {
         this.showGamerule = rule;
       },
+      rankclose(rule) {
+        this.gameRanking = false;
+      },
     },
 }
 
@@ -510,7 +437,7 @@ export default {
     padding-left: 5%;
     position: relative;
     min-width: 900px;
-    min-height: 600px;
+    min-height: 400px;
 
     /* background-color: rgba(221, 250, 193, 0.3); */
     border-radius: 20px;
@@ -522,7 +449,7 @@ export default {
     margin-bottom: 40px;
     display: flex;
     flex-flow: row wrap;
-    min-height: 581px;
+    min-height: 480px;
   }
   /* //Cards */
 
@@ -544,7 +471,7 @@ export default {
 
     &__inner {
       width: 100%;
-      padding: 25px;
+      padding: 15px;
       min-width: 80px;
       min-height: 60px;
       position: relative;

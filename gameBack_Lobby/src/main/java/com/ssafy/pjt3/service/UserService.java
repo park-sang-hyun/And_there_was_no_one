@@ -17,4 +17,5 @@ public interface UserService {
 
 	public int loginCheck(int user_id) throws SQLException;
 	public String getRank(int user_id) throws SQLException;
+	public List<User> findAllUser() throws SQLException;
 }

@@ -17,4 +17,5 @@ public interface UserDao {
 	
 	public int loginCheck(int user_id) throws SQLException;
 	public List<User> findAllUser() throws SQLException;
+
 }
