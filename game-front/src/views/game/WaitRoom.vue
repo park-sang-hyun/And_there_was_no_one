@@ -106,16 +106,42 @@
                 </div>
             </div>
             
-            <div v-if="isPopupFriend" class="change__part">
-                <div class="freinds__part">
-                    <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="modal__text" @click="inviteFriend">
-                        {{ friend.nickname }}
-                    </div>
-                    <div class="modal__button">
-                        <button @click="isPopupFriend = false;">닫기</button>
+
+
+            <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
+            <transition name="fade" appear>
+                <div v-if="isPopupFriend" @click="isPopupFriend = false;" class="modal-overlay"></div>
+            </transition>
+            <!-- 친구추가를 눌렀을 때 popup되는 모달  -->
+            <transition name="pop" appear>
+                <div class="inviteFriendmodal" 
+                    role="dialog" 
+                    v-if="isPopupFriend"
+                >
+
+                <div class="btn_container">
+                    <button @click="isPopupFriend = false;" class="button" style="margin-left: 370px;">X</button>
+                </div>
+                <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
+                <div>
+                    <h1>친구 초대</h1>
+
+                    <div class="scrollbar-box2" id="style-1" style="width: 400px" >
+                        <div class="force-overflow" >
+                            <div class="friendList">
+                                <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friend">
+                                
+                                    {{ friend.nickname }}
+                                    <button @click="inviteFriend" class="button" style="margin-left: 120px; background-color: rgba(48, 48, 48, 1)">초대</button>
+                                </div>
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+                </div>
+            </transition>
+
         </div>
     </div>
 </template>
@@ -528,18 +554,23 @@ export default {
 
         // 친구 초대
         inviteFriend(event) {
-            var ID = event.target.id.split('-');
+            console.log("sddddd");
+            
+            var ID = event.target.parentElement.id.split('-');
+            console.log(ID)
             var formData = new FormData;
             formData.append('from_id', storage.getItem('id'));
             formData.append('to_nickname', ID[0]);
             formData.append('room_id', this.room.id);
-
+            console.log("friend ID");
+            console.log(ID[0]);
             httplobby
             .post('alarm/inviteGame', formData)
             .then((res) => {
                 console.log(res.data);
             })
 
+            this.isPopupFriend = false;
         },
         
 
@@ -814,5 +845,128 @@ export default {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #555;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+.scrollbar-box2
+  {
+    height: 330px;
+    width: 100%;
+    background-color: rgba(0, 41, 0, 0);
+    overflow-y: scroll;
+    position : relative; 
+    bottom: 0px;
+
+  }
+
+  .force-overflow
+  {
+    /* 스크롤바 내부의 글자가 누적되는 창 크기
+    스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
+    min-height: 300px;
+    margin: 15px 10px;
+  }
+
+  .friendList {
+    margin: 10px;
+    padding: 5px;
+    padding-left: 30px;
+    background :#eceef188;
+    color: rgba(37, 37, 37, 0.788);
+    border-radius: 10px;
+  }
+
+  /*scrollbar STYLE 1*/
+  #style-1::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0);
+    border-radius: 10px;
+    background-color: #eceef155;
+    opacity:0.9;
+  }
+
+  #style-1::-webkit-scrollbar
+  {
+    width: 12px;
+    background-color: #F5F5F500;
+  }
+
+  #style-1::-webkit-scrollbar-thumb
+  {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+  }
+  
+
+  /* 우측정렬용 컨테이너 */
+
+  .button {
+    color: rgba(37, 37, 37, 0.788);
+    background: rgba(255, 254, 254, 0.151);
+    appearance: none;
+    font: inherit;
+    border-radius: .3em;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin: 5px;
+    opacity:0.9;
+
+    background-color: rgba(61, 61, 61, 0.5);
+    border: none;
+    color: white;
+  }
+
+  .inviteFriendmodal {
+    position: absolute;
+    position: fixed;
+    
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    text-align: center;
+    width: fit-content;
+    height: fit-content;
+    max-width: 50em;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+    background: #FFF;
+    z-index: 999;
+    transform: none;
+  }
+  .inviteFriendmodal h1 {
+    margin: 0 0 1rem;
+    color: black;
+  }
+
+  .modal-overlay {
+    content: '';
+    position: absolute;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 998;
+    background: #414141;
+    opacity: 0.6;
+    cursor: pointer;
+  }
+
+
+
 
 </style>
