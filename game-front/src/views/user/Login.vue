@@ -33,14 +33,14 @@
         <button
           type="button"
           class="button"
-          @click="onLogin"
+          @click="onLogin();buttonpush()"
           :disabled="!isSubmit"
           :class="{disabled : !isSubmit}"
         >Login</button>
         
         <div class="add-option mt-4">
           <div class="wrap">
-            <router-link to="/signup/" class="btn--text">Signup</router-link>
+            <router-link @click.native="buttonpush()" to="/signup/" class="btn--text" >Signup</router-link>
           </div>
         </div>
       </form>
@@ -91,7 +91,6 @@ export default {
     };
   },
   created() {
-
     // 화면 크기 확인
     window.addEventListener('resize', this.screenResize);
     this.screenResize();
@@ -151,6 +150,7 @@ export default {
 
     // 로그인 요청 - 토큰 받아서 local storage에 넣기
     onLogin() {
+      console.log("나 로그인중!!")
       if (this.isSubmit) {
 
         storage.setItem("token", "");
@@ -192,8 +192,10 @@ export default {
     var go = setTimeout( this.lobbyNext , 6000);
   },
 
-
-
+  buttonpush(){
+    var bpush = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
+    bpush.play();
+  },
 },
 
 };

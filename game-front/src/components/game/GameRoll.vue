@@ -21,7 +21,9 @@
                     </div>
                     <div class="game__word">
                         <h3>제시어</h3>
-                        <p v-if="isShadow">You are Shadow</p>
+                        <p v-if="isShadow">
+                            <img src="@/assets/images/shadow.png" alt="shadow_image" height="110px;" style="margin-top: -20px;"> 
+                        </p>
                         <p v-else>{{ sendGame.word }}</p>
                     </div>
                 </div>
@@ -178,7 +180,8 @@ section > div {
     left: 0;
     border-radius: 4%;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, .5);
-    background-color: #252c3e;
+    background-image: url('../../assets/images/card.png');
+    background-size: cover;
     color: white;
     line-height: 1.4;
 }
@@ -221,7 +224,8 @@ section > div {
 }
 
 .back > div > p {
-    font-size: 3rem;
+    margin-top: 10px;
+    font-size: 2rem;
     font-family: 'Cute Font', cursive, 'Gaegu', cursive;
 }
 

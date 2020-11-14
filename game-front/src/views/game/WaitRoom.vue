@@ -12,6 +12,7 @@
                             [{{ room.id }}]번방 {{ sendTitle }} 
                         </div>
                     </div>
+                    <!-- 친구 초대 -->
                     <div class="friends__invite">
                         <div class="btn btn-secondary" @click="friendsList">친구 초대</div>
                     </div>
@@ -35,8 +36,14 @@
                             style="display: inline-block; float:left;">
                             <span style="display: none;">{{ isUserClick[n-1] }}</span>
                         </user>
-                        <empty v-for="n in EmptyCount" :key="n + 'Emptykey'" :window="windowScreen" style="display: inline-block; float:left;"/>
-                        <none v-for="n in NoneCount" :key="n + 'Nonekey'" :window="windowScreen" style="display: inline-block; float:left;"/>
+                        <empty v-for="n in EmptyCount"
+                            :key="n + 'Emptykey'"
+                            :window="windowScreen"
+                            style="display: inline-block; float:left;"/>
+                        <none v-for="n in NoneCount" 
+                            :key="n + 'Nonekey'" 
+                            :window="windowScreen" 
+                            style="display: inline-block; float:left;"/>
                     </div>
                     <!-- 채팅 (상용구) -->
                     <div class="chat__part d-flex justify-content-center">
@@ -406,6 +413,7 @@ export default {
 
                 this.socketRoom.onmessage = ({data}) => {
                     var sendRoomData = { start : false };
+
                     if (typeof data !== 'undefined') {
                         sendRoomData = JSON.parse(data);
                     }
@@ -423,9 +431,9 @@ export default {
         
         //  
         sendRoomMessage() {
-            this.socketRoom.send(JSON.stringify({ start: false, game: false, room_id: this.room.id })); 
+            this.socketRoom.send(JSON.stringify({ game: false, start: false, room_id: this.room.id })); 
         },
-
+    
         // 채팅 부분
         // 소켓 연결
         connect() {
