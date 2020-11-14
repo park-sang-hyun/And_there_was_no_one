@@ -529,7 +529,11 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
+    background: url('../../assets/images/background2.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
     color: white;
 }
 
