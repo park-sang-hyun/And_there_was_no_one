@@ -69,6 +69,8 @@ export default {
       -moz-background-size: cover;
       -o-background-size: cover;
       background-size: cover;
+
+    min-height: 941px;
   }
 
   
@@ -91,7 +93,6 @@ export default {
   }
   .comp {
     display: grid;
-    grid-template-rows: .8fr .2fr;
     min-width: 300px;
   }
   .profile { 

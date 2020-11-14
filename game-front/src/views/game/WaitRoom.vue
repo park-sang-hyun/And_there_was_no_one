@@ -920,7 +920,6 @@ export default {
   /* 우측정렬용 컨테이너 */
 
   .button {
-    color: rgba(37, 37, 37, 0.788);
     background: rgba(255, 254, 254, 0.151);
     appearance: none;
     font: inherit;

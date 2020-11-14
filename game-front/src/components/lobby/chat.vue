@@ -13,7 +13,8 @@
         </div>
       </div>
       <form @submit.prevent="sendMessage" action="#">
-        <input v-model="message"><button type="submit" style="background-color:#c3c5c73d; color:rgba(255, 254, 254, 0.6);">메시지 전송</button>
+        <input v-model="message">
+        <button type="submit" class="button">메시지 전송</button>
       </form>
       
     </div>
@@ -83,69 +84,82 @@ export default {
   .chatbox {
     border-radius: 20px;
     background-color: #aeb0b32f;
-    height: 80%;
-    width: 88%;
-    margin-left:7%;
-    margin-top: 15px;
-    padding-top: 15px;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
+    height: 98%;
+    width: 92%;
+    margin-left:1.9%;
+    margin-top: 5px;
+    padding-top: 20px;
+    margin-right: 5%;
   }
   form{
     position: relative;
     /* top: 90%; */
-
     width: 100%;
-    margin-top: 15px;
-    margin-left: 20px;
+    margin-top: 25px;
+    margin-left: 28px;
   }
   input {
     width: 85%;
     margin-right: 10px;
-    background-color: #c3c5c73d;
+    background-color: #e2e2e27a;
+    border: none;
   }
 
-.scrollbar-box
-{
-	margin-left: 30px;
+  .button {
+    border: none;
+    color: rgba(255, 255, 255, 0.788);
+    background: rgba(255, 254, 254, 0.151);
+    appearance: none;
+    font: inherit;
+    border-radius: .3em;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    margin-left:10px;
+  }
   
-	height: 120px;
-	width: 95%;
-	
-	overflow-y: scroll;
-  position : relative; 
-  bottom: 0px;
-  color:rgba(255, 254, 254, 0.7);
-}
 
-.force-overflow
-{
-  /* 스크롤바 내부의 글자가 누적되는 창 크기
-  스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
-	min-height: 121px;
-}
+  .scrollbar-box
+  {
+    margin-left: 30px;
+    
+    height: 135px;
+    width: 95%;
+    
+    overflow-y: scroll;
+    position : relative; 
+    bottom: 0px;
+    color:rgba(255, 254, 254, 0.7);
+  }
 
-/*
- *  scrollbar STYLE 1
- */
+  .force-overflow
+  {
+    /* 스크롤바 내부의 글자가 누적되는 창 크기
+    스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
+    min-height: 136px;
+  }
 
-#style-1::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 10px;
-	background-color: #F5F5F5;
-}
+  /*
+  *  scrollbar STYLE 1
+  */
 
-#style-1::-webkit-scrollbar
-{
-	width: 12px;
-	background-color: #F5F5F500;
-}
+  #style-1::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+  }
 
-#style-1::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #555;
-}
+  #style-1::-webkit-scrollbar
+  {
+    width: 12px;
+    background-color: #F5F5F500;
+  }
+
+  #style-1::-webkit-scrollbar-thumb
+  {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+  }
 </style>

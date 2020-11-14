@@ -434,7 +434,7 @@ export default {
 
   .room-wrapper {
     padding-top: 5%;
-    padding-left: 5%;
+    padding-right: 2%;
     position: relative;
     min-width: 900px;
     min-height: 400px;
@@ -446,6 +446,7 @@ export default {
 
   .roomcards {
     padding: 10px;
+    margin-top: 10px;
     margin-bottom: 40px;
     display: flex;
     flex-flow: row wrap;
@@ -463,7 +464,7 @@ export default {
 
     &:hover {
       .roomcard__inner {
-        background-color: #aeb0b373;
+        background-color: #747474cc;
         transform: scale(1.05);
         border-radius: 20px;
       }
@@ -478,7 +479,7 @@ export default {
       cursor: pointer;
       border-radius: 20px;
       
-      background-color: #aeb0b32f;
+      background-color: #313131a4;
       color: rgba(255, 254, 254, 0.8);
       font-size: 1.5em;
       text-transform: uppercase;
@@ -520,14 +521,14 @@ html {background: #88bfd4; text-align: center}
 
 #menu {
   position: absolute;
-  bottom: -45px;
+  bottom: -35px;
 	list-style: none;
 	padding: 0px; 
   margin: 0;
 	background: #5c8a9700;
   margin-left: 41%;
 	display: inline-block;
-	height: 50px;
+	height: 30px;
 	overflow: hidden;
 }
 
@@ -569,7 +570,7 @@ html {background: #88bfd4; text-align: center}
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  width: 96%;
+  width: 93%;
 }
 
 .button {
