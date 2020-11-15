@@ -86,11 +86,11 @@ export default {
 #floater {
     float: left; 
     height: 30%; 
-    margin-bottom: -120px;
+    margin-bottom: -100px;
 }
 
 .flexContainer {
-    padding: 60px;
+    padding: 30px 60px;
     width: 98%;
     display: flex; 
     justify-content:space-between;

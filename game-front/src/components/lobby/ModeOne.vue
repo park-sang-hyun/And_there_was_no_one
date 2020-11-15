@@ -10,7 +10,6 @@
             <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(0)">X</button>
         </div>
         
-        
         <!-- 중앙 정렬위한 빈 공간 -->
         <div id="floater"></div>
         
@@ -95,12 +94,12 @@ export default {
 #floater {
     float: left; 
     height: 20%; 
-    margin-bottom: -120px;
+    margin-bottom: -140px;
 }
 
 
 .flexContainer {
-    padding: 60px;
+    padding: 30px 60px;
     width: 98%;
     display: flex; 
     justify-content:space-between;

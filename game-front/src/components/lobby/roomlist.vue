@@ -451,7 +451,7 @@ export default {
 
   .room-wrapper {
     padding-top: 2.5%;
-    padding-right: 2%;
+    padding-right: 0%;
     margin-bottom: 30px;
     position: relative;
     min-width: 900px;

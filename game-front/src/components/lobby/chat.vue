@@ -95,7 +95,7 @@ export default {
     border-radius: 20px;
     background-color: #aeb0b32f;
     height: 90%;
-    width: 92%;
+    width: 93.5%;
     margin-left:1.9%;
     padding-top: 15px;
     margin-right: 5%;
