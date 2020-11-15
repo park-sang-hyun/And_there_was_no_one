@@ -33,7 +33,7 @@
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
           <div v-else>
               <p>친구 추가 요청을 보냈습니다. </p>
-            <button @click="showModal=false, friendReqStatus='요청전'" class="button">닫기</button>
+            <button @click="showModal=false, friendReqStatus='요청전'" class="button" style="margin-top:10px; background-color: rgba(48, 48, 48, 1);">닫기</button>
           </div>
         
         </div>
@@ -75,9 +75,9 @@
     <div class="friends-wrapper">
       
       <div class="btn_container" style="justify-content: space-between">
-        <h4 style="margin-left:20px; color:rgba(255, 254, 254, 0.7);">친구 목록</h4>
+        <h5 style="margin-left:20px; color:rgba(255, 254, 254, 0.7);">친구 목록</h5>
         <!-- 친구 추가버튼  -->
-        <button @click="showModal = true" class="button" style="margin:10px">+</button>
+        <button @click="showModal = true" class="button" style="margin-right:10px">+</button>
       </div>
 
       <!-- 친구 리스트 -->
@@ -86,12 +86,12 @@
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
           <div v-for="friend in loginFriends" :key="friend.no + 'loginfriendkey'" class="loginfriend">
-            <p style="margin-left: 20px; margin-top: 10px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
-            <p style="margin-right: 20px; margin-top: 20px">{{ friend.rank }}</p>
+            <p style="margin-left: 20px; margin-top: 7px; margin-bottom: 0px; font-weight:bold; font-size:20px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 20px; margin-top: 10px">{{ friend.rank }}</p>
           </div>
           <div v-for="friend in logoutFriends" :key="friend.no + 'logoutfriendkey'" class="logoutfriend">
-            <p style="margin-left: 20px; margin-top: 10px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
-            <p style="margin-right: 20px; margin-top: 20px">{{ friend.rank }}</p>
+            <p style="margin-left: 20px; margin-top: 7px; margin-bottom: 0px; font-weight:bold; font-size:20px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 20px; margin-top: 10px">{{ friend.rank }}</p>
           </div>
         </div> 
       </div>
@@ -483,12 +483,12 @@ export default {
     padding: 20px;
     opacity:0.9;
     margin-left: 10%;
-    margin-top: 20px;
+
   }
   
   .scrollbar-box2
   {
-    height: 275px;
+    height: 215px;
     width: 97%;
     background-color: rgba(0, 41, 0, 0);
     overflow-y: scroll;
@@ -501,27 +501,25 @@ export default {
   {
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
-    min-height: 220px;
+    min-height: 190px;
     margin: 15px 10px;
   }
 
   .loginfriend {
-    margin: 10px;
+    margin: 5px;
     padding: 5px;
     background :#bbbbbb98;
     border-radius: 10px;
-    font-weight: 500; 
-    font-size: 18px;
+    font-size: 15px;
     display: flex;
     justify-content: space-between;
   }
   .logoutfriend {
-    margin: 10px;
+    margin: 5px;
     padding: 5px;
     background: rgba(255, 248, 220, 0.164);
     border-radius: 10px;
-    font-weight: 500; 
-    font-size: 18px;
+    font-size: 15px;
     display: flex;
     justify-content: space-between;
   }

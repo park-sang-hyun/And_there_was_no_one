@@ -7,10 +7,8 @@
                 <!-- 화면 상단 -->
                 <div class="screen__top">
                     <!-- 방제목 -->
-                    <div class="screen__top__left">
-                        <div class="room__title">
-                            [{{ room.id }}]번방 {{ sendTitle }} 
-                        </div>
+                    <div class="room__title">
+                        [{{ room.id }}]번방 {{ sendTitle }} 
                     </div>
                     <!-- 친구 초대 -->
                     <div class="friends__invite">
@@ -18,7 +16,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style="margin-left: 5% !important;">
                 <!-- 화면 왼쪽 -->
                 <div class="screen__left">
                     <!-- 입장한 유저 목록 -->
@@ -140,8 +138,8 @@
                             <div class="friend">
                                 <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friendList">
                                 
-                                    {{ friend.nickname }}
-                                    <button @click="inviteFriend" class="button" style="margin-left: 120px; background-color: rgba(48, 48, 48, 1)">초대</button>
+                                    <p style="margin-top: 10px; margin-bottom: 0px">{{ friend.nickname }}</p>    
+                                    <button @click="inviteFriend" class="button" style="margin-right: 10px; background-color: rgba(48, 48, 48, 1)">초대</button>
                                 </div>
                                 
                             </div>
@@ -598,6 +596,7 @@ export default {
 }
 
 #waitRoom {
+    position: fixed;
     height: 100%;
     width: 100%;
     min-width: 1024px;
@@ -633,7 +632,7 @@ export default {
 .screen__right {
     display: block;
     float: right;
-    width: var(--rightSize);
+    width: val(--rightSize);
     height: var(--mainSize);
     margin: 10px;
     /* background-color: skyblue; */
@@ -682,8 +681,8 @@ export default {
 /* 개별 style */
 /* 상단 우측 버튼 */
 .friends__invite {
-    position: fixed;
-    right: 15px;
+    position: absolute;
+    left: 15px;
     top: 0px;
 }
 
@@ -867,6 +866,8 @@ export default {
     background :#eceef188;
     color: rgba(37, 37, 37, 0.788);
     border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
   }
 
   /*scrollbar STYLE 1*/
