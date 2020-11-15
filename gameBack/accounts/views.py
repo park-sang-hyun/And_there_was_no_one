@@ -41,14 +41,30 @@ def read(request, id):
 
 
 @api_view(['GET']) # read
-def nickname(request, nickname):
-    print(nickname)
+def nickname(request, nickname, username):
+    print(nickname, username)
+    usernameCheck = False
+    nicknameCheck = False
+    
+    try: 
+        get_object_or_404(User, username=username)
+        usernameCheck = False
+    except:
+        usernameCheck = True
 
     try:
         get_object_or_404(User, nickname=nickname)
-        return JsonResponse({'message':'exist'})
+        nicknameCheck = False
     except:
-        return JsonResponse({'message':'ok'})
+        nicknameCheck = True
+    
+    if usernameCheck:
+        if nicknameCheck:
+            return JsonResponse({'message':'ok'})
+        else:
+            return JsonResponse({'message':'noNickname'})
+    else:
+        return JsonResponse({'message':'noUsername'})
 
 
 @api_view(['PUT']) # update
