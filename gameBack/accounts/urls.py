@@ -8,6 +8,7 @@ urlpatterns = [
     path('score/', views.score),
     path('deltoken/', views.deltoken),
     path('read/<int:id>/', views.read),
+    path('findfriend/<str:nickname>/', views.findfriend),
     path('nickname/<str:nickname>/<str:username>/', views.nickname),
     path('update/', views.update),
     path('delete/', views.delete),
