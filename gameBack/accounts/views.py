@@ -41,6 +41,17 @@ def read(request, id):
 
 
 @api_view(['GET']) # read
+def findfriend(request, nickname):
+
+    try: 
+        get_object_or_404(User, nickname=nickname)
+        return JsonResponse({'message':'exist'})
+    except:
+        return JsonResponse({'message':'ok'})
+    
+
+
+@api_view(['GET']) # read
 def nickname(request, nickname, username):
     print(nickname, username)
     usernameCheck = False
