@@ -1,5 +1,3 @@
-import Login from './views/user/Login.vue'
-import Signup from './views/user/Signup.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import LoadingGame from './views/game/loadingGame.vue'
@@ -41,25 +39,12 @@ export default [
         path : '/',
         name : 'Auth',
         component : Auth,
+        beforeEnter: getAuth()
     },
     {
         path : '/enterlobby',
         name : 'enterlobby',
         component : enterLobby,
-    },
-    // Auth 
-    {
-        path : '/',
-        name : 'Login',
-        component : Login,
-        beforeEnter: getAuth()
-    },
-    // Auth 
-    {
-        path : '/signup',
-        name : 'Signup',
-        component : Signup,
-        beforeEnter: getAuth()
     },
     // WaitRoom
     {

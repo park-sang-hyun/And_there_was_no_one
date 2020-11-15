@@ -517,7 +517,7 @@ export default {
 
     &__inner {
       width: 100%;
-      padding: 25px;
+      padding: 15px;
       min-width: 80px;
       min-height: 60px;
       position: relative;
