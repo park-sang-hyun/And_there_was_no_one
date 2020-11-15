@@ -222,7 +222,7 @@ export default {
         
         // 장고로 존재하는 유저인지 확인
         httpCommon
-        .get("accounts/nickname/" + this.friendName + "/")
+        .get("accounts/findfriend/" + this.friendName + "/")
         .then((res) => {
           if(res.data.message === "ok") {
             this.errmsg = "존재하지 않는 닉네임입니다.";
