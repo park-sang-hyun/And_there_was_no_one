@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -54,14 +57,31 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
 		System.out.println(session.getId() + "이(가) 메세지전송.");
+		
+		String msg = message.getPayload();
+		JSONObject obj = jsonToObjectParser(msg);
+		
+		System.out.println("fffff:" + obj.toJSONString());
 
 		Iterator<String> sessionIds = sessions.keySet().iterator();
 
 		String sessionId = "";
+		
 		while (sessionIds.hasNext()) {
 			sessionId = sessionIds.next();
-			sessions.get(sessionId).sendMessage(new TextMessage(session.getId() + " : " + message.getPayload()));
+			sessions.get(sessionId).sendMessage(new TextMessage(obj.toJSONString()));
 		}
+	}
+	
+	private static JSONObject jsonToObjectParser(String jsonStr) {
+		JSONParser parser = new JSONParser();
+		JSONObject obj = null;
+		try {
+			obj = (JSONObject) parser.parse(jsonStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 
 }

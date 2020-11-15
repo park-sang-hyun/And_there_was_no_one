@@ -1,87 +1,97 @@
 <template>
-  <div>
-    <!-- <h5>채팅</h5> -->
-    <div class="chatbox" v-if="status === 'connected'">
+    <div>
+        <!-- <h5>채팅</h5> -->
+        <div class="chatbox">
 
-      <div class="scrollbar-box" id="style-1" >
-        <div class="force-overflow" >
-          <br/>
-          <div v-for="(log, index) in logs" class="log" :key="index">
-          {{ log.event }}: {{ log.data }}
-          </div>
-          <br/>
+            <div class="scrollbar-box" id="style-1" >
+                <div class="force-overflow" >
+                    <br/>
+                    <div v-for="(log, index) in logs" class="log" :key="index + 'chattingKey'">
+                      {{ log.event }}: {{ log.data }}
+                    </div>
+                    <br/>
+                </div>
+            </div>
+            <form>
+                <input 
+                    type="text" 
+                    maxlength="80"
+                    v-model="message">
+                <button class="button" @click="sendMessage(message)">메시지 전송</button>
+            </form>
+          
         </div>
-      </div>
-      <form @submit.prevent="sendMessage" action="#">
-        <input v-model="message">
-        <button type="submit" class="button">메시지 전송</button>
-      </form>
-      
     </div>
-  </div>
 </template>
 
 <script>
+import http from "../../util/http-common.js";
+
+const storage = window.sessionStorage;
+
 export default {
 
-  data: () =>{
-    return{
-      
-      message: "",
-      logs: [],
-      status: "connected"
+    data: () =>{
+        return {
+            socket: null,
+            nickname: "",
+            message: "",
+            logs: [],
+            count: 0,
+            cnt: 0,
+        }
+    },
+
+    created() {
+        this.getProfile();
+        this.connect();
+    },
+
+    destroyed() {
+        
+        this.socket.close();
+        this.logs = [];
+    },
+
+    methods: {
+        getProfile() {
+
+            http
+            .get("accounts/read/" + sessionStorage.getItem("id")+"/")
+            .then((res) => {
+                this.nickname = res.data.nickname;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        },
+
+        connect() {
+            this.socket = new WebSocket(`ws://localhost:8001/chatting?userid=${storage.getItem('id')}`);
+            this.socket.onopen = () => {
+
+                this.socket.onmessage = ({data}) => {
+                    this.logs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = (chatBox.scrollHeight);
+                };
+            };
+        },
+        disconnect() {
+            this.socket.close();
+            this.status = "disconnected";
+            this.logs = [];
+        },
+        sendMessage(e) {
+            this.socket.send(JSON.stringify({ event: this.nickname , data: e }));
+            this.message = "";
+        },
     }
-  },
-
-  // created() {
-  //   console.log("webSocket: "+this.websocket)
-  // },
-
-  methods: {
-    connect() {
-      this.socket = new WebSocket("ws://localhost:8001/chatting");
-      this.socket.onopen = () => {
-      this.status = "connected";
-      this.logs.push({ event: "연결 완료: ", data: 'wss://echo.websocket.org'})
-      
-
-    this.socket.onmessage = ({data}) => {
-      console.log(data)
-      this.logs.push({ event: "메시지 수신", data });
-      };
-    };
-  },
-    disconnect() {
-      this.socket.close();
-      this.status = "disconnected";
-      this.logs = [];
-    },
-    sendMessage(e) {
-      const chatBox = document.querySelector(".scrollbar-box");
-      
-
-      console.log("메시지 전송")
-      this.logs.push({ event: "메시지 전송", data: this.message });
-      // scroll();
-      chatBox.scrollTop = (chatBox.scrollHeight);
-      
-      this.message = "";  // 아래 소켓 연결 안돼서 지워지지 않음 그래서 여기서 임시로 지워줌 
-      this.socket.send(this.message);
-      this.message = "";
-    },
-    // 스크롤 바닥에 붙이는 코드를 sendMessage 안에 넣어뒀는데 그러면, 맨 마지막줄이 출력되지 않음 템플릿 변화된 다음에 호출해야되는데,
-    // 방법을 몰라서 일단 밑에 br 넣어서 공간 두는 방식으로 일단 놔둠........
-    // scroll() {
-    //   const chatBox = document.querySelector(".scrollbar-box");
-    //   console.log(chatBox.scrollHeight)
-    //   chatBox.scrollTop = (chatBox.scrollHeight);
-    // },
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-  .chatbox {
+.chatbox {
     border-radius: 20px;
     background-color: #aeb0b32f;
     height: 98%;
@@ -90,22 +100,22 @@ export default {
     margin-top: 5px;
     padding-top: 20px;
     margin-right: 5%;
-  }
-  form{
+}
+form{
     position: relative;
     /* top: 90%; */
     width: 100%;
     margin-top: 25px;
     margin-left: 28px;
-  }
-  input {
+}
+input {
     width: 85%;
     margin-right: 10px;
     background-color: #e2e2e27a;
     border: none;
-  }
+}
 
-  .button {
+.button {
     border: none;
     color: rgba(255, 255, 255, 0.788);
     background: rgba(255, 254, 254, 0.151);
@@ -118,13 +128,13 @@ export default {
     margin-left:10px;
     
     &:hover {
-    background: rgba(255, 255, 255, 0.493);
+        background: rgba(255, 255, 255, 0.493);
   }
-  }
-  
+}
 
-  .scrollbar-box
-  {
+
+.scrollbar-box
+{
     margin-left: 30px;
     
     height: 135px;
@@ -134,36 +144,36 @@ export default {
     position : relative; 
     bottom: 0px;
     color:rgba(255, 254, 254, 0.7);
-  }
+}
 
-  .force-overflow
-  {
+.force-overflow
+{
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
     min-height: 136px;
-  }
+}
 
-  /*
-  *  scrollbar STYLE 1
-  */
+/*
+*  scrollbar STYLE 1
+*/
 
-  #style-1::-webkit-scrollbar-track
-  {
+#style-1::-webkit-scrollbar-track
+{
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
     background-color: #F5F5F5;
-  }
+}
 
-  #style-1::-webkit-scrollbar
-  {
+#style-1::-webkit-scrollbar
+{
     width: 12px;
     background-color: #F5F5F500;
-  }
+}
 
-  #style-1::-webkit-scrollbar-thumb
-  {
+#style-1::-webkit-scrollbar-thumb
+{
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
-  }
+}
 </style>
