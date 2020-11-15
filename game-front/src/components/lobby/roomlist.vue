@@ -126,9 +126,9 @@
         <div class="roomcard" v-for="(room, index) in roomList" :key="(room.no, index) + 'roomkey'">
           <div v-if="room.no !='none'" class="roomcard__inner" @click="pickRoom(room.no)">
             <div style="text-align:left; margin-left:5%; font-size:20px;">방 이름 : {{ room.roomname }} </div>
-            <div style="text-align:left; margin-left:70%; font-size:15px;">모드 : {{ modelist[room.mode] }} </div> 
-            <div style="text-align:left; margin-left:70%; font-size:15px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
-            <div style="text-align:left; margin-left:70%; font-size:15px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
+            <div style="text-align:left; margin-left:70%; font-size:13px;">모드 : {{ modelist[room.mode] }} </div> 
+            <div style="text-align:left; margin-left:70%; font-size:13px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
+            <div style="text-align:left; margin-left:70%; font-size:13px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
             <!-- isStart: {{ room.start }} -->
           </div>
           <div v-else class="roomcardNone__inner">
@@ -450,8 +450,9 @@ export default {
   } */
 
   .room-wrapper {
-    padding-top: 5%;
+    padding-top: 2.5%;
     padding-right: 2%;
+    margin-bottom: 30px;
     position: relative;
     min-width: 900px;
     min-height: 400px;
@@ -463,17 +464,16 @@ export default {
 
   .roomcards {
     padding: 10px;
-    margin-top: 10px;
-    margin-bottom: 40px;
     display: flex;
     flex-flow: row wrap;
-    min-height: 480px;
+    min-height: 400px;
   }
   /* //Cards */
 
   .roomcard {
     height: fit-content;
     margin: 10px; 
+    margin-bottom: 0px;
     width: 47%;
     transition: all 0.2s ease-in-out;
     color:white;

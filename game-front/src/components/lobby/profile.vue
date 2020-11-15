@@ -20,7 +20,7 @@
       <!-- 유저 정보 불러오기  -->
       <div class="info">
         <h3 style="color: white;">{{ nickname }} </h3>
-        <h4>{{rank}} ( score: {{ score }} )</h4> 
+        <h5>{{rank}} ( score: {{ score }} )</h5> 
       </div>
     </div>
   </div>
@@ -110,15 +110,15 @@ export default {
 <style lang="scss" scoped>
 .box {
   padding-left: 3px;
-    width: 220px;
-    height: 220px; 
+    width: 200px;
+    height: 200px; 
     border-radius: 70%;
     overflow: hidden;
-    margin-left:23%;
+    margin-left:17%;
     opacity:0.9;
 }
 .profile {
-  margin-top: 20px;
+  margin-top: 10px;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -126,19 +126,17 @@ export default {
 }
 .info {
   /* background-color: rgba(255, 255, 255, 0.6); */
-  padding: 20px;
+  padding: 15px;
   color :rgba(255, 254, 254, 0.6);
-  font-size:20px;
-  margin-top: 20px;
-  padding-bottom: 16px;
+  font-size:15px;
   text-align: center;
 }
 .profile-wrapper {
   width: 80%;
   background-color: #aeb0b32f;
   border-radius: 20px;
-  margin: 20px;
-  padding-top: 30px;
+  margin: 15px;
+  padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
   height: 90%;

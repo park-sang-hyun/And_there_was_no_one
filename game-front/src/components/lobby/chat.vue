@@ -94,22 +94,22 @@ export default {
 .chatbox {
     border-radius: 20px;
     background-color: #aeb0b32f;
-    height: 98%;
+    height: 90%;
     width: 92%;
     margin-left:1.9%;
-    margin-top: 5px;
-    padding-top: 20px;
+    padding-top: 15px;
     margin-right: 5%;
+    margin-top: 2%
 }
 form{
     position: relative;
     /* top: 90%; */
     width: 100%;
-    margin-top: 25px;
+    margin-top: 10px;
     margin-left: 28px;
 }
 input {
-    width: 85%;
+    width: 82%;
     margin-right: 10px;
     background-color: #e2e2e27a;
     border: none;
@@ -137,7 +137,7 @@ input {
 {
     margin-left: 30px;
     
-    height: 135px;
+    height: 110px;
     width: 95%;
     
     overflow-y: scroll;
@@ -150,7 +150,7 @@ input {
 {
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
-    min-height: 136px;
+    min-height: 111px;
 }
 
 /*

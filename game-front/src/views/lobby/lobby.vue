@@ -89,7 +89,7 @@ export default {
       -o-background-size: cover;
       background-size: cover;
 
-    min-height: 941px;
+    min-height: 500px;
   }
 
   
