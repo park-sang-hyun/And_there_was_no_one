@@ -17,7 +17,7 @@
                     type="text" 
                     maxlength="80"
                     v-model="message">
-                <button class="button" @click="sendMessage(message)">메시지 전송</button>
+                <button type="button" class="button" @click="sendMessage(message)">메시지 전송</button>
             </form>
           
         </div>
