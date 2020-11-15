@@ -33,6 +33,7 @@ export default {
                 height: 0,
             },
             start: false,
+            audioBtn: new Audio('https://www.soundjay.com/door/sounds/creaking-door-1.mp3'),
         }
     },
 
@@ -42,6 +43,11 @@ export default {
         this.screenResize();
         this.moveFeed();
         this.start=true;
+        this.audioBtn.play();
+    },
+
+    destroyed(){
+        this.audioBtn.pause();
     },
 
     watch: {

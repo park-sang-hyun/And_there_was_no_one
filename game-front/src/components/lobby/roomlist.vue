@@ -4,10 +4,10 @@
       <div class="btn_container" style="justify-content: space-between; color:rgba(255, 254, 254, 0.6); margin-left:3%; font-size: 15px;">
         <h3 style="color:white;">방 목록</h3>
         <div>
-          <button type="button" class="button" style="color:white;" @click="showCreateModal = true">방 만들기</button>
-          <button type="button" class="button" style="color:white;" @click="random">빠른 입장</button>  
-          <button type="button" class="button" style="color:white;" @click="showGamerule=1">게임 설명</button>
-          <button type="button" class="button" style="color:white;" @click="gameRanking=true">랭킹</button>
+          <button type="button" class="button" style="color:white;" @click="[showCreateModal = true, buttonpush()]">방 만들기</button>
+          <button type="button" class="button" style="color:white;" @click="[random(), buttonpush()]">빠른 입장</button>  
+          <button type="button" class="button" style="color:white;" @click="[showGamerule=1, buttonpush()]">게임 설명</button>
+          <button type="button" class="button" style="color:white;" @click="[gameRanking=true, buttonpush()]">랭킹</button>
         </div>
       </div>
 
@@ -397,6 +397,7 @@ export default {
       },
 
       pickRoom(roomNo) {
+        this.buttonpush2();
         console.log("Enter pickRoom: " + roomNo);
         this.enterRoom(roomNo);
       },
@@ -425,6 +426,14 @@ export default {
       },
       rankclose(rule) {
         this.gameRanking = false;
+      },
+      buttonpush(){
+        var bpush = new Audio('https://www.soundjay.com/misc/sounds/wind-chime-1.mp3');
+        bpush.play();
+      },
+      buttonpush2(){
+        var bpush = new Audio('https://www.soundjay.com/misc/sounds/page-flip-8.mp3');
+        bpush.play();
       },
     },
 }

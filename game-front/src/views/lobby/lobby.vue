@@ -41,12 +41,13 @@ export default {
 
   data() {
     return {
-      audioBtn: new Audio('http://www.hochmuth.com/mp3/Tchaikovsky_Nocturne__orch.mp3'),
+      audioBtn: new Audio(require('../../assets/musics/back1.mp3')),
     }
   },
 
   created(){
     this.audioBtn.play();
+    this.audioBtn.loop = true;
   },
   destroyed(){
     this.audioBtn.pause();
@@ -55,17 +56,22 @@ export default {
 
       // 로그아웃 버튼 눌렀을 때
       logout(signal) {
+        this.buttonpush();
         this.$refs.out.logout();
       },
 
       bell(signal) {
+        this.buttonpush();
         this.$refs.out.showAlarm(0);
       },
 
       reload() {
         this.$refs.reloadBell.getAlarm();
       },
-
+      buttonpush(){
+        var bpush = new Audio('https://www.soundjay.com/misc/sounds/wind-chime-1.mp3');
+        bpush.play();
+      },
   }
 }
 

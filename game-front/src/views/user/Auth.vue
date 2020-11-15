@@ -70,6 +70,7 @@ export default {
         },
 
         clickImage() {
+            this.buttonpush2();
             // numOfPieces 개수만큼 날라옴 6 * 6 조각
             // var frag = document.createDocumentFragment();
             for (var i = 1; i <= 36; i++) {
@@ -93,6 +94,7 @@ export default {
         },
 
         closeHandler() {
+          this.buttonpush1();
           console.log("sdlkfjl")
             var $popupsCont = document.querySelector('.popups__cont');
             var $popup = document.querySelector('.pop__up');
@@ -107,7 +109,14 @@ export default {
             }, 900);
         },
 
-        
+         buttonpush1(){
+          var bpush = new Audio(require('../../assets/musics/glass1.mp3'));
+          bpush.play();
+        },
+        buttonpush2(){
+          var bpush = new Audio(require('../../assets/musics/glass2.mp3'));
+          bpush.play();
+        },
     },
 
 }

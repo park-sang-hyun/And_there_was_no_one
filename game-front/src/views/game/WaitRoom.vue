@@ -18,6 +18,7 @@
                     </div>
                 </div>
 
+                <div class="row">
                 <!-- 화면 왼쪽 -->
                 <div class="screen__left">
                     <!-- 입장한 유저 목록 -->
@@ -95,9 +96,10 @@
 
                     <!-- 게임 시작 버튼 -->
                     <div class="game__start d-flex justify-content-center align-items-center">
-                        <button @click="GameStart" :disabled="!leader">게임 시작</button>
-                        <button @click="ExitRoom">방 나가기</button>
+                        <button @click="[GameStart(), buttonpush()]" :disabled="!leader">게임 시작</button>
+                        <button @click="[ExitRoom(), buttonpush()]">방 나가기</button>
                     </div>
+                </div>
                 </div>
 
 
@@ -265,12 +267,12 @@ export default {
             myfriends: [],
             isPopupFriend: false,
             ifFirst: true,
+            audioBtn: new Audio(require('../../assets/musics/back2.mp3')),
         }
     },
 
 
     created() {
-
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
         this.readRoom();
@@ -281,6 +283,9 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
+
+        this.audioBtn.play();
+        this.audioBtn.loop = true;
     },
 
     computed: {
@@ -308,11 +313,14 @@ export default {
     destroyed() {
         this.socket.close();
         this.socketRoom.close();
-
+        this.audioBtn.pause();
     },
 
     methods: {
-
+        buttonpush(){
+            var bpush = new Audio('https://www.soundjay.com/nature/sounds/wooden-floor-creaking-02.mp3');
+            bpush.play();
+        },
         readRoom() {
 
             http
