@@ -31,6 +31,7 @@ import http from "../../util/http-common.js";
 import httpLobby from "../../util/http-lobby.js";
 
 export default {
+
   data: () => {
     return {
       nickname: "Hello, Anonymous User",
@@ -58,8 +59,6 @@ export default {
       .catch((err) => {
           console.log(err);
       })
-
-      console.log("Enter getProfile");
     },
 
     logout() {
@@ -70,7 +69,6 @@ export default {
       httpLobby
       .get("user/rank/" + sessionStorage.getItem("id"))
       .then((res) => {
-        console.log("111111 : " + res.data.object);
         this.rank = res.data.object;
       })
       .catch((err) => {
@@ -84,7 +82,6 @@ export default {
       httpLobby
       .get("alarm/count/" + sessionStorage.getItem('id') + "/" )
       .then((res) => {
-        console.log(res.data)
         this.alarmCnt = res.data;
       })
       .catch((err) => {

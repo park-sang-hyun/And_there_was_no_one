@@ -10,7 +10,7 @@
       <div class="comp">
         <Roomlist class="roomlist"/>
         <!-- 소켓 props -->
-        <Chat  class="chat"></Chat>
+        <Chat class="chat"></Chat>
       </div>
     </div>
 
