@@ -55,12 +55,13 @@ public class AlarmController {
 			User u = userService.findUser(from_id);
 			
 			Alarm alarm = new Alarm();
-			String content = "Friend Add Request from '"+ u.getNickname() + "'"; 
+			String content = u.getNickname() + "님이 친구요청을 보냈습니다."; 
 			
 			int to_id = userService.findPkId(to_nickname);
 			alarm.setFrom_id(from_id);
 			alarm.setTo_id(to_id);
 			alarm.setContent(content);
+			alarm.setKind(-1);
 			
 			alarmService.send(alarm);
 		} catch (SQLException e) {
@@ -84,12 +85,13 @@ public class AlarmController {
 			User u = userService.findUser(from_id);
 			
 			Alarm alarm = new Alarm();
-			String content = "GameRoom " +room_id +" Invite Request from '"+ u.getNickname() + "'"; 
+			String content = room_id +"번 방에서 "+ u.getNickname() + "님이 초대 하셨습니다."; 
 			
 			int to_id = userService.findPkId(to_nickname);
 			alarm.setFrom_id(from_id);
 			alarm.setTo_id(to_id);
 			alarm.setContent(content);
+			alarm.setKind(room_id);
 			
 			alarmService.send(alarm);
 		} catch (SQLException e) {
@@ -113,7 +115,7 @@ public class AlarmController {
 			alarmList = alarmService.receive(user_id);
 			for(int i=0; i<alarmList.size(); i++) {
 				User u = userService.findUser(alarmList.get(i).getFrom_id());
-				contents.add(new AlarmData(alarmList.get(i).getId(), u.getId(), u.getNickname(), alarmList.get(i).getContent()));
+				contents.add(new AlarmData(alarmList.get(i).getId(), u.getId(), u.getNickname(), alarmList.get(i).getContent(),alarmList.get(i).getKind()));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

@@ -263,24 +263,36 @@ export default {
       // 친구가 로그아웃이거나 게임중이면 바로 친구추가 불가 메시지를 요청자가 받아야함
       let formData = new FormData();
       if (ans === 'ok') {
-        formData.append("user_id", sessionStorage.getItem('id'));
-        formData.append("friend_id", this.alarms[index].to_id);
-        formData.append("alarm_id", this.alarms[index].alarm_id);
-        console.log(formData)
-        http  
-        .post("user/friend/make", formData)
-        .then((res) => {
-          console.log("정보정보");
-          console.log(res.data.object);
-          console.log(res.data.status);
+        if(this.alarms[index].kind === -1){
+          formData.append("user_id", sessionStorage.getItem('id'));
+          formData.append("friend_id", this.alarms[index].to_id);
+          formData.append("alarm_id", this.alarms[index].alarm_id);
+          console.log(formData)
+          http  
+          .post("user/friend/make", formData)
+          .then((res) => {
+            console.log("정보정보");
+            console.log(res.data.object);
+            console.log(res.data.status);
 
-          this.getFriendsList(); 
-          this.showAlarm(1);
-          if(res.data.status === false){
-            // room 이동
-            this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.object }});
-          }
-        })
+            this.getFriendsList(); 
+            this.showAlarm(1);
+            if(res.data.status === false){
+              // room 이동
+              this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.object }});
+            }
+          })
+        }
+        else{
+          this.enterRoom(this.alarms[index].kind);
+          formData.append("alarm_id", this.alarms[index].alarm_id);
+          http
+          .post("alarm/delete", formData)
+          .then((res) => {
+            this.getFriendsList(); 
+            this.showAlarm(1);
+          })
+        }
       }
       else {
         formData.append("alarm_id", this.alarms[index].alarm_id);
@@ -291,8 +303,22 @@ export default {
           this.showAlarm(1);
         })
       }
+    },
 
-      
+    enterRoom(roomNo) {
+        http
+        .get(`room/enter/${storage.getItem('id')}/${roomNo}`)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.status) {
+            this.$router.replace({ name: 'WaitRoom' , params: { roomId: roomNo }});
+          } else {
+            alert(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })                                                                                 
     },
 
     // 친구 추가 요청 취소
