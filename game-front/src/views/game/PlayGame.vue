@@ -109,6 +109,7 @@ export default {
 
     data() {
         return {
+            audioBtn: new Audio(require('../../assets/musics/ingame1.mp3')),
             game: { },
             turn: 0,                            // 현재 턴
             isMode: true,                       // 현재 게임 모드 확인 (true: 자유그리기 | false: 이어그리기)
@@ -213,7 +214,6 @@ export default {
             myNickname: '',
             youShadow: false,
             playing: true,
-            
         }
     },
 
@@ -275,6 +275,9 @@ export default {
         this.output.difficulty = this.checkName.difficulty[this.game.difficulty];
         this.output.sec = this.checkName.sec[this.game.difficulty];
         this.timer = this.output.sec;
+
+        this.audioBtn.play();
+        this.audioBtn.loop = true;
     },
 
     computed: {
@@ -301,6 +304,7 @@ export default {
     destroyed() {
         this.socket.close();
         this.socketPlay.close();
+        this.audioBtn.pause();
     },
 
     methods: {

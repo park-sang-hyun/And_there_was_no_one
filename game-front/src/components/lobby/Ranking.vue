@@ -2,7 +2,7 @@
     <!-- 랭킹 페이지 -->
     <div id="LoadingModeRank">
         <div class=flexContainer>
-            <h2 style="float:left; color:white; margin-left:8%">랭 킹</h2> 
+            <h2 style="float:left; color:white; margin-left:3%">랭 킹</h2> 
             <button class="button" style="margin-left:80%; color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(0)">X</button>
         </div>       
 
@@ -11,7 +11,7 @@
         
         <!-- 스토리 -->
         <div class="main__story">
-            <table style="margin-left:12%;">
+            <table style="margin-left:5%;">
                 <tr>
                     <th style="font-size:20px; color:white; width:20%; text-align:center;">순 서 </th> 
                     <th style="font-size:20px; color:white; width:25%; text-align:center;">닉네임 </th>
@@ -20,12 +20,12 @@
                     <th style="font-size:20px; color:white; width:15%; text-align:center;">점 수</th>
                </tr>
                 <tr v-for="(rank, index) in rankList" :key="(rank.no, index) + 'rankkey'">
-                    <td v-if="rank.no !='none'" style="font-size:20px; color:white; text-align:center;">{{ rank.no }} </td> 
-                    <td v-if="rank.no !='none'" style="font-size:20px; color:white; text-align:center;">{{ rank.nickname }} </td>
-                    <td v-if="rank.no !='none'" style="font-size:20px; color:white; text-align:center;">{{ rank.playcount }} ( {{rank.wincount}} / {{(rank.playcount - rank.wincount)}} )</td> 
-                    <td v-if="rank.no !='none'" style="font-size:20px; color:white; text-align:center;">{{ rank.rank }}</td>
-                    <td v-if="rank.no !='none'" style="font-size:20px; color:white; text-align:center;">{{ rank.score }}</td>
-                    <td v-else style="height:49px; color:white;"></td>
+                    <td v-if="rank.no !='none'" style="font-size:14px; color:white; text-align:center;">{{ rank.no }} </td> 
+                    <td v-if="rank.no !='none'" style="font-size:14px; color:white; text-align:center;">{{ rank.nickname }} </td>
+                    <td v-if="rank.no !='none'" style="font-size:14px; color:white; text-align:center;">{{ rank.playcount }} ( {{rank.wincount}} / {{(rank.playcount - rank.wincount)}} )</td> 
+                    <td v-if="rank.no !='none'" style="font-size:14px; color:white; text-align:center;">{{ rank.rank }}</td>
+                    <td v-if="rank.no !='none'" style="font-size:14px; color:white; text-align:center;">{{ rank.score }}</td>
+                    <td v-else style="height:40px; color:white;"></td>
                 </tr>
             </table>
 

@@ -30,14 +30,14 @@
         <button
           type="button"
           class="button"
-          @click="onLogin();buttonpush()"
+          @click="onLogin();"
           :disabled="!isSubmit"
           :class="{disabled : !isSubmit}"
         >Login</button>
         
         <div class="add-option mt-4">
           <div class="wrap">
-            <p @click="goto(), buttonpush()" class="btn--text" >Signup</p>
+            <p @click="goto()" class="btn--text" >Signup</p>
           </div>
         </div>
       </form>
@@ -183,11 +183,6 @@ export default {
 
   moveFeed(){
     var go = setTimeout( this.lobbyNext , 100);
-  },
-
-  buttonpush(){
-    var bpush = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
-    bpush.play();
   },
 
   goto() {

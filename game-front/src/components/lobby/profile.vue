@@ -4,8 +4,8 @@
     <div class="profile-wrapper">
       <div>
         <div class="btn_container">
-          <button class="button" style="margin-left:2%;" @click="logout">게임 종료</button>
-          <button class="notification bell" @click="bellclick">
+          <button class="button" style="margin-left:2%;" @click="[logout(), buttonpush2()]">게임 종료</button>
+          <button class="notification bell" @click="[bellclick(), buttonpush()]">
             <img class="img" src="../../assets/images/bell.svg">
             <span v-if="alarmCnt" class="notification--num">{{ alarmCnt }}</span>
           </button>
@@ -93,6 +93,15 @@ export default {
 
     bellclick() {
       this.$emit('bell', 'bell');
+    },
+
+    buttonpush(){
+      var bpush = new Audio('https://www.soundjay.com/misc/sounds/wind-chime-1.mp3');
+      bpush.play();
+    },
+    buttonpush2(){
+      var bpush = new Audio('https://www.soundjay.com/human/sounds/woman-scream-01.mp3');
+      bpush.play();
     },
   },
 }
