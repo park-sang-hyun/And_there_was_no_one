@@ -384,9 +384,16 @@ export default {
       },
 
       random() {
-        var roomNo = Math.floor(Math.random() * (this.totalRoom + 1));
-        console.log("Enter random: " + roomNo);
-        this.enterRoom(roomNo);
+        http
+        .get(`room/fastenter`)
+        .then((res) => {
+          console.log("12121212: " + res.data);
+          
+          this.enterRoom(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })   
       },
 
       pickRoom(roomNo) {
