@@ -5,14 +5,16 @@ public class Alarm {
 	int from_id;
 	int to_id;
 	String content;
+	int kind;
 	
 	public Alarm() {}
 
-	public Alarm(int id, int from_id, int to_id, String content) {
+	public Alarm(int id, int from_id, int to_id, String content, int kind) {
 		this.id = id;
 		this.from_id = from_id;
 		this.to_id = to_id;
 		this.content = content;
+		this.kind = kind;
 	}
 
 	public int getId() {
@@ -45,5 +47,13 @@ public class Alarm {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public int getKind() {
+		return kind;
+	}
+
+	public void setKind(int kind) {
+		this.kind = kind;
 	}
 }
