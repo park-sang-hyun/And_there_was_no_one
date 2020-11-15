@@ -18,7 +18,7 @@ class User(AbstractUser):
     )
     playcount = models.IntegerField('플레이수', default=0)
     wincount = models.IntegerField('이긴수', default=0)
-    score = models.IntegerField('점수', default=0)
+    score = models.IntegerField('점수', default=1000)
 
     # VScode경고 때문에 delete할 때 django.db.utils.OperationalError: no such table: allauth_socialaccount 에러남
     # django는 object와 속성들을 모든 model클래스에 동적으로 추가하는데 vscode가 이를 모르고 경고함
