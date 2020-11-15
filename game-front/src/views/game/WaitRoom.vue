@@ -140,8 +140,8 @@
                             <div class="friend">
                                 <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friendList">
                                 
-                                    {{ friend.nickname }}
-                                    <button @click="inviteFriend" class="button" style="margin-left: 120px; background-color: rgba(48, 48, 48, 1)">초대</button>
+                                    <p style="margin-top: 10px; margin-bottom: 0px">{{ friend.nickname }}</p>    
+                                    <button @click="inviteFriend" class="button" style="margin-right: 10px; background-color: rgba(48, 48, 48, 1)">초대</button>
                                 </div>
                                 
                             </div>
@@ -867,6 +867,8 @@ export default {
     background :#eceef188;
     color: rgba(37, 37, 37, 0.788);
     border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
   }
 
   /*scrollbar STYLE 1*/
