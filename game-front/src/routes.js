@@ -1,12 +1,10 @@
-import Login from './views/user/Login.vue'
-import Signup from './views/user/Signup.vue'
 import WaitRoom from './views/game/WaitRoom.vue'
 import PlayGame from './views/game/PlayGame.vue'
 import LoadingGame from './views/game/loadingGame.vue'
-import testpage from './views/game/testpage.vue'
 import Lobby from './views/lobby/lobby.vue'
 import forbidden from './views/forbidden/forbidden404.vue'
-import Test from './views/user/test.vue'
+import Auth from './views/user/Auth.vue'
+import enterLobby from './views/user/enterLobby.vue'
 
 // 로그인이 필요한 경우엔 requireAuth 를 사용한다. beforeEnter: requireAuth()
 const requireAuth = () => (to, from, next) => {
@@ -38,28 +36,15 @@ const getAuth = () => (to, from, next) => {
 export default [
     // test
     {
-        path : '/test',
-        name : 'Test',
-        component : Test,
-    },
-    {
-        path: '/page',
-        name: 'testpage',
-        component: testpage,
-    },
-    // Auth 
-    {
         path : '/',
-        name : 'Login',
-        component : Login,
+        name : 'Auth',
+        component : Auth,
         beforeEnter: getAuth()
     },
-    // Auth 
     {
-        path : '/signup',
-        name : 'Signup',
-        component : Signup,
-        beforeEnter: getAuth()
+        path : '/enterlobby',
+        name : 'enterlobby',
+        component : enterLobby,
     },
     // WaitRoom
     {

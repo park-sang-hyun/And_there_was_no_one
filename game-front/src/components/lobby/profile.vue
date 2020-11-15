@@ -2,25 +2,25 @@
   <div>
     
     <div class="profile-wrapper">
-      프로필
-
       <div>
-        <button class="notification bell" style="float:left;" @click="bellclick">
-          <img class="img" src="../../assets/images/bell.svg">
-          <span v-if="alarmCnt" class="notification--num">{{ alarmCnt }}</span>
-        </button>
-      
-        <button class="button" style="margin-left:50%" @click="logout">게임 종료</button>
+        <div class="btn_container">
+          <button class="button" style="margin-left:2%;" @click="[logout(), buttonpush2()]">게임 종료</button>
+          <button class="notification bell" @click="[bellclick(), buttonpush()]">
+            <img class="img" src="../../assets/images/bell.svg">
+            <span v-if="alarmCnt" class="notification--num">{{ alarmCnt }}</span>
+          </button>
+        </div>
+          
       </div>
 
       <!-- 프로필 이미지 불러오기 -->
-      <div class="box" style="background: #BDBDBD;">
-        <img class="profile" src="https://pbs.twimg.com/profile_images/1184827741884973057/V0F3blnl.jpg">
+      <div class="box" style="background: black;">
+        <img class="profile" src="../../assets/images/detective.png">
       </div>
       <!-- 유저 정보 불러오기  -->
       <div class="info">
-        <p>nickname: {{ nickname }}</p>
-        <p>score: {{ score }}</p> 
+        <h3 style="color: white;">{{ nickname }} </h3>
+        <h5>{{rank}} ( score: {{ score }} )</h5> 
       </div>
     </div>
   </div>
@@ -31,15 +31,18 @@ import http from "../../util/http-common.js";
 import httpLobby from "../../util/http-lobby.js";
 
 export default {
+
   data: () => {
     return {
-      nickname: "Hello Anonymous User",
-      score: 999,
+      nickname: "Hello, Anonymous User",
+      score: 0,
+      rank:'F',
       alarmCnt: 0,
     };
   },
   created() {
     this.getProfile();
+    this.getRank();
     this.getAlarm();
   },
   methods: {
@@ -53,13 +56,25 @@ export default {
         this.nickname = res.data.nickname
         this.score = res.data.score
       })
-
-
-      console.log("Enter getProfile");
+      .catch((err) => {
+          console.log(err);
+      })
     },
 
     logout() {
       this.$emit('logout', 'logout');
+    },
+
+    getRank(){
+      httpLobby
+      .get("user/rank/" + sessionStorage.getItem("id"))
+      .then((res) => {
+        this.rank = res.data.object;
+      })
+      .catch((err) => {
+          console.log(err);
+      })
+
     },
 
     getAlarm() {
@@ -67,13 +82,26 @@ export default {
       httpLobby
       .get("alarm/count/" + sessionStorage.getItem('id') + "/" )
       .then((res) => {
-        console.log(res.data)
         this.alarmCnt = res.data;
+      })
+      .catch((err) => {
+          console.log(err);
       })
     },
 
+
+
     bellclick() {
       this.$emit('bell', 'bell');
+    },
+
+    buttonpush(){
+      var bpush = new Audio('https://www.soundjay.com/misc/sounds/wind-chime-1.mp3');
+      bpush.play();
+    },
+    buttonpush2(){
+      var bpush = new Audio('https://www.soundjay.com/human/sounds/woman-scream-01.mp3');
+      bpush.play();
     },
   },
 }
@@ -81,40 +109,51 @@ export default {
 
 <style lang="scss" scoped>
 .box {
+  padding-left: 3px;
     width: 200px;
     height: 200px; 
     border-radius: 70%;
     overflow: hidden;
-    margin-left:20%;
+    margin-left:17%;
     opacity:0.9;
 }
 .profile {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity:0.9;
+  margin-top: 10px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity:0.9;
 }
 .info {
   /* background-color: rgba(255, 255, 255, 0.6); */
-  padding: 20px;
+  padding: 15px;
   color :rgba(255, 254, 254, 0.6);
-  font-size:20px;
-  margin-left: 20%;
+  font-size:15px;
+  text-align: center;
 }
 .profile-wrapper {
   width: 80%;
   background-color: #aeb0b32f;
   border-radius: 20px;
-  margin: 20px;
+  margin: 15px;
   padding-top: 20px;
   padding-left: 20px;
   padding-right: 20px;
   height: 90%;
+  margin-left: 10%;
 }
+
+/* 우측정렬용 컨테이너 */
+.btn_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .button {
     border: none;
     color: #FFF;
-    background: rgba(255, 254, 254, 0.151);
+    background: rgba(255, 254, 254, 0.205);
     appearance: none;
     font: inherit;
     border-radius: .3em;
@@ -122,13 +161,17 @@ export default {
     padding: 5px 10px;
     margin-bottom: 10px;
     opacity:0.9;
+    
+    &:hover {
+    background: rgba(255, 255, 255, 0.493);
+  }
 }
 .img {
   width: 80%;
 }
 .notification {
   position: relative;
-  width: 20%;
+  width: 15%;
   border: none;
   border-radius: 50px;
   background: none;
@@ -148,7 +191,7 @@ export default {
   animation: notification 3.2s ease;
 }
 .bell{
-  opacity:0.6;
+  opacity:0.75;
 
 }
 </style>

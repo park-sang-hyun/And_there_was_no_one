@@ -3,19 +3,19 @@
     <div id="LoadingModeThree">
         <div class=flexContainer>
             <div>
-                <button class="button" @click="closeRule(1)">1</button>
-                <button class="button" @click="closeRule(2)">2</button>
-                <button class="button" @click="closeRule(3)">3</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(1)">1</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(2)">2</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(3)">3</button>
             </div>
-            <button class="button" @click="closeRule(0)">X</button>
+            <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(0)">X</button>
         </div>
         <!-- 중앙 정렬위한 빈 공간 -->
         <div id="floater"></div>
 
         <!-- 스토리 -->
         <div class="main__story">
-            <h1>지금부터 당신은 사건 현장으로 이동합니다.</h1>
-            <p>현재 이 방의 사람들 모두 <span class="bold__part">용의자</span>로 의심받고 있습니다.</p>
+            <h1>[공지] 지금 AI는 시스템 점검 중입니다.</h1>
+            <p>지금 당신이 있는 방의 사람들은 모두 <span class="bold__part">용의자</span>로 의심받고 있습니다.</p>
             <strong style="margin: 40px; color: white;"><p>당신들 사이에 범인 Shadow가 숨어있습니다.</p></strong>
             <p class="bold__part" style="font-size: 1.8rem;">다른 사람들과 함께 Shadow를 찾아내 용의선상에서 벗어나세요.</p>
         </div>
@@ -86,11 +86,11 @@ export default {
 #floater {
     float: left; 
     height: 30%; 
-    margin-bottom: -120px;
+    margin-bottom: -100px;
 }
 
 .flexContainer {
-    padding: 60px;
+    padding: 30px 60px;
     width: 98%;
     display: flex; 
     justify-content:space-between;

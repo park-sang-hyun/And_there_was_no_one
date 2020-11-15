@@ -2,15 +2,6 @@
     <!-- 게임 로딩 화면 (이어그리기 모드) -->
     <div id="LoadingModeTwo">
 
-        <div class=flexContainer>
-            <div>
-                <button class="button" @click="closeRule(1)">1</button>
-                <button class="button" @click="closeRule(2)">2</button>
-                <button class="button" @click="closeRule(3)">3</button>
-            </div>
-            <button class="button" @click="closeRule(0)">X</button>
-        </div>
-
         <!-- 안개 -->
         <div id="foglayer_01" class="fog">
             <div class="image01"></div>
@@ -24,6 +15,17 @@
             <div class="image01"></div>
             <div class="image02"></div>
         </div>
+
+        <div class=flexContainer style="z-index: 100">
+            <div>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(1)">1</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(2)">2</button>
+                <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(3)">3</button>
+            </div>
+            <button class="button" style="color: rgba(37, 37, 37, 0.788); background-color:white;" @click="closeRule(0)">X</button>
+        </div>
+
+        
         
         <!-- 중앙 정렬위한 빈 공간 -->
         <div id="floater"></div>
@@ -98,7 +100,8 @@ export default {
     width: var(--widthSize);
     height: var(--heightSize);
     min-width:1024px;
-    background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
+    background-color: black;
+    /* background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px); */
     overflow: inherit; 
 }
 
@@ -107,11 +110,14 @@ export default {
 #floater {
     float: left; 
     height: 20%; 
-    margin-bottom: -120px;
+    margin-bottom: -230px + 174px;
 }
 
 .flexContainer {
-    padding: 60px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 30px 60px;
     width: 98%;
     display: flex; 
     justify-content:space-between;
