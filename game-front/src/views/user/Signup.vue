@@ -2,6 +2,8 @@
   <div class="signupcontainer">
     <form>
       <h1>Signup page</h1>
+
+      <!-- 아이디 -->
       <div class="form-item">
         <input
           v-model="username"
@@ -10,6 +12,8 @@
           placeholder="아이디를 입력하세요."
         />
       </div>
+
+      <!-- 닉네임 -->
       <div class="form-item">
       <input
           v-model="nickname"
@@ -18,11 +22,12 @@
           placeholder="닉네임을 입력하세요."
           @keyup="nickCheck=false"
           style="width:270px; padding-top: 5px"
+          maxlength="8"
         />
-        <button type="button" @click="nicknameCheck(nickname);" style="margin-bottom:5px">중복체크</button>
+        <button type="button" @click="nicknameCheck(nickname, username);" style="margin-bottom:5px">중복체크</button>
       </div>
       
-      <!-- 닉네임 중복체크하기  -->
+      <!-- 비밀번호 -->
       <div class="error-text" v-if="error.password1">{{error.password1}}</div>
       <div class="form-item">
         <input
@@ -35,6 +40,7 @@
         />
         
       </div>
+
       <!-- 비밀번호 맞는지 체크하기  -->
       <div class="form-item">
         <input
@@ -209,22 +215,28 @@ export default {
       var go = setTimeout( this.lobbyNext , 100);
     },
 
-    nicknameCheck(nick) {
+    nicknameCheck(nick, username) {
       let msg = "";
       console.log("Enter nickname check")
-      if (nick === "") {
+      if (username === "") {
+        alert("아이디를 입력해주세요.");
+      }
+      else if(nick === ""){
         alert("닉네임을 입력해주세요.");
       }
       else {
         http
-          .get("accounts/nickname/" + nick + "/")
+          .get("accounts/nickname/" + nick + "/" + username + "/")
           .then((res) => {
             console.log(res);
             console.log(res.data);
             console.log(res.data.message)
             if(res.data.message === "ok") {
-              msg = "사용 가능한 닉네임입니다.";
+              msg = "아이디와 닉네임 모두 사용 가능합니다.";
               this.nickCheck = true;
+            }
+            else if (res.data.message === "noUsername") {
+              msg = "이미 존재하는 아이디입니다.";
             }
             else {
               msg = "이미 존재하는 닉네임입니다.";

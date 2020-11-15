@@ -86,12 +86,12 @@
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
           <div v-for="friend in loginFriends" :key="friend.no + 'loginfriendkey'" class="loginfriend">
-            <p style="margin-left: 40px; margin-top: 5px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
-            <p style="margin-right: 40px; margin-top: 20px">{{ friend.rank }}</p>
+            <p style="margin-left: 20px; margin-top: 10px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 20px; margin-top: 20px">{{ friend.rank }}</p>
           </div>
           <div v-for="friend in logoutFriends" :key="friend.no + 'logoutfriendkey'" class="logoutfriend">
-            <p style="margin-left: 40px; margin-top: 5px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
-            <p style="margin-right: 40px; margin-top: 20px">{{ friend.rank }}</p>
+            <p style="margin-left: 20px; margin-top: 10px; font-weight:bold; font-size:30px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 20px; margin-top: 20px">{{ friend.rank }}</p>
           </div>
         </div> 
       </div>
