@@ -41,7 +41,7 @@ export default {
 
   data() {
     return {
-      audioBtn: new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'),
+      audioBtn: new Audio('http://www.hochmuth.com/mp3/Tchaikovsky_Nocturne__orch.mp3'),
     }
   },
 
