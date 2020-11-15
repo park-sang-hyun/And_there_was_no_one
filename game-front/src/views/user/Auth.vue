@@ -2,6 +2,27 @@
   <div>
     <div class="popups__cont">
       <div class="popups__cont__overlay"></div>
+        <div id="wrap">
+          <div class="black">
+              <div id="c"></div>
+              <div class="text">
+                <span></span>
+                <span>그</span>
+                <span>리</span>
+                <span>고 아</span>
+                <span>&nbsp;</span>
+                <span>&nbsp;</span>
+                <span>무</span>
+                <span>도 없</span>
+                <span>&nbsp;</span>
+                <span>&nbsp;</span>
+                <span>었</span>
+                <span>다</span>
+                <span></span>
+              </div>
+          </div>
+        </div>    
+
         <div class="pop__up">
           <div class="pop__up__pieces"></div>
           <div class="pop__up__content">
@@ -273,6 +294,7 @@ $contentFadeAT: 0.2s;
 .pop__up {
   z-index: 2;
   position: relative;
+  margin-top:10%;
   width: 500px;
   height: 500px;
   transform-style: preserve-3d;
@@ -410,6 +432,7 @@ $contentFadeAT: 0.2s;
   overflow: hidden;
   margin:auto;
   background: black;
+  margin-top:10%;
 }
 .loginImg {
   position: absolute;
@@ -419,5 +442,39 @@ $contentFadeAT: 0.2s;
   object-fit: cover;
   background: black;
 }
+
+#wrap {
+        position: absolute;
+        top:0;
+        left: 0;
+        background: black;
+        width: var(--widthSize);
+        height: var(--heightSize);
+        /* min-width: 1000px;
+        min-height: 800px; */
+        /* width: 1200px;
+        height: 900px; */
+        overflow: hidden;
+        /* animation:page-in ease-out 3s;
+        animation-fill-mode:forwards; */
+}
+    span {
+        font-size: 100px;
+        display: inline-block;
+        text-shadow: 0 0 0 whitesmoke;
+    }
+
+    .text{
+        position: absolute;
+        top: 5%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        text-align: center;
+        color: transparent;
+        font-family: 'East Sea Dokdo', cursive;
+        /* overflow: hidden; */
+    }
 
 </style>
