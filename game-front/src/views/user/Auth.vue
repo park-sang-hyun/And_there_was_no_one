@@ -6,19 +6,19 @@
           <div class="black">
               <div id="c"></div>
               <div class="text">
-                <span></span>
-                <span>그</span>
-                <span>리</span>
-                <span>고 아</span>
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                <span>무</span>
-                <span>도 없</span>
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                <span>었</span>
-                <span>다</span>
-                <span></span>
+                <span class="text__span"></span>
+                <span class="text__span">그</span>
+                <span class="text__span">리</span>
+                <span class="text__span">고 아</span>
+                <span class="text__span">&nbsp;</span>
+                <span class="text__span">&nbsp;</span>
+                <span class="text__span">무</span>
+                <span class="text__span">도 없</span>
+                <span class="text__span">&nbsp;</span>
+                <span class="text__span">&nbsp;</span>
+                <span class="text__span">었</span>
+                <span class="text__span">다</span>
+                <span class="text__span"></span>
               </div>
           </div>
         </div>    
@@ -458,11 +458,12 @@ $contentFadeAT: 0.2s;
         /* animation:page-in ease-out 3s;
         animation-fill-mode:forwards; */
 }
-    span {
+   .text__span {
         font-size: 100px;
         display: inline-block;
         text-shadow: 0 0 0 whitesmoke;
     }
+
 
     .text{
         position: absolute;
