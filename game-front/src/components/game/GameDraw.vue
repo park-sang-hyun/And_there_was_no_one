@@ -43,6 +43,7 @@ import "@/assets/css/draw.css"
 import Stomp from 'webstomp-client'
 import SockJS from 'sockjs-client'
 import http from "@/util/http-common.js";
+const socketURL = 'ws://k3d105.p.ssafy.io:8002/coordinating';
 
 export default {
     components:{
@@ -54,6 +55,9 @@ export default {
         },
         turnOff: {
             type: Boolean,
+        },
+        roomId: {
+            type: Number,
         },
     },
 
@@ -79,6 +83,8 @@ export default {
             image:null,
             link:null,
             recvList: [],
+            DrawSocket: null,
+            connected: true,
         }
     },
     created(){
@@ -107,40 +113,50 @@ export default {
     },
     methods:{
          connect() {
-            const serverURL= "http://localhost:8002"
-            let socket = new SockJS(serverURL);
-            this.stompClient = Stomp.over(socket);
-            // console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
-            this.stompClient.connect(
-                {},
-                frame => {
-                // 소켓 연결 성공
+            this.DrawSocket = new WebSocket(`${serverURL}/${this.roomId}`);
+            this.DrawSocket.onopen = () => {
+
+                this.sendRoomMessage();
                 this.connected = true;
-                // console.log('소켓 연결 성공', frame);
-                // 서버의 메시지 전송 endpoint를 구독합니다.
-                // 이런형태를 pub sub 구조라고 합니다.
-                // console.log(this.teamId)
-                this.stompClient.subscribe("/topic/"+"1", res => {
-                //  console.log("구독으로 받은 메시지 입니다.", res.body)
 
-                //     // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-                //     console.log(JSON.parse(res.body))
-
-                    let r = JSON.parse(res.body)
-                    
+                this.DrawSocket.onmessage = ({data}) => {
+                    let r = JSON.parse(data)
                     this.receiveMouseMove(r.x1, r.y1, r.x2, r.y2, r.color, r.width, r.mode);
+                };
+            };
+            // this.stompClient = Stomp.over(socket);
+            // // console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`)
+            // this.stompClient.connect(
+            //     {},
+            //     frame => {
+            //     // 소켓 연결 성공
+            //     this.connected = true;
+            //     // console.log('소켓 연결 성공', frame);
+            //     // 서버의 메시지 전송 endpoint를 구독합니다.
+            //     // 이런형태를 pub sub 구조라고 합니다.
+            //     // console.log(this.teamId)
+            //     this.stompClient.subscribe("/topic/"+"1", res => {
+            //     //  console.log("구독으로 받은 메시지 입니다.", res.body)
+
+            //     //     // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
+            //     //     console.log(JSON.parse(res.body))
+
+            //         let r = JSON.parse(res.body)
                     
-                    //this.recvList.push(JSON.parse(res.body))
-                    // this.scrolltoBottom()
-                });
-            },
-                error => {
-                // 소켓 연결 실패
-                // console.log('소켓 연결 실패', error);
-                this.connected = false;
-                }
-            );        
+            //         this.receiveMouseMove(r.x1, r.y1, r.x2, r.y2, r.color, r.width, r.mode);
+                    
+            //         //this.recvList.push(JSON.parse(res.body))
+            //         // this.scrolltoBottom()
+            //     });
+            // },
+            //     error => {
+            //     // 소켓 연결 실패
+            //     // console.log('소켓 연결 실패', error);
+            //     this.connected = false;
+            //     }
+            // );        
         },
+        
         receiveMouseMove(x1, y1, x2, y2, color, width, mode){
             //console.log("painting : ", this.painting)
             //console.log("filling : ", this.filling)
@@ -156,7 +172,9 @@ export default {
             this.ctx.stroke();
         },
         send() {
-            if (this.stompClient && this.stompClient.connected) {
+            
+            // if (this.stompClient && this.stompClient.connected) {
+            if (this.DrawSocket && this.connected) {
                 const msg = { 
                     x1: this.ox,
                     y1: this.oy,
@@ -164,9 +182,11 @@ export default {
                     y2: this.ny,
                     color: this.ctx.fillStyle,
                     width: this.ctx.lineWidth,
-                    mode: this.filling
+                    mode: this.filling,
+                    room_id: this.roomId
                 };
-                this.stompClient.send("/app/topic/" + "1",JSON.stringify(msg),{});
+                this.DrawSocket.send(JSON.stringify(msg));
+                // this.stompClient.send("/app/topic/" + "1",JSON.stringify(msg),{});
             }
          },
         stopPainting(){

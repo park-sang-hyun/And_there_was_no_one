@@ -458,11 +458,12 @@ $contentFadeAT: 0.2s;
         /* animation:page-in ease-out 3s;
         animation-fill-mode:forwards; */
 }
-     .text__span {
+   .text__span {
         font-size: 100px;
         display: inline-block;
         text-shadow: 0 0 0 whitesmoke;
     }
+
 
     .text{
         position: absolute;

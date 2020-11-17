@@ -9,7 +9,7 @@
     </insert>
     
     <select id="receive" resultType="com.ssafy.pjt3.dto.Alarm">
-    	select id, from_id, to_id, content, kind from Alarm where to_id=#{user_id}
+    	select id, from_id, to_id, content, kind from alarm where to_id=#{user_id}
     </select>
 
     <delete id="alarmDelete">
