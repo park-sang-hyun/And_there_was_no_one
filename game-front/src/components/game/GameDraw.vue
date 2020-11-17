@@ -57,7 +57,7 @@ export default {
             type: Boolean,
         },
         roomId: {
-            type: Number,
+            type: undefined,
         },
     },
 
@@ -113,10 +113,9 @@ export default {
     },
     methods:{
          connect() {
-            this.DrawSocket = new WebSocket(`${serverURL}/${this.roomId}`);
+            this.DrawSocket = new WebSocket(`${socketURL}/${String(this.roomId)}`);
             this.DrawSocket.onopen = () => {
 
-                this.sendRoomMessage();
                 this.connected = true;
 
                 this.DrawSocket.onmessage = ({data}) => {
@@ -183,7 +182,7 @@ export default {
                     color: this.ctx.fillStyle,
                     width: this.ctx.lineWidth,
                     mode: this.filling,
-                    room_id: this.roomId
+                    room_id: String(this.roomId)
                 };
                 this.DrawSocket.send(JSON.stringify(msg));
                 // this.stompClient.send("/app/topic/" + "1",JSON.stringify(msg),{});

@@ -30,7 +30,7 @@ public class CoordinateSocketHandler extends TextWebSocketHandler {
 		boolean flag = false;
 		String url = session.getUri().toString();
 		System.out.println(url);
-		String room_id = url.split("/chatting/")[1];
+		String room_id = String.valueOf(url.split("/coordinating/")[1]);
 
 		System.out.println(room_id);
 
@@ -80,13 +80,13 @@ public class CoordinateSocketHandler extends TextWebSocketHandler {
 		String msg = message.getPayload();
 		JSONObject obj = jsonToObjectParser(msg);
 
-		String x1 = (String) obj.get("x1");
+		String x1 = String.valueOf(obj.get("x1"));
 		System.out.println("x1: " + x1);
-		String x2 = (String) obj.get("x2");
+		String x2 = String.valueOf(obj.get("x2"));
 		System.out.println("x2: " + x2);
-		String y1 = (String) obj.get("y1");
+		String y1 = String.valueOf(obj.get("y1"));
 		System.out.println("y1: " + y1);
-		String y2 = (String) obj.get("y2");
+		String y2 = String.valueOf(obj.get("y2"));
 		System.out.println("y2: " + y2);
 		
 		String rN = String.valueOf(obj.get("room_id")); // 어느 방에 보낼 것 인지.
