@@ -9,7 +9,6 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 import com.ssafy.pjt3.handler.ChatSocketHandler;
 import com.ssafy.pjt3.interceptor.HandshakeInterceptor;
-import com.ssafy.pjt3.interceptor.HandshakeInterceptorTwo;
 
 
 @Configuration
