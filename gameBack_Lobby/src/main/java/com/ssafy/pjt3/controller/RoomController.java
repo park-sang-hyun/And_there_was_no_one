@@ -200,4 +200,29 @@ public class RoomController {
         result.data = "방 입장 완료";
         return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+	
+	@GetMapping("/fastenter")
+	@ApiOperation(value = "빠른입장", notes = "빠른 입장을 하기위한 room_id 값을 넘겨주는 기능 구현")
+	public int fastenter() {
+		List<Room> list = new ArrayList<Room>();
+		List<Room> fast_list = new ArrayList<Room>();
+		int fast_room_id = 0;
+		int min = 999;
+		
+		try {
+			list = roomService.findAll();
+			
+			for(int i=0; i<list.size(); i++) {
+				if(list.get(i).isStart() == false && min > list.get(i).getMax_count() - list.get(i).getCur_count()) {
+					min = list.get(i).getMax_count() - list.get(i).getCur_count();
+					fast_room_id = list.get(i).getId();
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return fast_room_id;
+	}
 }

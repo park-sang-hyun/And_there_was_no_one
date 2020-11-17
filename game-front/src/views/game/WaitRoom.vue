@@ -7,10 +7,8 @@
                 <!-- 화면 상단 -->
                 <div class="screen__top">
                     <!-- 방제목 -->
-                    <div class="screen__top__left">
-                        <div class="room__title">
-                            [{{ room.id }}]번방 {{ sendTitle }} 
-                        </div>
+                    <div class="room__title">
+                        [{{ room.id }}]번방 {{ sendTitle }} 
                     </div>
                     <!-- 친구 초대 -->
                     <div class="friends__invite">
@@ -18,6 +16,7 @@
                     </div>
                 </div>
 
+                <div class="row" style="margin-left: 5% !important;">
                 <!-- 화면 왼쪽 -->
                 <div class="screen__left">
                     <!-- 입장한 유저 목록 -->
@@ -95,9 +94,10 @@
 
                     <!-- 게임 시작 버튼 -->
                     <div class="game__start d-flex justify-content-center align-items-center">
-                        <button @click="GameStart" :disabled="!leader">게임 시작</button>
-                        <button @click="ExitRoom">방 나가기</button>
+                        <button @click="[GameStart(), buttonpush()]" :disabled="!leader">게임 시작</button>
+                        <button @click="[ExitRoom(), buttonpush()]">방 나가기</button>
                     </div>
+                </div>
                 </div>
 
 
@@ -107,8 +107,8 @@
                         {{ room.userList[changeLeaderNum].nickname }}에게 방장을 넘기겠습니까?
                     </div>
                     <div class="modal__button d-flex justify-content-center">
-                        <button @click="exitLeader">닫기</button>
-                        <button @click="leaderChange" class="ml-2">팀장 위임</button>
+                        <button @click="leaderChange" class="mr-3" style="padding: 5px; background-color: rgba(48, 48, 48, 1)">팀장 위임</button>
+                        <button @click="exitLeader" style="padding: 5px; background-color: rgba(48, 48, 48, 1)">닫기</button>
                     </div>
                 </div>
             </div>
@@ -134,12 +134,12 @@
                     <h1>친구 초대</h1>
 
                     <div class="scrollbar-box2" id="style-1" style="width: 400px" >
-                        <div class="force-overflow" >
-                            <div class="friendList">
-                                <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friend">
+                        <div class="force-overflow2" >
+                            <div class="friend">
+                                <div v-for="friend in myfriends" :id="friend.nickname + '-id'" :key="friend.id + 'friendKey'" class="friendList">
                                 
-                                    {{ friend.nickname }}
-                                    <button @click="inviteFriend" class="button" style="margin-left: 120px; background-color: rgba(48, 48, 48, 1)">초대</button>
+                                    <p style="margin-top: 10px; margin-bottom: 0px">{{ friend.nickname }}</p>    
+                                    <button @click="inviteFriend" class="button" style="margin-right: 10px; background-color: rgba(48, 48, 48, 1)">초대</button>
                                 </div>
                                 
                             </div>
@@ -265,12 +265,12 @@ export default {
             myfriends: [],
             isPopupFriend: false,
             ifFirst: true,
+            audioBtn: new Audio(require('../../assets/musics/back2.mp3')),
         }
     },
 
 
     created() {
-
         // 이후엔 요청 보내서 받아올 것
         // this.room = this.defaultroom;
         this.readRoom();
@@ -281,6 +281,9 @@ export default {
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
+
+        this.audioBtn.play();
+        this.audioBtn.loop = true;
     },
 
     computed: {
@@ -306,14 +309,16 @@ export default {
     },
 
     destroyed() {
-        
         this.socket.close();
         this.socketRoom.close();
-
+        this.audioBtn.pause();
     },
 
     methods: {
-
+        buttonpush(){
+            var bpush = new Audio('https://www.soundjay.com/nature/sounds/wooden-floor-creaking-02.mp3');
+            bpush.play();
+        },
         readRoom() {
 
             http
@@ -327,9 +332,6 @@ export default {
                     this.connectRoom();
                     this.ifFirst = false;
                 }
-
-                console.log(this.room);
-
 
                 // 빈자리 출력을 위해 인원 확인
                 if (this.room.cur_count < this.room.max_count) {
@@ -392,18 +394,6 @@ export default {
 
         },
 
-        // 채팅 버튼
-        // chatMessage() {
-        //     var s = document.getElementById("inputMessageSelect");
-        //     var idx = s.options[s.selectedIndex].value;
-        //     if (this.chatList[idx] === undefined) {
-        //         alert('메시지를 선택해주세요');
-        //     } else {
-        //         // 넣어주는 건 되는데 그래서 어떻게 해당 위치에서만 띄우지....
-        //         console.log(this.chatList[idx]);
-        //     }
-        // },
-
         // 대기 방 소켓 연결
         connectRoom() {
             this.socketRoom = new WebSocket(`${socketRoomURL}/${this.room.id}`);
@@ -442,7 +432,6 @@ export default {
             this.socket.onopen = () => {
                 // this.chatLogs.push({ event: "연결 완료", data: 'wss://echo.websocket.org'})
                 
-
                 this.socket.onmessage = ({data}) => {
                     this.chatLogs.push(JSON.parse(data));
                     const chatBox = document.querySelector(".scrollbar-box");
@@ -454,7 +443,6 @@ export default {
         //  채팅 보내기
         sendMessage(Data) {
             // websocketsend(Data) 와 동일
-            console.log("나 채팅!!")
             if (Data != '' && this.myNickname != '') {
                 this.socket.send(JSON.stringify({ event: this.myNickname, data: Data, room_id: this.room.id }));
             }
@@ -479,9 +467,6 @@ export default {
                 .get(`game/ingame/${this.room.id}`)
                 .then((res) => {
                     this.socketRoom.send(JSON.stringify({ start: true, game: false, room_id: this.room.id, sendGame: res.data }));
-                    // // 로딩화면 띄우기
-                    // this.delayMode = true;
-                    // setTimeout(() => this.$router.replace({ name: 'PlayGame' , params: { sendGame: res.data, roomId: this.room.id, sendSocket: this.socket }}), 7000);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -554,7 +539,6 @@ export default {
             httplobby
             .get(`user/loginFriend/list/${storage.getItem('id')}`)
             .then((res) => {
-                console.log(res.data);
                 this.myfriends = res.data;
                 this.isPopupFriend = true;
             })
@@ -562,20 +546,16 @@ export default {
 
         // 친구 초대
         inviteFriend(event) {
-            console.log("sddddd");
             
             var ID = event.target.parentElement.id.split('-');
-            console.log(ID)
             var formData = new FormData;
             formData.append('from_id', storage.getItem('id'));
             formData.append('to_nickname', ID[0]);
             formData.append('room_id', this.room.id);
-            console.log("friend ID");
-            console.log(ID[0]);
             httplobby
             .post('alarm/inviteGame', formData)
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
             })
 
             this.isPopupFriend = false;
@@ -616,10 +596,15 @@ export default {
 }
 
 #waitRoom {
+    position: fixed;
     height: 100%;
     width: 100%;
     min-width: 1024px;
-    background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
+    background: url('../../assets/images/background4.jpg') no-repeat center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
     color: white;
 }
 
@@ -647,7 +632,7 @@ export default {
 .screen__right {
     display: block;
     float: right;
-    width: var(--rightSize);
+    width: val(--rightSize);
     height: var(--mainSize);
     margin: 10px;
     /* background-color: skyblue; */
@@ -696,8 +681,8 @@ export default {
 /* 개별 style */
 /* 상단 우측 버튼 */
 .friends__invite {
-    position: fixed;
-    right: 15px;
+    position: absolute;
+    left: 15px;
     top: 0px;
 }
 
@@ -810,8 +795,8 @@ export default {
     position: fixed;
     left: 50%;
     top: 50%;
-    height: 100px;
-    padding: 0px 50px;
+    height: 140px;
+    padding: 20px 50px;
     transform: translate(-50%, -50%);
     border-radius: 20px;
     background-color: white;
@@ -825,6 +810,7 @@ export default {
 
 .modal__button > button {
     padding: 3px;
+    margin-top: 10px;
     border-radius: 10px;
     color: white;
     background-color: rgba(28, 144, 65, 0.8);
@@ -854,18 +840,6 @@ export default {
 	background-color: #555;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 .scrollbar-box2
   {
     height: 330px;
@@ -877,7 +851,7 @@ export default {
 
   }
 
-  .force-overflow
+  .force-overflow2
   {
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
@@ -892,6 +866,8 @@ export default {
     background :#eceef188;
     color: rgba(37, 37, 37, 0.788);
     border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
   }
 
   /*scrollbar STYLE 1*/
@@ -920,7 +896,6 @@ export default {
   /* 우측정렬용 컨테이너 */
 
   .button {
-    color: rgba(37, 37, 37, 0.788);
     background: rgba(255, 254, 254, 0.151);
     appearance: none;
     font: inherit;

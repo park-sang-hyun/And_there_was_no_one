@@ -11,7 +11,7 @@
             v-if="showModal"
             >
           <div class="btn_container">
-            <button @click="cancel" class="button" style="color: rgba(37, 37, 37, 0.788);">X</button>
+            <button @click="cancel" class="button" style="background-color: rgba(61, 61, 61, 0.5);">X</button>
           </div>
           
           <h1>친구 추가</h1>
@@ -27,25 +27,17 @@
               placeholder="닉네임"
             >
             <p>{{ errmsg }}</p>
-            <button @click="addFriend" class="button" style="margin-left:10px; color:rgba(37, 37, 37, 0.788);">요청하기</button>
+            <button @click="addFriend" class="button" style="margin-top:10px; background-color: rgba(48, 48, 48, 1);">요청하기</button>
           </div>
 
           <!-- 친구 추가 요청 후 상대방의 응답을 기다리는 상태 -->
           <div v-else>
               <p>친구 추가 요청을 보냈습니다. </p>
-            <button @click="showModal=false, friendReqStatus='요청전'" class="button">닫기</button>
+            <button @click="showModal=false, friendReqStatus='요청전'" class="button" style="margin-top:10px; background-color: rgba(48, 48, 48, 1);">닫기</button>
           </div>
         
         </div>
       </transition>
-
-    <div class="friends-wrapper">
-      
-      <div class="btn_container" style="justify-content: space-between">
-        <p style="margin-left:20px; color:rgba(255, 254, 254, 0.6);">친구 목록</p>
-        <!-- 친구 추가버튼  -->
-        <button @click="showModal = true" class="button" style="margin:10px">+</button>
-      </div>
 
       <!-- 모달 주변을 클릭하면 모달이 사라지는 효과 -->
       <transition name="fade" appear>
@@ -58,19 +50,21 @@
             v-if="showFriendReq"
           >
 
-          <div class="btn_container">
-            <button @click="showFriendReq = false" class="button">X</button>
+          <div class="btn_container" >
+            <button @click="showFriendReq = false" class="button" style="background-color: rgba(61, 61, 61, 0.5)">X</button>
           </div>
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div>
-            <h1>친구 추가 요청</h1>
+            <h1>새로운 알림</h1>
 
             <div class="scrollbar-box2" id="style-1" style="width: 400px" >
               <div class="force-overflow" >
                 <div v-for="(alarm, index) in alarms" :key="(alarm.no, index) + 'alarmkey'" class="friend">
-                  <p>{{alarm.content}}</p>
-                  <button @click="friendAns('ok', index), showFriendReq = false" class="button" style="margin: 5px">수락</button>
-                  <button @click="friendAns('no', index), showFriendReq = false" class="button" style="margin: 5px">거절</button>
+                  <div class="alarmlist">
+                    <p style=" font-weight: bold; font-size: 15px;">{{alarm.content}}</p>
+                    <button @click="friendAns('ok', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">수락</button>
+                    <button @click="friendAns('no', index), showFriendReq = false" class="button" style="margin: 5px; background-color: rgba(48, 48, 48, 1)">거절</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -78,6 +72,13 @@
         </div>
       </transition>
 
+    <div class="friends-wrapper">
+      
+      <div class="btn_container" style="justify-content: space-between">
+        <h5 style="margin-left:20px; color:rgba(255, 254, 254, 0.7);">친구 목록</h5>
+        <!-- 친구 추가버튼  -->
+        <button @click="showModal = true" class="button" style="margin-right:10px">+</button>
+      </div>
 
       <!-- 친구 리스트 -->
       <!-- 친구 리스트에 스크롤바 두니까 아래로 안움직임 -->
@@ -85,14 +86,12 @@
       <div class="scrollbar-box2" id="style-1" >
         <div class="force-overflow" >
           <div v-for="friend in loginFriends" :key="friend.no + 'loginfriendkey'" class="loginfriend">
-            <p style="margin: 5px">
-              {{ friend.nickname }} {{ friend.score }}
-            </p>
+            <p style="margin-left: 20px; margin-top: 7px; margin-bottom: 0px; font-weight:bold; font-size:20px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 20px; margin-top: 10px">{{ friend.rank }}</p>
           </div>
           <div v-for="friend in logoutFriends" :key="friend.no + 'logoutfriendkey'" class="logoutfriend">
-            <p style="margin: 5px">
-              {{ friend.nickname }} {{ friend.score }}
-            </p>
+            <p style="margin-left: 20px; margin-top: 7px; margin-bottom: 0px; font-weight:bold; font-size:20px;">{{ friend.nickname }} </p>
+            <p style="margin-right: 20px; margin-top: 10px">{{ friend.rank }}</p>
           </div>
         </div> 
       </div>
@@ -160,7 +159,7 @@ export default {
       http
       .get("user/friend/list/" + sessionStorage.getItem('id') + "/")
       .then((res) => {
-        console.log(res.data)
+        console.log("2222222:" + res.data)
         // 아래 내용은 서버 기능 만들고 수정하기 
         // this.friends 변수에 친구 목록 데이터 넣기
         this.friends = res.data;
@@ -223,7 +222,7 @@ export default {
         
         // 장고로 존재하는 유저인지 확인
         httpCommon
-        .get("accounts/nickname/" + this.friendName + "/")
+        .get("accounts/findfriend/" + this.friendName + "/")
         .then((res) => {
           if(res.data.message === "ok") {
             this.errmsg = "존재하지 않는 닉네임입니다.";
@@ -264,24 +263,36 @@ export default {
       // 친구가 로그아웃이거나 게임중이면 바로 친구추가 불가 메시지를 요청자가 받아야함
       let formData = new FormData();
       if (ans === 'ok') {
-        formData.append("user_id", sessionStorage.getItem('id'));
-        formData.append("friend_id", this.alarms[index].to_id);
-        formData.append("alarm_id", this.alarms[index].alarm_id);
-        console.log(formData)
-        http  
-        .post("user/friend/make", formData)
-        .then((res) => {
-          console.log("정보정보");
-          console.log(res.data.object);
-          console.log(res.data.status);
+        if(this.alarms[index].kind === -1){
+          formData.append("user_id", sessionStorage.getItem('id'));
+          formData.append("friend_id", this.alarms[index].to_id);
+          formData.append("alarm_id", this.alarms[index].alarm_id);
+          console.log(formData)
+          http  
+          .post("user/friend/make", formData)
+          .then((res) => {
+            console.log("정보정보");
+            console.log(res.data.object);
+            console.log(res.data.status);
 
-          this.getFriendsList(); 
-          this.showAlarm(1);
-          if(res.data.status === false){
-            // room 이동
-            this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.object }});
-          }
-        })
+            this.getFriendsList(); 
+            this.showAlarm(1);
+            if(res.data.status === false){
+              // room 이동
+              this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.object }});
+            }
+          })
+        }
+        else{
+          this.enterRoom(this.alarms[index].kind);
+          formData.append("alarm_id", this.alarms[index].alarm_id);
+          http
+          .post("alarm/delete", formData)
+          .then((res) => {
+            this.getFriendsList(); 
+            this.showAlarm(1);
+          })
+        }
       }
       else {
         formData.append("alarm_id", this.alarms[index].alarm_id);
@@ -292,8 +303,22 @@ export default {
           this.showAlarm(1);
         })
       }
+    },
 
-      
+    enterRoom(roomNo) {
+        http
+        .get(`room/enter/${storage.getItem('id')}/${roomNo}`)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.status) {
+            this.$router.replace({ name: 'WaitRoom' , params: { roomId: roomNo }});
+          } else {
+            alert(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })                                                                                 
     },
 
     // 친구 추가 요청 취소
@@ -455,15 +480,16 @@ export default {
     background-color: #aeb0b32f;
     height: 80%;
     width: 80%;
-    margin: 0px 20px;
     padding: 20px;
     opacity:0.9;
+    margin-left: 10%;
+
   }
   
   .scrollbar-box2
   {
-    height: 285px;
-    width: 100%;
+    height: 215px;
+    width: 97%;
     background-color: rgba(0, 41, 0, 0);
     overflow-y: scroll;
     position : relative; 
@@ -475,21 +501,27 @@ export default {
   {
     /* 스크롤바 내부의 글자가 누적되는 창 크기
     스크롤바 height 보다 min-height가 커야 우측 스크롤바가 생김 */
-    min-height: 220px;
+    min-height: 190px;
     margin: 15px 10px;
   }
 
   .loginfriend {
-    margin: 10px;
+    margin: 5px;
     padding: 5px;
-    background :#eceef188;
+    background :#bbbbbb98;
     border-radius: 10px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
   }
   .logoutfriend {
-    margin: 10px;
+    margin: 5px;
     padding: 5px;
-    background: rgba(255, 248, 220, 0.2);
+    background: rgba(255, 248, 220, 0.164);
     border-radius: 10px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
   }
 
   /*scrollbar STYLE 1*/
@@ -533,6 +565,10 @@ export default {
     padding: 5px 10px;
     margin-bottom: 10px;
     opacity:0.9;
+
+    &:hover {
+    background: rgba(255, 255, 255, 0.493);
+  }
   }
 
   .friendmodal {
@@ -594,5 +630,12 @@ export default {
   .pop-leave-to {
     opacity: 0;
     transform: scale(0.3) translateY(-50%);
+  }
+
+  .alarmlist {
+    background: #eceef188;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px 0;
   }
 </style>

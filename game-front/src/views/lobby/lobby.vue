@@ -1,31 +1,16 @@
 <template>
   <div class="lobby" >
-
-    <!-- <div v-if="status === 'connected'"> -->
-      <!-- <div>
-      <form @submit.prevent="webSocketSend" action="#">
-        <input v-model="message"><button type="submit">메세지 전송</button>
-      </form>
-            <ul id="logs">
-        <li v-for="(log, index) in logs" class="log" :key="index">
-                {{ log.event }}: {{ log.data }}
-        </li>
-            </ul>
-      </div> -->
-    <!-- </div> -->
-
     <div class="gerstner-2">
       <div class="comp">
         
         <Profile class="profile" @logout="logout" @bell="bell" ref="reloadBell"/>
         <!-- 소켓 props -->
-        <!-- 대흠님이 ref 메서드 멀로 해놨을까?그거에 맞춰서 ref 쓰기  -->
         <Friends class="friends" ref="out" @reload="reload"></Friends>
       </div>
       <div class="comp">
         <Roomlist class="roomlist"/>
         <!-- 소켓 props -->
-        <Chat  class="chat"></Chat>
+        <Chat class="chat"></Chat>
       </div>
     </div>
 
@@ -54,20 +39,39 @@ export default {
     Roomlist,
   },
 
+  data() {
+    return {
+      audioBtn: new Audio(require('../../assets/musics/back1.mp3')),
+    }
+  },
+
+  created(){
+    this.audioBtn.play();
+    this.audioBtn.loop = true;
+  },
+  destroyed(){
+    this.audioBtn.pause();
+  },
   methods: {
 
       // 로그아웃 버튼 눌렀을 때
       logout(signal) {
+        this.buttonpush();
         this.$refs.out.logout();
       },
 
       bell(signal) {
+        this.buttonpush();
         this.$refs.out.showAlarm(0);
       },
 
       reload() {
         this.$refs.reloadBell.getAlarm();
-      }
+      },
+      buttonpush(){
+        var bpush = new Audio('https://www.soundjay.com/misc/sounds/wind-chime-1.mp3');
+        bpush.play();
+      },
   }
 }
 
@@ -76,6 +80,7 @@ export default {
 
 <style lang="scss" scoped>
   .lobby /deep/ { 
+    
     border: none;
 
     background: url('../../assets/images/background.jpg') no-repeat center center fixed;
@@ -83,8 +88,22 @@ export default {
       -moz-background-size: cover;
       -o-background-size: cover;
       background-size: cover;
+
+    min-height: 500px;
   }
+
+  
+  @-webkit-keyframes fadein { /* Safari and Chrome */
+      from {
+          opacity:0;
+      }
+      to {
+          opacity:1;
+      }
+  }
+
   .gerstner-2 {
+    -webkit-animation: fadein 1s; /* Safari and Chrome */
     display: grid;
     grid-template-columns: 1fr 2.5fr;
     /* grid-column-gap: 1em; */
@@ -93,7 +112,6 @@ export default {
   }
   .comp {
     display: grid;
-    grid-template-rows: .8fr .2fr;
     min-width: 300px;
   }
   .profile { 

@@ -1,11 +1,8 @@
 <template>
-
-    <transition v-if="goLobby" name="fade" appear>
-      <enterLobby style="z-index: 1;"/>
-    </transition>
-    <div v-else class="container">
+  <div>
+    <div class="container">
       <form>
-        <h1>Login page</h1>
+        <h1 style="margin-bottom: 50px">Login page</h1>
         <div class="form-item">
           <!-- 아래는 아이콘을 출력하는 부분인데 지금은 출력 안돼서 주석처리함 -->
           <!-- <label for="username"><span class="entypo-user"></span></label> -->
@@ -33,14 +30,14 @@
         <button
           type="button"
           class="button"
-          @click="onLogin();buttonpush()"
+          @click="onLogin();"
           :disabled="!isSubmit"
           :class="{disabled : !isSubmit}"
         >Login</button>
         
         <div class="add-option mt-4">
           <div class="wrap">
-            <router-link @click.native="buttonpush()" to="/signup/" class="btn--text" >Signup</router-link>
+            <p @click="goto()" class="btn--text" >Signup</p>
           </div>
         </div>
       </form>
@@ -62,21 +59,17 @@
       <button type="button" class="popup-btn">Show Popup</button>  -->
 
     </div>
-
+  </div>
 </template>
 
 <script>
 import PV from "password-validator";
-import enterLobby from './enterLobby.vue'
 
 import http from "../../util/http-common.js";
 
 const storage = window.sessionStorage;
 
 export default {
-  components: {
-    enterLobby,
-  },
   data: () => {
     return {
       username: "",
@@ -174,6 +167,7 @@ export default {
             storage.setItem("id", res.data.user)
             console.log(storage)
           }
+          this.goLobby=true;
           this.moveFeed();
         })
         .catch((err) => {
@@ -184,18 +178,16 @@ export default {
   },
 
   lobbyNext() {
-    this.$router.push("/lobby");
+    this.$router.push("/enterlobby");
   },
 
   moveFeed(){
-    this.goLobby = true;
-    var go = setTimeout( this.lobbyNext , 6000);
+    var go = setTimeout( this.lobbyNext , 100);
   },
 
-  buttonpush(){
-    var bpush = new Audio('https://www.soundjay.com/button/sounds/button-3.mp3');
-    bpush.play();
-  },
+  goto() {
+    this.$emit('login', false);
+  }
 },
 
 };
@@ -232,10 +224,10 @@ export default {
 
   .container {
     position: absolute;
-    top: 20%;
     width: 442px;
     background-color: #fff;
     padding: 8px 0 20px 0;
+    top: 15%;
     border-radius: 4px;
     /* -webkit-box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75);       */
     /* box-shadow:  1px 1px 2px 0px rgba(155, 155, 155, .75); */

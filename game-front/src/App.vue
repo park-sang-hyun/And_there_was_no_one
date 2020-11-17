@@ -12,9 +12,8 @@ export default {
 
 <style lang="scss" scoped>
 /* 일단 테스트용 임시방편 */
-  /* .app{
-    background-color: black;
-    width: 100%;
-    height: 1000px;
-  } */
+  .app{
+    background-color: rgba(0, 0, 0, 0.7);
+    width:100%;
+  }
 </style>

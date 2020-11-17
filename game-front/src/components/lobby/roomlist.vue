@@ -4,10 +4,10 @@
       <div class="btn_container" style="justify-content: space-between; color:rgba(255, 254, 254, 0.6); margin-left:3%; font-size: 15px;">
         <h3 style="color:white;">방 목록</h3>
         <div>
-          <button type="button" class="button" style="color:white;" @click="showCreateModal = true">방 만들기</button>
-          <button type="button" class="button" style="color:white;" @click="random">빠른 입장</button>  
-          <button type="button" class="button" style="color:white;" @click="showGamerule=1">게임 설명</button>
-          <button type="button" class="button" style="color:white;" @click="gameRanking=true">랭킹</button>
+          <button type="button" class="button" style="color:white;" @click="[showCreateModal = true, buttonpush()]">방 만들기</button>
+          <button type="button" class="button" style="color:white;" @click="[random(), buttonpush()]">빠른 입장</button>  
+          <button type="button" class="button" style="color:white;" @click="[showGamerule=1, buttonpush()]">게임 설명</button>
+          <button type="button" class="button" style="color:white;" @click="[gameRanking=true, buttonpush()]">랭킹</button>
         </div>
       </div>
 
@@ -31,24 +31,26 @@
             v-if="showCreateModal"
           >
           <div class="container" style="width:100%">
-            <button @click="showCreateModal = false" class="button" style="margin-left:100%">X</button>
+            <button @click="showCreateModal = false" class="button" style="margin-left:108%; background-color: rgba(61, 61, 61, 0.5); color: white;">X</button>
           </div>
           
           <!-- 아래 div를 form 태그로 하면 input 창에서 enter 치거나 버튼 눌렀을 때 새로고침됨 -->
           <div class="inmodal">
-            <h1>게임 방 만들기</h1>
+            <h1 style="margin-bottom: 30px">게임 방 만들기</h1>
             <p>방 이름을 입력하세요</p>
             <input 
               v-model="roomName"
               type="text"
+              maxlength="15"
               placeholder="방 이름"
               @keyup.enter="createRoom"
+              style="margin-bottom: 20px"
             >
 
             <p>{{ roomCreateErr }}</p>
             <div >
               <div>
-                <label for="mode">Mode</label>
+                <label for="mode">모드</label>
               </div>
               <div class="number-input-container">
                 <button
@@ -57,7 +59,7 @@
                   @click="setMode('down')"
                 ></button>
                 <div class="number-input" style="text-align: center">
-                  {{ modelist[mode-1] }}
+                  {{ modelist[mode] }}
                 </div>
                 <button
                   type="button"
@@ -69,7 +71,7 @@
 
             <div>
               <div>
-                <label for="difficulty">Difficulty</label>
+                <label for="difficulty">난이도</label>
               </div>
               <div class="number-input-container">
                 <button
@@ -88,9 +90,9 @@
               </div>
             </div>
 
-            <div>
+            <div >
               <div>
-                <label for="people">Number of People</label>
+                <label for="people">최대 인원수</label>
               </div>
               <div class="number-input-container">
                 <button
@@ -110,7 +112,7 @@
             </div>
             
 
-            <button type="button" @click="createRoom" class="button" style="margin-left:60%;">방 생성하기</button>
+            <button type="button" @click="createRoom" class="button" style="margin-top: 40px; margin-left:34%; background-color: rgba(48, 48, 48, 1); color: white;">방 생성하기</button>
           </div>
         
         </div>
@@ -123,11 +125,10 @@
       <div class="roomcards">
         <div class="roomcard" v-for="(room, index) in roomList" :key="(room.no, index) + 'roomkey'">
           <div v-if="room.no !='none'" class="roomcard__inner" @click="pickRoom(room.no)">
-            <div style="float:left; font-size:22px; text-shadow: 2px 2px 2px gray;">No.{{ room.no }} </div> 
-            <div style="text-align:left; margin-left:20%; font-size:20px;">방 제 : {{ room.roomname }} </div>
-            <div style="text-align:left; margin-left:60%; font-size:15px;">모드 : {{ modelist[room.mode] }} </div> 
-            <div style="text-align:left; margin-left:60%; font-size:15px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
-            <div style="text-align:left; margin-left:60%; font-size:15px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
+            <div style="text-align:left; margin-left:5%; font-size:20px;">방 이름 : {{ room.roomname }} </div>
+            <div style="text-align:left; margin-left:70%; font-size:13px;">모드 : {{ modelist[room.mode] }} </div> 
+            <div style="text-align:left; margin-left:70%; font-size:13px;">인원 : {{ room.cur_people }} / {{ room.max_people }}</div>
+            <div style="text-align:left; margin-left:70%; font-size:13px;">난이도 : {{ difficultylist[room.difficulty] }}</div>
             <!-- isStart: {{ room.start }} -->
           </div>
           <div v-else class="roomcardNone__inner">
@@ -208,7 +209,7 @@ export default {
         people: 5,
 
         //mode
-        modelist : ['자유그리기', '이어그리기', 'AI제외'],
+        modelist : ['', '자유그리기', '이어그리기', 'AI 점검중'],
         difficultylist: ['하', '중', '상'],
 
         showGamerule: false,
@@ -383,12 +384,20 @@ export default {
       },
 
       random() {
-        var roomNo = Math.floor(Math.random() * (this.totalRoom + 1));
-        console.log("Enter random: " + roomNo);
-        this.enterRoom(roomNo);
+        http
+        .get(`room/fastenter`)
+        .then((res) => {
+          console.log("12121212: " + res.data);
+          
+          this.enterRoom(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })   
       },
 
       pickRoom(roomNo) {
+        this.buttonpush2();
         console.log("Enter pickRoom: " + roomNo);
         this.enterRoom(roomNo);
       },
@@ -418,6 +427,14 @@ export default {
       rankclose(rule) {
         this.gameRanking = false;
       },
+      buttonpush(){
+        var bpush = new Audio('https://www.soundjay.com/misc/sounds/wind-chime-1.mp3');
+        bpush.play();
+      },
+      buttonpush2(){
+        var bpush = new Audio('https://www.soundjay.com/misc/sounds/page-flip-8.mp3');
+        bpush.play();
+      },
     },
 }
 
@@ -433,8 +450,9 @@ export default {
   } */
 
   .room-wrapper {
-    padding-top: 5%;
-    padding-left: 5%;
+    padding-top: 2.5%;
+    padding-right: 0%;
+    margin-bottom: 30px;
     position: relative;
     min-width: 900px;
     min-height: 400px;
@@ -446,16 +464,16 @@ export default {
 
   .roomcards {
     padding: 10px;
-    margin-bottom: 40px;
     display: flex;
     flex-flow: row wrap;
-    min-height: 480px;
+    min-height: 400px;
   }
   /* //Cards */
 
   .roomcard {
     height: fit-content;
     margin: 10px; 
+    margin-bottom: 0px;
     width: 47%;
     transition: all 0.2s ease-in-out;
     color:white;
@@ -463,7 +481,7 @@ export default {
 
     &:hover {
       .roomcard__inner {
-        background-color: #aeb0b373;
+        background-color: #747474cc;
         transform: scale(1.05);
         border-radius: 20px;
       }
@@ -478,7 +496,7 @@ export default {
       cursor: pointer;
       border-radius: 20px;
       
-      background-color: #aeb0b32f;
+      background-color: #313131a4;
       color: rgba(255, 254, 254, 0.8);
       font-size: 1.5em;
       text-transform: uppercase;
@@ -499,7 +517,7 @@ export default {
 
     &__inner {
       width: 100%;
-      padding: 25px;
+      padding: 15px;
       min-width: 80px;
       min-height: 60px;
       position: relative;
@@ -520,14 +538,14 @@ html {background: #88bfd4; text-align: center}
 
 #menu {
   position: absolute;
-  bottom: -45px;
+  bottom: -35px;
 	list-style: none;
 	padding: 0px; 
   margin: 0;
 	background: #5c8a9700;
   margin-left: 41%;
 	display: inline-block;
-	height: 50px;
+	height: 30px;
 	overflow: hidden;
 }
 
@@ -541,7 +559,7 @@ html {background: #88bfd4; text-align: center}
 #menu li:first-child {margin: 0}
 
 #menu li a {
-	background:rgba(255, 254, 254, 0.6);
+	background:rgba(255, 254, 254, 0.226);
 	display: block;
 	border-radius: 3px;
 	padding: 0 12px;
@@ -550,12 +568,12 @@ html {background: #88bfd4; text-align: center}
 	text-decoration: none;
 	height: 27px;
 	font: 12px / 27px "PT Sans", Arial, sans-serif;
-	box-shadow: 0px 3px rgba(255, 254, 254, 0.6), 0px 4px 5px rgba(0, 0, 0, 0.11);
+	box-shadow: 0px 3px rgb(46, 39, 39), 0px 4px 5px rgba(0, 0, 0, 0.11);
 	transition: all 0.3s ease;
 }
 
 
-#menu li a:hover {background: rgba(255, 254, 254, 0.9)}
+#menu li a:hover {background: rgba(173, 173, 173, 0.9)}
 #menu li a:active {
 	background:rgba(255, 254, 254, 0.9);
 
@@ -569,7 +587,7 @@ html {background: #88bfd4; text-align: center}
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  width: 96%;
+  width: 93%;
 }
 
 .button {
@@ -583,6 +601,9 @@ html {background: #88bfd4; text-align: center}
   padding: 5px 10px;
   margin-bottom: 10px;
   margin-left:10px;
+  &:hover {
+    background: rgba(255, 255, 255, 0.493);
+  }
 }
 
 .roommodal {
@@ -593,10 +614,10 @@ html {background: #88bfd4; text-align: center}
   left: 0;
   margin: auto;
   /* text-align: center; */
-  width: fit-content;
+  width: 450px;
   height: fit-content;
   /* max-width: 200em; */
-  padding: 40px;
+  padding: 20px 60px;
   border-radius: 1rem;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
   background: #FFF;
