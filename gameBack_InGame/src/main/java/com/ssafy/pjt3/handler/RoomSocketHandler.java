@@ -115,7 +115,7 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				turn++;
 				obj.put("turn", turn);
 				System.out.println("fffff:" + obj.toJSONString());
-			}       
+			}
 		}
 
 // 		해당하는 번호의 방 정보 갱신되면 그 방에 들어있는 친구들에게 방 정보 브로드캐스팅.
@@ -142,13 +142,13 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				WebSocketSession wss = (WebSocketSession) temp.get(k);
 
 				if (wss != null) {
-				
-						try {
-							wss.sendMessage(new TextMessage(obj.toJSONString()));
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-		
+
+					try {
+						wss.sendMessage(new TextMessage(obj.toJSONString()));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
 				}
 			}
 		}

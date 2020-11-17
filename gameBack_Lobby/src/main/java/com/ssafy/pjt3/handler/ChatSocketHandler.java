@@ -56,8 +56,9 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 		System.out.println(session.getId() + "이(가) 메세지전송.");
 
 		Iterator<String> sessionIds = sessions.keySet().iterator();
-
+		
 		String sessionId = "";
+		
 		while (sessionIds.hasNext()) {
 			sessionId = sessionIds.next();
 			sessions.get(sessionId).sendMessage(new TextMessage(session.getId() + " : " + message.getPayload()));
