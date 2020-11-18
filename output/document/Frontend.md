@@ -224,7 +224,7 @@ sequenceDiagram
 
 | 이름         | 위치               | 역할                                                         | 포트번호 |
 | ------------ | ------------------ | ------------------------------------------------------------ | -------- |
-| `Login`      | Frontend           | 해당 diagram이 일어나는 로그인 페이지                        | 8080     |
+| `Login`      | Frontend           | 해당 diagram이 일어나는 로그인 페이지                        | -        |
 | `UserServer` | gameBack(`Django`) | 유저 관련 Backend로 로그인, 회원가입 등 User 테이블에 관련된 로직을 실행 | 8000     |
 
 
@@ -245,7 +245,7 @@ sequenceDiagram
 
 | 이름         | 위치               | 역할                                                         | 포트번호 |
 | ------------ | ------------------ | ------------------------------------------------------------ | -------- |
-| `Signup`     | Frontend           | 해당 diagram이 일어나는 회원가입 페이지                      | 8080     |
+| `Signup`     | Frontend           | 해당 diagram이 일어나는 회원가입 페이지                      | -        |
 | `UserServer` | gameBack(`Django`) | 유저 관련 Backend로 로그인, 회원가입 등 User 테이블에 관련된 로직을 실행 | 8000     |
 | `DB`         | DataBase           | 전체 DataBase                                                | 3306     |
 
@@ -283,12 +283,12 @@ Lobby->>WaitRoom: 생성된 방 pk 전달
 
 | 이름                                | 위치                     | 역할                                | 포트번호/주소 |
 | ----------------------------------- | ------------------------ | ----------------------------------- | ------------- |
-| `Lobby`                             | Frontend                 | 해당 diagram이 일어나는 로비 페이지 | 8080          |
+| `Lobby`                             | Frontend                 | 해당 diagram이 일어나는 로비 페이지 | -             |
 | `UserServer`                        | gameBack(`Django`)       | 유저 관련 Backend                   | 8000(port)    |
 | `LobbyServer`                       | gameBack_Lobby(`Spring`) | 게임 로비 Backend                   | 8001(port)    |
 | LobbyServer(WebSocket) - `Chatting` | gameBack_Lobby(`Spring`) | 로비 Chatting 소켓                  | /chatting     |
 | `DB`                                | DataBase                 | 전체 DataBase                       | 3306          |
-| `WaitRoom`                          | Frontend                 | 게임 대기 방 페이지                 | 8080          |
+| `WaitRoom`                          | Frontend                 | 게임 대기 방 페이지                 | -             |
 
 
 
@@ -315,8 +315,8 @@ WaitRoom->>WaitRoom: 정보 갱신
 
 | 이름                                  | 위치                       | 역할                                                         | 포트번호/주소 |
 | ------------------------------------- | -------------------------- | ------------------------------------------------------------ | ------------- |
-| `Lobby`                               | Frontend                   | 로비 페이지                                                  | 8080          |
-| `WaitRoom`                            | Frontend                   | 해당 diagram이 일어나는 게임 대기방 페이지                   | 8080          |
+| `Lobby`                               | Frontend                   | 로비 페이지                                                  | -             |
+| `WaitRoom`                            | Frontend                   | 해당 diagram이 일어나는 게임 대기방 페이지                   | -             |
 | `InGameServer`                        | gameBack_InGame (`Spring`) | 게임 플레이 관련 BackEnd                                     | 8002(port)    |
 | InGameServer(WebSocket) - `Chatting`  | gameBack_InGame (`Spring`) | 게임 대기 방 Chatting 소켓                                   | /chatting     |
 | InGameServer(WebSocket) -  `Renewing` | gameBack_InGame (`Spring`) | 게임 대기 방에서는 방정보 갱신 관련 소켓, 유저가 들어오고 나가는 것과 팀장 위임, 모드 수정 등의 경우 정보 요청 및 전달 | /renewing     |
@@ -356,9 +356,9 @@ UserServer-->PlayGame: 게임 결과 반영 완료 전달
 
 | 이름                                 | 위치                       | 역할                                                         | 포트번호/주소 |
 | ------------------------------------ | -------------------------- | ------------------------------------------------------------ | ------------- |
-| `WaitRoom`                           | Frontend                   | 게임 대기방 페이지                                           | 8080          |
-| `loadingGame`                        | Frontend                   | 게임 시작 전 로딩 페이지                                     | 8080          |
-| `PlayGame`                           | Frontend                   | 해당 diagram이 일어나는 게임 플레이 페이지                   | 8080          |
+| `WaitRoom`                           | Frontend                   | 게임 대기방 페이지                                           | -             |
+| `loadingGame`                        | Frontend                   | 게임 시작 전 로딩 페이지                                     | -             |
+| `PlayGame`                           | Frontend                   | 해당 diagram이 일어나는 게임 플레이 페이지                   | -             |
 | `InGameServer`                       | gameBack_InGame (`Spring`) | 게임 플레이 관련 BackEnd                                     | 8002(port)    |
 | InGameServer(WebSocket) - `Chatting` | gameBack_InGame (`Spring`) | 게임 플레이 시 Chatting 소켓                                 | /chatting     |
 | InGameServer(WebSocket) -  `Play`    | gameBack_InGame (`Spring`) | 게임 플레이 시 게임의 Play 관련 소켓, 해당 부분에서는 Turn 및 투표 결과 전달로 사용 | /renewing     |
