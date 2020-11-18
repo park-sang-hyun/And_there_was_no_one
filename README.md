@@ -52,7 +52,7 @@
 ```
 
 - 각 서버의 구조는 해당 서버의 md 파일에서 확인할 수 있습니다.
-  - [Frontend (클릭 시 이동)](./output/document/frontend.md)
+  - [Frontend (클릭 시 이동)](./output/document/Frontend.md)
   - [UserServer (클릭 시 이동)](./output/document/UserServer.md)
   - [AIServer (클릭 시 이동)](./output/document/AIServer.md)
   - [InGameServer (클릭 시 이동)](./output/document/InGameServer.md)
