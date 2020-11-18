@@ -1,7 +1,5 @@
 ## StoryBoard
 
-
-
 실제 링크 :  https://ovenapp.io/view/YeQDN7XJ1WgVSIpFi68druUGwW7hrJUg/
 
 
@@ -45,3 +43,4 @@
 ​	5-1. AI 검사 Modal (게임 실행 페이지)
 
 ![AI 검사 Modal (게임 실행 페이지)](./images/AI 검사 Modal (게임 실행 페이지).JPG)
+
