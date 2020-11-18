@@ -26,6 +26,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(chatSocketHandler, "/chatting/{room_id}").setAllowedOrigins("*");
 		registry.addHandler(roomSocketHandler, "/renewing/{room_id}").setAllowedOrigins("*");
+		
 		registry.addHandler(coordinateSocketHandler, "/coordinating/{room_id}").setAllowedOrigins("*");
 	}
 }
