@@ -8,41 +8,29 @@ import java.util.List;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.pjt3.dto.Room;
-import com.ssafy.pjt3.dto.User;
-import com.ssafy.pjt3.service.RoomService;
-import com.ssafy.pjt3.service.UserService;
-
 @Component
-public class RoomSocketHandler extends TextWebSocketHandler {
+public class CoordinateSocketHandler extends TextWebSocketHandler {
 
 	// HashMap<String, WebSocketSession> sessionMap = new HashMap<>(); //웹소켓 세션을 담아둘
 	// 맵
 	List<HashMap<String, Object>> rls = new ArrayList<>(); // 웹소켓 세션을 담아둘 리스트 ---roomListSessions
 
-	@Autowired
-	RoomService roomService;
-
-	@Autowired
-	UserService userService;
-
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+
 		System.out.println("session ID : " + session);
 		// 소켓 연결
 		super.afterConnectionEstablished(session);
 		boolean flag = false;
 		String url = session.getUri().toString();
 		System.out.println(url);
-		String room_id = url.split("/renewing/")[1];
+		String room_id = String.valueOf(url.split("/coordinating/")[1]);
 
 		System.out.println(room_id);
 
@@ -68,11 +56,11 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 			rls.add(map);
 		}
 
-//		// 세션등록이 끝나면 발급받은 세션ID값의 메시지를 발송한다.
-//		JSONObject obj = new JSONObject();
-//		obj.put("type", "getId");
-//		obj.put("sessionId", session.getId());
-//		session.sendMessage(new TextMessage(obj.toJSONString()));
+//			// 세션등록이 끝나면 발급받은 세션ID값의 메시지를 발송한다.
+//			JSONObject obj = new JSONObject();
+//			obj.put("type", "getId");
+//			obj.put("sessionId", session.getId());
+//			session.sendMessage(new TextMessage(obj.toJSONString()));
 	}
 
 	@Override
@@ -89,49 +77,33 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		// 메시지 발송
-		System.out.println("-------------------방 정보 핸들러----------------------");
-
 		String msg = message.getPayload();
 		JSONObject obj = jsonToObjectParser(msg);
 
-		System.out.println("fffff:" + obj.toJSONString());
-
-		// 게임이 시작되고 주고 받는 데이터인지 구분하기!
-		boolean game = (boolean) obj.get("game");
-		System.out.println("game: " + game);
-
-		long t = (long) obj.get("room_id");
-//		int temp_rN = (int) t;
+		String x1 = String.valueOf(obj.get("x1"));
+		System.out.println("x1: " + x1);
+		String x2 = String.valueOf(obj.get("x2"));
+		System.out.println("x2: " + x2);
+		String y1 = String.valueOf(obj.get("y1"));
+		System.out.println("y1: " + y1);
+		String y2 = String.valueOf(obj.get("y2"));
+		System.out.println("y2: " + y2);
+		
 		String rN = String.valueOf(obj.get("room_id")); // 어느 방에 보낼 것 인지.
-		System.out.println("rN: " + rN);
-
-		// 게임방 데이터인 경우
-		if (game) {
-			boolean isturn = (boolean) obj.get("isturn");
-			System.out.println("isTurn: " + isturn);
-			if (isturn) {
-				// 턴 데이터의 경우!!! 턴값증가!!!
-				long turn = (long) obj.get("turn");
-				turn++;
-				obj.put("turn", turn);
-				System.out.println("fffff:" + obj.toJSONString());
-			}
-		}
-
-// 		해당하는 번호의 방 정보 갱신되면 그 방에 들어있는 친구들에게 방 정보 브로드캐스팅.
+		System.out.println("room_id: " + rN);
 
 		HashMap<String, Object> temp = new HashMap<String, Object>();
 
 		if (rls.size() > 0) {
-
 			for (int i = 0; i < rls.size(); i++) {
 				String roomNumber = (String) rls.get(i).get("room_id"); // 세션리스트의 저장된 방번호를 가져와서
 
 				if (roomNumber.equals(rN)) { // 같은값의 방이 존재한다면
-					temp = rls.get(i); // 해당 방번호의 세션리스트의 존재하는 모든 object값을 가져온다.(방에 해당하는 MAP 얻어오는 작업.)
+					temp = rls.get(i); // 해당 방번호의 세션리스트의 존재하는 모든 object값을 가져온다.
 					break;
 				}
 			}
+
 
 			// 해당 방의 세션들만 찾아서 메시지를 발송해준다.
 			for (String k : temp.keySet()) {
@@ -140,20 +112,16 @@ public class RoomSocketHandler extends TextWebSocketHandler {
 				}
 
 				WebSocketSession wss = (WebSocketSession) temp.get(k);
-
 				if (wss != null) {
-
 					try {
 						wss.sendMessage(new TextMessage(obj.toJSONString()));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-
 				}
 			}
 		}
 
-		System.out.println("-------------핸들 텍스트 함수 종료!!!!!---------------");
 	}
 
 	private static JSONObject jsonToObjectParser(String jsonStr) {

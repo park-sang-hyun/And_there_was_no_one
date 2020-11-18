@@ -54,7 +54,6 @@ INSTALLED_APPS = [
 
     # app
     'accounts',
-    'rooms',
 ]
 
 SITE_ID = 1
@@ -99,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'game',
         'USER': 'root',
-        'PASSWORD': '1234',
+        'PASSWORD': 'GAME105',
         'HOST': 'localhost',
         'PORT': '3306',
     }

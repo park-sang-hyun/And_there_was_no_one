@@ -464,6 +464,7 @@ $contentFadeAT: 0.2s;
         text-shadow: 0 0 0 whitesmoke;
     }
 
+
     .text{
         position: absolute;
         top: 5%;
