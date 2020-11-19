@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                        
+<mapper namespace="alarm_mapper"> <!-- mybatis는 namespace필수!! -->
+	<insert id="send" parameterType="com.ssafy.pjt3.dto.Alarm">
+    	insert into alarm(from_id, to_id, content, kind) 
+    	values(#{from_id},#{to_id},#{content},#{kind})
+    </insert>
+    
+    <select id="receive" resultType="com.ssafy.pjt3.dto.Alarm">
+    	select id, from_id, to_id, content, kind from alarm where to_id=#{user_id}
+    </select>
+
+    <delete id="alarmDelete">
+    	delete from alarm where id = #{alarm_id}
+    </delete>
+
+    <select id="findOne" resultType="com.ssafy.pjt3.dto.Alarm">
+    	select * from alarm where id=#{alarm_id}
+    </select>
+
+
+</mapper>

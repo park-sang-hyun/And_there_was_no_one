@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                        
+<mapper namespace="user_mapper"> <!-- mybatis는 namespace필수!! -->
+    <select id="selectPkId" parameterType="String" resultType="int">
+		select id from user where nickname=#{username}
+    </select>
+    
+    <select id="selectUserWithId" resultType="com.ssafy.pjt3.dto.User">
+		select * from user where id=#{user_id}
+    </select>
+    
+	<select id="isLeader" resultType="boolean">
+		select leader from userroom where user_id=#{user_id}
+	</select>
+	
+	<select id="friendList" resultType="com.ssafy.pjt3.dto.Userconnect">
+    	select * from userconnect where user_id = #{user_id}
+     </select>
+	
+	<insert id="friendAccecpt">
+    	insert into userconnect (user_id , friend_id) 
+    	values(#{user_id},#{friend_id})
+     </insert>
+     
+     <delete id="friendDelete">
+    	delete from userconnect where user_id = #{user_id} and friend_id = #{friend_id}
+     </delete>
+	
+	<select id="loginCheck" resultType="int">
+    	select user_id from authtoken_token where user_id = #{user_id}
+     </select>
+     
+     <select id="findAllUser" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		order by score desc
+	</select>
+</mapper>
+
+
+

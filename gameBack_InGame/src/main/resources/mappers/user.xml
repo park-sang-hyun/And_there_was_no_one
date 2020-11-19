@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mappers/hrm.xml -->
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                        
+<mapper namespace="user_mapper"> <!-- mybatis는 namespace필수!! -->
+    <select id="selectPkId" parameterType="String" resultType="int">
+		select id from user where username=#{username}
+    </select>
+    
+	<select id="isLeader" resultType="boolean">
+		select leader from userroom where user_id=#{user_id}
+	</select>
+	
+	<select id="getLeader" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		where id=(select user_id from userroom where room_id=#{room_id} and leader=true);
+	</select>
+	
+	<select id="getUserwithUserId" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		where id=#{user_id}
+	</select>
+	
+	 <update id="changeScore" parameterType="com.ssafy.pjt3.dto.User">
+    	update user 
+     	set playcount=#{playcount},
+     	score=#{score},
+     	wincount=#{wincount}
+     	where id=#{id}
+     </update>
+     
+     <select id="findAllUser" resultType="com.ssafy.pjt3.dto.User">
+		select id, username, nickname, password, playcount, wincount, score
+		from user
+		order by score desc
+	</select>
+</mapper>
+
+
+

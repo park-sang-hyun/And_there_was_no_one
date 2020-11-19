@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                        
+<mapper namespace="room_mapper"> <!-- mybatis는 namespace필수!! -->
+     <select id="selectAll" resultType="room">
+		select * from room where start=false
+     </select>
+
+     <insert id="create" useGeneratedKeys="true" keyProperty="id">
+    	insert into room(title, max_count, cur_count, mode, difficulty, start) 
+    	values(#{title},#{max_count},#{cur_count},#{mode},#{difficulty},#{start})
+     </insert>
+     
+     <insert id="enterRoom" parameterType="com.ssafy.pjt3.dto.UserRoom">
+    	insert into userroom(leader, user_id, room_id) 
+    	values(#{leader},#{user_id},#{room_id})
+     </insert>
+     
+     <update id="curCountPlus">
+     	update room 
+     	set cur_count = cur_count + 1
+     	where id=#{userroom.getRoom_id()}	
+     </update>
+     
+     <select id="findRoomPkId" resultType="int">
+		select room_id from UserRoom where user_id=#{user_id}
+     </select>
+     
+     <select id="findRoomWithUserid" resultType="com.ssafy.pjt3.dto.Room">
+		select r.id, r.title, r.cur_count, r.max_count, r.mode, r.difficulty, r.start
+		from userroom as ur, Room as r
+		where ur.user_id = #{user_id} and ur.room_id = r.id;
+     </select>
+     
+     <select id="findUserInRoom" resultType="com.ssafy.pjt3.dto.User">
+		select u.id, u.username, u.nickname, u.password, u.playcount, u.wincount, u.score
+		from User as u, UserRoom as ur
+		where ur.room_id = #{room_id} and ur.user_id = u.id;
+     </select>
+     
+     <select id="findRoomWithRoomId" resultType="com.ssafy.pjt3.dto.Room">
+		select *
+		from room 
+		where id = #{room_id}
+     </select>
+     
+</mapper>
