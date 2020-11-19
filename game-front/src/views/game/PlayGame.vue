@@ -84,8 +84,8 @@ import aihttp from '@/util/http-ai.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
-const socketURL = 'ws://localhost:8002/chatting';
-const socketPlayURL = 'ws://localhost:8002/renewing';
+const socketURL = 'ws://k3d105.p.ssafy.io:8002/chatting';
+const socketPlayURL = 'ws://k3d105.p.ssafy.io:8002/renewing';
 
 
 export default {

@@ -67,7 +67,7 @@ export default {
         },
 
         connect() {
-            this.socket = new WebSocket(`ws://localhost:8001/chatting?userid=${storage.getItem('id')}`);
+            this.socket = new WebSocket(`ws://k3d105.p.ssafy.io:8001/chatting?userid=${storage.getItem('id')}`);
             this.socket.onopen = () => {
 
                 this.socket.onmessage = ({data}) => {

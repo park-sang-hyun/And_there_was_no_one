@@ -164,8 +164,8 @@ import httplobby from '@/util/http-lobby.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const storage = window.sessionStorage;
-const socketURL = 'ws://localhost:8002/chatting';
-const socketRoomURL = 'ws://localhost:8002/renewing';
+const socketURL = 'ws://k3d105.p.ssafy.io:8002/chatting';
+const socketRoomURL = 'ws://k3d105.p.ssafy.io:8002/renewing';
 
 
 export default {
@@ -433,6 +433,7 @@ export default {
                 // this.chatLogs.push({ event: "연결 완료", data: 'wss://echo.websocket.org'})
                 
                 this.socket.onmessage = ({data}) => {
+                    console.log("received111111");
                     this.chatLogs.push(JSON.parse(data));
                     const chatBox = document.querySelector(".scrollbar-box");
                     chatBox.scrollTop = chatBox.scrollHeight;
