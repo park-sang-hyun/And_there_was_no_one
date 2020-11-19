@@ -1,5 +1,5 @@
 <template>
-  <div class="lobby" >
+  <div id="lobby" >
     <div class="gerstner-2">
       <div class="comp">
         
@@ -79,10 +79,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .lobby /deep/ { 
+  #lobby /deep/ { 
     
     border: none;
-
+    position: fixed;
+    height: 100%;
+    width: 100%;
     background: url('../../assets/images/background.jpg') no-repeat center center fixed;
       -webkit-background-size: cover;
       -moz-background-size: cover;
@@ -103,16 +105,21 @@ export default {
   }
 
   .gerstner-2 {
+    width: 100%;
+    position: absolute;
+
+    // 수직 중앙정렬. 부모요소에서 50% 내린 다음 본인 크기 50%만큼 올림
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
     -webkit-animation: fadein 1s; /* Safari and Chrome */
     display: grid;
     grid-template-columns: 1fr 2.5fr;
-    /* grid-column-gap: 1em; */
-    
-    //background-color: black;
   }
   .comp {
-    display: grid;
     min-width: 300px;
+    margin: auto 0;
   }
   .profile { 
     /* background-color: #ba68c8;  */

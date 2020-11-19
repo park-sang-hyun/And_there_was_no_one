@@ -143,7 +143,6 @@ export default {
 
     // 로그인 요청 - 토큰 받아서 local storage에 넣기
     onLogin() {
-      console.log("나 로그인중!!")
       if (this.isSubmit) {
 
         storage.setItem("token", "");
@@ -158,14 +157,9 @@ export default {
         },
         )
         .then((res) => {
-          console.log(res)
-          console.log(res.data.key)
-          console.log(res.data.user)
           if(res.status) {
-            console.log("enter")
             storage.setItem("token", res.data.key)
             storage.setItem("id", res.data.user)
-            console.log(storage)
           }
           this.goLobby=true;
           this.moveFeed();

@@ -63,10 +63,7 @@ export default {
     mounted() {
       for (var i = 1; i <= 36; i++) {
                 var $piece = document.createElement('div');
-                // console.log("before");
-                // console.log($piece);
                 $piece.classList.add('pop__up__piece');
-                // console.log($piece);
                 
                 // 모달 안에 작은 조각상자들이 3조각으로 컷팅됨
                 this.insertInnerPieces($piece, 3);
@@ -116,7 +113,6 @@ export default {
 
         closeHandler() {
           this.buttonpush1();
-          console.log("sdlkfjl")
             var $popupsCont = document.querySelector('.popups__cont');
             var $popup = document.querySelector('.pop__up');
 
@@ -426,6 +422,7 @@ $contentFadeAT: 0.2s;
   
 }
 .loginImgBox {
+  position: absolute;
   width: 300px;
   height: 300px; 
   border-radius: 70%;
@@ -463,6 +460,7 @@ $contentFadeAT: 0.2s;
         display: inline-block;
         text-shadow: 0 0 0 whitesmoke;
     }
+
 
     .text{
         position: absolute;

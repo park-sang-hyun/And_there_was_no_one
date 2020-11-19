@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- <h5>채팅</h5> -->
-        <div class="chatbox">
+        <div id="chatbox">
 
             <div class="scrollbar-box" id="style-1" >
                 <div class="force-overflow" >
@@ -67,7 +67,7 @@ export default {
         },
 
         connect() {
-            this.socket = new WebSocket(`ws://localhost:8001/chatting?userid=${storage.getItem('id')}`);
+            this.socket = new WebSocket(`ws://k3d105.p.ssafy.io:8001/chatting?userid=${storage.getItem('id')}`);
             this.socket.onopen = () => {
 
                 this.socket.onmessage = ({data}) => {
@@ -91,7 +91,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chatbox {
+#chatbox {
     border-radius: 20px;
     background-color: #aeb0b32f;
     height: 90%;
@@ -99,17 +99,22 @@ export default {
     margin-left:1.9%;
     padding-top: 15px;
     margin-right: 5%;
-    margin-top: 2%
+    margin-top: 5.5%
 }
 form{
     position: relative;
     /* top: 90%; */
-    width: 100%;
+    width: 95%;
     margin-top: 10px;
     margin-left: 28px;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 7px;
 }
 input {
-    width: 82%;
+    width: 86%;
+    height: 25px;
+    margin-top:5px;
     margin-right: 10px;
     background-color: #e2e2e27a;
     border: none;

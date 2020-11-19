@@ -64,7 +64,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 		System.out.println("fffff:" + obj.toJSONString());
 
 		Iterator<String> sessionIds = sessions.keySet().iterator();
-
+		
 		String sessionId = "";
 		
 		while (sessionIds.hasNext()) {
