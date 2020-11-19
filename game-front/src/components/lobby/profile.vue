@@ -1,7 +1,7 @@
 <template>
   <div>
     
-    <div class="profile-wrapper">
+    <div id="profile-wrapper">
       <div>
         <div class="btn_container">
           <button class="button" style="margin-left:2%;" @click="[logout(), buttonpush2()]">게임 종료</button>
@@ -108,17 +108,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+#profile-wrapper {
+  width: 80%;
+  background-color: #aeb0b32f;
+  border-radius: 20px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: 90%;
+  margin-bottom: 30px;
+  margin-left: 10%;
+}
+
 .box {
   padding-left: 3px;
     width: 200px;
     height: 200px; 
     border-radius: 70%;
     overflow: hidden;
-    margin-left:17%;
+    margin:0 auto;
     opacity:0.9;
 }
 .profile {
-  margin-top: 10px;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -130,17 +142,6 @@ export default {
   color :rgba(255, 254, 254, 0.6);
   font-size:15px;
   text-align: center;
-}
-.profile-wrapper {
-  width: 80%;
-  background-color: #aeb0b32f;
-  border-radius: 20px;
-  margin: 15px;
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  height: 90%;
-  margin-left: 10%;
 }
 
 /* 우측정렬용 컨테이너 */

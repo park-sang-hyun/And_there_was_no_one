@@ -72,7 +72,7 @@
         </div>
       </transition>
 
-    <div class="friends-wrapper">
+    <div id="friends-wrapper">
       
       <div class="btn_container" style="justify-content: space-between">
         <h5 style="margin-left:20px; color:rgba(255, 254, 254, 0.7);">친구 목록</h5>
@@ -131,14 +131,6 @@ export default {
   },
 
   created(){
-
-    // sessionStorage에 들어있는 사용자 id 받아오는 부분! 확인용으로 나중에 삭제 예정
-    console.log("id: ");
-    console.log("id: ");
-    console.log("id: ");
-    console.log("id: ");
-    console.log(sessionStorage);
-    console.log("id: " + sessionStorage.getItem("id"));
     // 처음에 lobby 서버에서 http로 친구목록 데이터를 받아옴
     this.getFriendsList(); 
     // this.initWebScoket();
@@ -159,12 +151,9 @@ export default {
       http
       .get("user/friend/list/" + sessionStorage.getItem('id') + "/")
       .then((res) => {
-        console.log("2222222:" + res.data)
         // 아래 내용은 서버 기능 만들고 수정하기 
         // this.friends 변수에 친구 목록 데이터 넣기
         this.friends = res.data;
-        console.log(res.data[0].login);
-        console.log(res.data[0].logout);
         this.loginFriends = res.data[0].login;
         this.logoutFriends = res.data[0].logout;
       })
@@ -215,7 +204,6 @@ export default {
 
     // 친구 추가 요청을 보낼 때
     addFriend() {
-      console.log("1;" +this.friendName);
       // 이름을 입력했을 때만 가능
       if (this.friendName) {
         this.friendName_copy = this.friendName
@@ -229,20 +217,16 @@ export default {
             
           }
           else {
-            console.log("2;" +this.friendName_copy);
-                        //formData안에 값 넣기
+            //formData안에 값 넣기
             let formData = new FormData();
             formData.append("from_id", sessionStorage.getItem("id"));
             formData.append("to_nickname", this.friendName_copy);
-            console.log(this.friendName_copy);
 
             // 스프링으로 친구추가 요청 보내기
             http
             .post("alarm/send/", formData
             )
             .then((res) => {
-              console.log("sdfsxdfgadflkaowieuosadxkljlsd")
-              console.log(res.data)
             })
             this.friendReqStatus = '응답기다림'
           }
@@ -256,7 +240,6 @@ export default {
 
     // 친구 추가 요청 답변을 보낼 때 호출되는 메서드
     friendAns(ans, index) {
-      console.log("Ans: "+ans)
 
       // 로비서버에 소켓으로 친구 추가 요청 응답(ans 매개변수) 보내기 
       // 로비서버에서 user 테이블 안에 있는 친구 정보 수정
@@ -267,14 +250,9 @@ export default {
           formData.append("user_id", sessionStorage.getItem('id'));
           formData.append("friend_id", this.alarms[index].to_id);
           formData.append("alarm_id", this.alarms[index].alarm_id);
-          console.log(formData)
           http  
           .post("user/friend/make", formData)
           .then((res) => {
-            console.log("정보정보");
-            console.log(res.data.object);
-            console.log(res.data.status);
-
             this.getFriendsList(); 
             this.showAlarm(1);
             if(res.data.status === false){
@@ -309,7 +287,6 @@ export default {
         http
         .get(`room/enter/${storage.getItem('id')}/${roomNo}`)
         .then((res) => {
-          console.log(res.data);
           if (res.data.status) {
             this.$router.replace({ name: 'WaitRoom' , params: { roomId: roomNo }});
           } else {
@@ -327,9 +304,6 @@ export default {
         // 서버에 소켓으로 상대방이 요청 취소했다고 전달하기. 
 
 
-
-
-
       }
       this.showModal=false;
       this.friendReqStatus='요청전';
@@ -337,27 +311,8 @@ export default {
 
 
     logout() {
-
-      // 로그아웃 버튼 누르면 여기 함수 실행 잘 되는거 확인함!!!!!!1
-      // 로그아웃 장고 로그아웃 요청을 여기서 보낼지 lobby.vue로 보낼지 대흠님이랑 맞춰보기 
       // 소켓이나 axios로 로그아웃한다고 신호 보내고 로그아웃해야함 
       // 그 다음에 로그인 페이지로 전환
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-      console.log("sdkfjhas;dkfjhaskldjfhaskldjfhksjxcnsdjkzcisdk");
-
 
       // 장고 서버로 로그아웃 요청 보내기 
       let formData = new FormData();
@@ -365,10 +320,6 @@ export default {
       httpCommon
       .post("accounts/deltoken/", formData)
       .then((res) => {
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
-        console.log(res.data);
          httpCommon
         .post("rest-auth/logout/", { 'headers': { 'Authorization': 'Token ' + sessionStorage.getItem('token') }}
           // db에 token 테이블 잘 날아가는지 확인해서 제대로 로그아웃 시키기 
@@ -385,9 +336,7 @@ export default {
     },
 
     refreshFriends(user, status) {
-      console.log("Enter refresh");
       if (status === 'login'){
-        console.log("Enter login friends list");
         for(let i=0; i<this.logoutFriends.length; i++){
           if (this.logoutFriends[i].no === user) {
             this.loginFriends.push(this.logoutFriends.splice(i, 1));
@@ -396,13 +345,11 @@ export default {
         }
       }
       else {
-        console.log("Enter logout friends list");
         for(let i=0; i<this.loginFriends.length; i++){
           if (this.loginFriends[i].no === user) {
             let tmp = this.loginFriends[i];
             this.loginFriends.splice(i, 1);
             this.logoutFriends.push(tmp);
-            console.log(this.logoutFriends)
             break;
           }
         }
@@ -410,15 +357,10 @@ export default {
     },
 
     webSocketSend(Data){
-      console.log("메시지 전송");
       this.websock.send(Data);
-      console.log('1:' + Data)
-      console.log('2:' + this.websock)
-      console.log(this.websock.sessionId)
     },
 
     webSocketClose(e){
-      console.log("소켓 닫기");
       this.websock.close();
     },
 
@@ -429,10 +371,7 @@ export default {
       http
       .get("alarm/receive/" + sessionStorage.getItem('id') + "/")
       .then((res) => {
-        console.log(res.data)
         this.alarms = res.data
-        console.log("alarm: ");
-        console.log(this.alarms)
 
         if (typealarm === 0){
           this.showFriendReq = true;
@@ -448,26 +387,12 @@ export default {
       })
 
       this.reload();
-
       
     },
 
     reload() {
       this.$emit('reload', 'reload');
     }
-
-    // 딜레이 함수. 이거 쓰면 그냥 폴링방식으로 계속 기다림 주의
-    // setTimeOut?은 다를까..? 한번 시도해보자 
-    // delayModal() {
-    //   // 1.5초 뒤에 변수를 바꿔서 응답 메시지 확인히 가능하게
-    //   var gap = 1500;
-    //   var then,now; 
-    //   then=new Date().getTime(); 
-    //   now=then; 
-    //   while((now-then)<gap){ 
-    //     now=new Date().getTime();  // 현재시간을 읽어 함수를 불러들인 시간과의 차를 이용하여 처리 
-    //   } 
-    // }, 
   },
     
 }
@@ -475,7 +400,7 @@ export default {
 
 <style lang="scss" scoped>
 
-  .friends-wrapper {
+  #friends-wrapper {
     border-radius: 20px;
     background-color: #aeb0b32f;
     height: 80%;

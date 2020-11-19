@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="room-wrapper">
+    <div id="room-wrapper">
       <div class="btn_container" style="justify-content: space-between; color:rgba(255, 254, 254, 0.6); margin-left:3%; font-size: 15px;">
         <h3 style="color:white;">방 목록</h3>
         <div>
@@ -228,10 +228,7 @@ export default {
          http
         .get("room/listcount/")
         .then((res) => {
-          console.log("listcount : " + res.data);
-          console.log("listcount : " + this.totalRoom);
           this.totalRoom = res.data;
-          console.log("totalroom : " + this.totalRoom);
           this.pageLen = Math.ceil(this.totalRoom / 6);
         })
         .catch(err => {
@@ -240,8 +237,6 @@ export default {
 
         //this.pageLen = Math.ceil(this.totalRoom / 6);  // 소수점 올림
         //this.pageLen = (this.pageLen < 6) ? this.pageLen : 6; // 보여주는 페이지 최대크기는 6
-        console.log("pageLen: "+this.pageLen);
-        console.log("Enter getRoomInfo");
       },
 
       // 현재 페이지의 룸 정보 받아오는 메서드
@@ -252,9 +247,6 @@ export default {
         http
         .get("room/list/"+this.pageNow)
         .then((res) => {
-          // 받아온 데이터 출력해보고 아래 수정하기
-          console.log(res.data);
-
           //받아온 데이터 roomList에 집어넣기
           for(let i=0; i < 6; i++){
             if (i < res.data.length) {
@@ -275,32 +267,22 @@ export default {
           console.log(err)
         })
 
-        console.log("Enter getRoomList");
-
-        
-
-        console.log("Enter getRoomList");
       },
 
       nextPage() {
         this.pageNow = ((this.pageNow + 1) > this.pageLen) ? this.pageNow : (this.pageNow + 1)
-        console.log("pageNow: "+this.pageNow);
         this.getRoomList();
       },
 
       prevPage() {
         this.pageNow = ((this.pageNow - 1) < 1) ? 1 : (this.pageNow - 1)
-        console.log("pageNow: "+this.pageNow);
         this.getRoomList();
       },
 
       createRoom() {
-        console.log("Enter createRoom");
-
         // this.roomName = "parksanghyun";
         // 방 이름이 기입되면 Room Create 요청 보내기
         if (this.roomName) {
-          console.log("roomname: "+this.roomName)
           
           //임의로 정의
           let user_id = sessionStorage.getItem("id");
@@ -325,9 +307,6 @@ export default {
           .post("room/create", formData)
           .then((res) => {
             //Create요청 후 받은 방 번호로 페이지 이동
-            console.log(res)  
-            console.log(res.data)
-            console.log("방생성 완료");
             this.$router.replace({ name: 'WaitRoom' , params: { roomId: res.data.room_id }});
           })
           .catch(err => {
@@ -356,8 +335,6 @@ export default {
         else if (input === 'up') {
           this.mode = (this.mode >= 2) ? 3 : (this.mode + 1);
         }
-
-        console.log("modemode:     "  + this.mode);
         
       },
 
@@ -368,8 +345,6 @@ export default {
         else if (input === 'up') {
           this.difficulty = (this.difficulty >= 2) ? 3 : (this.difficulty + 1);
         }
-
-        console.log("difficultydifficulty:     "  + this.difficulty);
       },
 
       setPeople(input) {
@@ -379,16 +354,12 @@ export default {
         else if (input === 'up') {
           this.people = (this.people >= 7) ? 8 : (this.people + 1);
         }
-
-        console.log("peoplepeople:     "  + this.people);
       },
 
       random() {
         http
         .get(`room/fastenter`)
         .then((res) => {
-          console.log("12121212: " + res.data);
-          
           this.enterRoom(res.data);
         })
         .catch((err) => {
@@ -398,18 +369,14 @@ export default {
 
       pickRoom(roomNo) {
         this.buttonpush2();
-        console.log("Enter pickRoom: " + roomNo);
         this.enterRoom(roomNo);
       },
 
       enterRoom(roomNo) {
         // Room 들어가기 요청 보내기
-        console.log("Enter enterRoom: " + roomNo);
-
         http
         .get(`room/enter/${storage.getItem('id')}/${roomNo}`)
         .then((res) => {
-          console.log(res.data);
           if (res.data.status) {
             this.$router.replace({ name: 'WaitRoom' , params: { roomId: roomNo }});
           } else {
@@ -449,10 +416,10 @@ export default {
     box-sizing: border-box;
   } */
 
-  .room-wrapper {
-    padding-top: 2.5%;
+  #room-wrapper {
     padding-right: 0%;
     margin-bottom: 30px;
+    margin-top: 0%;
     position: relative;
     min-width: 900px;
     min-height: 400px;

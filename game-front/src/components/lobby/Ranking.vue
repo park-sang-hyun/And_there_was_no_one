@@ -11,7 +11,7 @@
         
         <!-- 스토리 -->
         <div class="main__story">
-            <table style="margin-left:2%;">
+            <table style="transform: translate(-5%, 0%); margin: 0 auto;">
                 <tr>
                     <th style="font-size:20px; color:white; width:20%; text-align:center;">순 서 </th> 
                     <th style="font-size:20px; color:white; width:25%; text-align:center;">닉네임 </th>
@@ -70,7 +70,6 @@ export default {
         }
     },    
     created() {
-        console.log("sdfasjdkfhxc kjsdhzxcusehdiwejef");
         // 보이는 화면 크기 확인
         this.getRankCount();
         this.getRankList();
@@ -106,7 +105,6 @@ export default {
             .get("user/rank/listcount")
             .then((res) => {
                 this.totalRank = res.data;
-                console.log(this.totalRank);
                 this.pageLen = Math.ceil(this.totalRank / 10);
             })
             .catch(err => {
@@ -117,18 +115,8 @@ export default {
             http
             .get("user/rank/list/"+this.pageNow)
             .then((res) => {
-                console.log("rank 길이 : " + res.data.length);
 
                 for(let i=0; i < 10; i++){
-                    // console.log(i + "번째--------- ");
-                    // console.log("id : " + res.data[i].id);
-                    // console.log("nickname : " + res.data[i].nickname);
-                    // console.log("playcount : " + res.data[i].playcount);
-                    // console.log("wincount : " + res.data[i].wincount);
-                    // console.log("rank : " + res.data[i].rank);
-                    // console.log("score : " + res.data[i].score);
-                    // console.log("pagenow : " + this.pageNow);
-
                     if (i < res.data.length) {
                         this.rankList[i].no = (this.pageNow - 1) * 10 + i + 1;
                         this.rankList[i].nickname = res.data[i].nickname;
@@ -147,12 +135,10 @@ export default {
         },
         nextPage() {
         this.pageNow = ((this.pageNow + 1) > this.pageLen) ? this.pageNow : (this.pageNow + 1)
-        console.log("pageNow: "+this.pageNow);
         this.getRankList();
         },
         prevPage() {
             this.pageNow = ((this.pageNow - 1) < 1) ? 1 : (this.pageNow - 1)
-            console.log("pageNow: "+this.pageNow);
             this.getRankList();
         },
     },
@@ -170,13 +156,15 @@ export default {
 
 #LoadingModeRank {
     position: fixed;
-    left: 30px;
-    top: 0;
+    // 중앙정렬. 부모요소에서 50% 내린 다음 본인 크기 50%만큼 올림
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: var(--widthSize);
     height: var(--heightSize);
     min-width:1024px;
     background: repeating-linear-gradient(-45deg, rgb(33, 33, 33), rgb(33, 33, 33) 1px, rgb(10, 10, 10) 0, rgb(10, 10, 10) 10px);
-    background: url('../../assets/images/background.jpg') no-repeat center center fixed;
+    background: url('../../assets/images/background.jpg') no-repeat center center;
       -webkit-background-size: cover;
       -moz-background-size: cover;
       -o-background-size: cover;
@@ -219,10 +207,9 @@ html {background: #88bfd4; text-align: center}
 #menu {
 	list-style: none;
 	padding: 0px; 
-  margin: 0;
 	background: #5c8a9700;
-  margin-left: 43%;
-  margin-top: 20px;
+    margin-left: 45.5%;
+    margin-top: 40px;
 	display: inline-block;
 	height: 50px;
 	overflow: hidden;

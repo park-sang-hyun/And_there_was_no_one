@@ -36,7 +36,6 @@ export default {
     name: "ModeOne",
 
     created() {
-        console.log("sdfasjdkfhxc kjsdhzxcusehdiwejef");
         // 보이는 화면 크기 확인
         window.addEventListener('resize', this.screenResize);
         this.screenResize();
@@ -80,8 +79,10 @@ export default {
 
 #LoadingModeOne {
     position: fixed;
-    left: 0;
-    top: 0;
+    // 중앙정렬. 부모요소에서 50% 내린 다음 본인 크기 50%만큼 올림
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: var(--widthSize);
     height: var(--heightSize);
     min-width:1024px;
