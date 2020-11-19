@@ -1,5 +1,7 @@
 # InGameServer
 
+![Backend_Two](https://img.shields.io/badge/Backend-Spring-blue)  ![java](https://img.shields.io/badge/Language-Java-blue)
+
 >InGameServer는 `Frontend`와 `axios`와 `socket`을 사용해 통신합니다.
 >
 >InGameServer는 Java 언어를 사용해 `Spring`으로 구현되었습니다.
@@ -199,29 +201,31 @@ sequenceDiagram
 
 ### :black_small_square: Vote
 
-> > 투표하기
->
-> ```mermaid
-> sequenceDiagram
-> Vote->>VoteServer: 투표 완료 요청
-> VoteServer->>DB: 투표 정보 저장 요청
-> DB->>VoteServer: 투표 정보 저장 완료 전달
-> VoteServer->>Vote: 투표 완료 전달
-> ```
->
-> > 투표결과 확인
->
-> ```mermaid
-> sequenceDiagram
-> Room->>VoteServer: 현재 룸에 저장된 투표 결과 요청
-> VoteServer->>DB: 현재 룸에 저장된 투표정보 요청
-> DB->>VoteServer: 현대 룸에 저장된 투표정보 전달
-> VoteServer->>Room: 최대 득표수 유저 정보 전달
-> VoteServer->>DB: 현재 룸에 저장된 투표정보 삭제 요청
-> DB->>VoteServer: 현대 룸에 저장된 투표정보 삭제완료 요청
-> ```
->
-> 
+> 게임 플레이 시에 투표 결과를 받아오기 위한 과정
+
+- 투표하기
+
+  ```mermaid
+  sequenceDiagram
+  	Vote->>VoteServer: 투표 완료 요청
+  	VoteServer->>DB: 투표 정보 저장 요청
+  	DB-->>VoteServer: 투표 정보 저장 완료 전달
+  	VoteServer-->>Vote: 투표 완료 전달
+  ```
+
+- 투표 결과 확인
+
+  ```mermaid
+  sequenceDiagram
+  	Room->>VoteServer: 현재 룸에 저장된 투표 결과 요청
+  	VoteServer->>DB: 현재 룸에 저장된 투표정보 요청
+  	DB->>VoteServer: 현대 룸에 저장된 투표정보 전달
+  	VoteServer->>Room: 최대 득표수 유저 정보 전달
+  	VoteServer->>DB: 현재 룸에 저장된 투표정보 삭제 요청
+  	DB->>VoteServer: 현대 룸에 저장된 투표정보 삭제완료 요청
+  ```
+
+  
 
 
 

@@ -1,5 +1,7 @@
 # UserServer
 
+![Backend_One](https://img.shields.io/badge/Backend-Django-green)  ![python](https://img.shields.io/badge/Language-Python-green)
+
 > UserServer는 `Frontend`와 `axios`를 사용해 통신합니다.
 >
 > (다른 Backend 서버들과 직접적으로 통신하지 않습니다.)

@@ -1,6 +1,6 @@
 # README
 
-![Backend_One](https://img.shields.io/badge/Backend-Django-green)  ![Backend_Two](https://img.shields.io/badge/Backend-Spring-blue)  ![Frontend](https://img.shields.io/badge/Frontend-Vue.js-yellow)  ![DB](https://img.shields.io/badge/DB-Mysql-lightgrey)  ![python](https://img.shields.io/badge/Language-Python-green)  ![java](https://img.shields.io/badge/Language-Java-blue)  ![javascript](https://img.shields.io/badge/Language-Javascript-yellow)  ![HTML/CSS](https://img.shields.io/badge/Language-HTML%2FCSS-yellow)  ![sql](https://img.shields.io/badge/Language-sql-lightgrey)    
+![ai](https://img.shields.io/badge/AI-Tensor--flow-red)  ![Backend_One](https://img.shields.io/badge/Backend-Django-green)  ![Backend_Two](https://img.shields.io/badge/Backend-Spring-blue)  ![Frontend](https://img.shields.io/badge/Frontend-Vue.js-yellow)  ![DB](https://img.shields.io/badge/DB-Mysql-lightgrey)  ![python](https://img.shields.io/badge/Language-Python-green)  ![java](https://img.shields.io/badge/Language-Java-blue)  ![javascript](https://img.shields.io/badge/Language-Javascript-yellow)  ![HTML/CSS](https://img.shields.io/badge/Language-HTML%2FCSS-yellow)  ![sql](https://img.shields.io/badge/Language-sql-lightgrey)    
 
 
 
@@ -28,7 +28,7 @@
 
 - 출처
 
-  [1] 한국건강증진개발원(https://www.khealth.or.kr/) 보도자료
+  [1] [한국건강증진개발원](https://www.khealth.or.kr/) 보도자료
 
   [2] https://www.sedaily.com/NewsVIew/1Z6HKWX4WI
 
@@ -210,8 +210,6 @@ gantt
 		Back 추가기능 구현				:done,		des5, 11-13,11-15
 		배포								:done,		des5, 11-11,11-17
 ```
-
-
 
 ### :black_small_square: Developer
 
