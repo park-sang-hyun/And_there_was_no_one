@@ -187,15 +187,10 @@ export default {
         },
         )
         .then((res) => {
-          console.log(res)
-          console.log(res.data.key)
-          console.log(res.data.user)
           if(res.status) {
-            console.log("enter")
             msg = "회원가입되었습니다.";
             storage.setItem("token", res.data.key)
             storage.setItem("id", res.data.user)
-            console.log(storage)
           }
           alert(msg);
           this.moveFeed();
@@ -217,7 +212,6 @@ export default {
 
     nicknameCheck(nick, username) {
       let msg = "";
-      console.log("Enter nickname check")
       if (username === "") {
         alert("아이디를 입력해주세요.");
       }
@@ -228,9 +222,6 @@ export default {
         http
           .get("accounts/nickname/" + nick + "/" + username + "/")
           .then((res) => {
-            console.log(res);
-            console.log(res.data);
-            console.log(res.data.message)
             if(res.data.message === "ok") {
               msg = "아이디와 닉네임 모두 사용 가능합니다.";
               this.nickCheck = true;
