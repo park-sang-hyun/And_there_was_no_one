@@ -1,5 +1,9 @@
 # README
 
+![ai](https://img.shields.io/badge/AI-Tensor--flow-red)  ![Backend_One](https://img.shields.io/badge/Backend-Django-green)  ![Backend_Two](https://img.shields.io/badge/Backend-Spring-blue)  ![Frontend](https://img.shields.io/badge/Frontend-Vue.js-yellow)  ![DB](https://img.shields.io/badge/DB-Mysql-lightgrey)  ![python](https://img.shields.io/badge/Language-Python-green)  ![java](https://img.shields.io/badge/Language-Java-blue)  ![javascript](https://img.shields.io/badge/Language-Javascript-yellow)  ![HTML/CSS](https://img.shields.io/badge/Language-HTML%2FCSS-yellow)  ![sql](https://img.shields.io/badge/Language-sql-lightgrey)    
+
+
+
 ## '그리고 아무도 없었다' 개요
 
 > '그리고 아무도 없었다'는 비언어적으로 소통하며 교류할 수 있는 파티게임입니다.
@@ -24,13 +28,13 @@
 
 - 출처
 
-  [1] 한국건강증진개발원(https://www.khealth.or.kr/) 보도자료
+  [1] [한국건강증진개발원](https://www.khealth.or.kr/) 보도자료
 
   [2] https://www.sedaily.com/NewsVIew/1Z6HKWX4WI
 
 ### Why 그리고 아무도 없었다
 
-> 게임의 설정 상 Shadow가 탐정들에게 걸리지 않는 이상 마지막에 Shadow의 정체를 밝혀주지 않습니다. 그렇기 때문에 결과적으로 마지막엔 아무도 남지 않는다라는 의미로 그리고 아무도 없었다라는 이름으로 탄생하게 되었습니다.
+> 게임의 설정 상 Shadow가 탐정들에게 걸리지 않는 이상 마지막에 Shadow의 정체를 밝히지 않습니다. 그렇기 때문에 결과적으로 마지막엔 아무도 남지 않는다라는 의미로 그리고 아무도 없었다라는 이름으로 탄생하게 되었습니다.
 
 
 
@@ -42,14 +46,14 @@
 
 ## Project Construction
 
-> 해당 프로젝트는 
+> 해당 프로젝트는
 >
 > - BackEnd(`Spring` & `Django`)
 > - FrontEnd(`Vue.js`)
 > - DataBase(`Mysql`)
 > - AI(`Tensorflow(Django)`)
 >
-> 로 구성되어 있습니다
+> 로 총 **5개의 서버**로 구성되어 있습니다
 
 ```python
 📦PJT
@@ -92,7 +96,7 @@
   | LobbyServer  | gameBack_Lobby  | 8001     |
   | InGameServer | gameBack_InGame | 8002     |
   | AIServer     | gameAI          | 8005     |
-  | DB           | -               | 3306     |
+  | DataBase     | -               | 3306     |
 
 
 
@@ -139,13 +143,15 @@
 
 ![첫화면](./output/images/첫화면.png)
 
+### [Beta 홍보 영상 🎞️](https://youtu.be/dCh7_HpKsk4)
+
 
 
 ## 기술 설명
 
-### ERD
+### ERD ![DB](https://img.shields.io/badge/DB-Mysql-lightgrey)
 
-...
+![ERD](./output/database/ERD.png)
 
 ### Wire Frame
 
@@ -153,11 +159,11 @@
 
 
 
-##  Color
+##  Color ![black](https://img.shields.io/badge/-black-black)
 
-> 게임의 컨셉이 `미스터리`인 관계 상 검은색(Black)을 기준으로 어두운 분위기의 탁색을 사용했습니다.
+> 게임의 컨셉이 `미스터리`인 관계 상 **검은색(Black)을 기준**으로 어두운 분위기의 **탁색**을 사용했습니다.
 >
-> 화면의 위에 올라가는 컴포넌트들은 투명도를 적용하여 배경이 비치도록 설정하여 은밀하게 보이는 듯한 효과를 주었습니다.
+> 화면의 위에 올라가는 컴포넌트들은 **투명도를 적용**하여 배경이 비치도록 설정하여 은밀하게 보이는 듯한 효과를 주었습니다.
 
 
 
@@ -171,20 +177,47 @@ gantt
         title 그리고 아무도 없었다
 
 		section 1주차
-		아이디어 선정						:done,		des1, 10-15,10-21
+		아이디어 선정						:done,		des1, 10-14,10-18
 		section 2주차
-		역할분담						  :done,	des1, 10-21,10-22
+		아이디어 선정						:done,		des2, 10-18,10-19
+		프로젝트 구조 만들기					:done,		des2, 10-19,10-20
+		역할분담 및 Jira 생성				:done,		des2, 10-20,10-21
+		와이어프레임						:done,		des2, 10-21,10-23
+		user CRUD(Back-Django)			:done,		des2, 10-22,10-24
+		room CRUD(Back-Django)			:done,		des2, 10-22,10-23
+		socket 공부(Back)					:done,		des2, 10-23,10-25
+		user form(Front)				:done,		des2, 10-22,10-23
+		canvas(Front)					:done,		des3, 10-23,10-26
+		section 3주차
+		프론트, 백 역할 바꾸기				:done,		des3, 10-26,10-26	
+        canvas 마우스 트래킹(stomp)		:done,		des3, 10-26,10-27
+        layout 및 페이지 나누기(Front)		:done,		des3, 10-26,10-28
+        각 페이지 만들기(Front)			:done,		des3, 10-29,10-31
+        room CRUD(Back-Spring)			:done,		des3, 10-26,10-29
+        section 4주차
+        lobby, game CRUD(Back-Spring)	:done,		des4, 10-30,11-06
+        socket 구현						:done,		des4, 11-07,11-10
+        user token 연결(Back-Front)		:done,		des4, 11-01,11-02
+		AI 모델 선정					:done,		des4,	10-19,11-06
+		페이지 별 세부 영역(Front)			:done,		des4, 11-01,11-08
+		section 5주차
+		Front 게임 코드 구현				:done,		des5, 11-08,11-10
+		Front-Back 연결					:done,		des5, 11-09,11-11
+		AI 학습							:done,		des5, 11-07,11-12
+		Front-AI 연결						:done,		des5, 11-12,11-13
+		Front css 완료					:done,		des5, 11-09,11-16
+		Front-Back socket 연결			:done,		des5, 11-12,11-14
+		Back 추가기능 구현				:done,		des5, 11-13,11-15
+		배포								:done,		des5, 11-11,11-17
 ```
-
-
 
 ### :black_small_square: Developer
 
-- 조대흠(conquerer1209@gmail.com): Backend(Spring), 서버 배포
-- 박상현(park03851@naver.com): Backend(Spring), Frontend
-- 김호한(ghgksdk123@naver.com): AI, Backend(Spring)
-- 유수정(yusj1231@gmail.com): Frontend, AI 서버 구현(Django)
-- 황신실(ohgyosin@naver.com): Backend(Django), Frontend
+- 조대흠[📧](conquerer1209@gmail.com): Backend(Spring), 서버 배포
+- 박상현[📧](park03851@naver.com): Backend(Spring), Frontend
+- 김호한[📧](ghgksdk123@naver.com): AI, Backend(Spring)
+- 유수정[📧](yusj1231@gmail.com): Frontend, AI 서버(django) 구현, UCC
+- 황신실[📧](ohgyosin@naver.com): Backend(Django), Frontend
 
 
 

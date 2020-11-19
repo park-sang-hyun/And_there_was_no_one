@@ -1,5 +1,7 @@
 # LobbyServer
 
+![Backend_Two](https://img.shields.io/badge/Backend-Spring-blue)  ![java](https://img.shields.io/badge/Language-Java-blue)
+
 >LobbyServer는 `Frontend`와 `axios`와 `socket`을 사용해 통신합니다.
 >
 >LobbyServer는 Java 언어를 사용해 `Spring`으로 구현되었습니다.

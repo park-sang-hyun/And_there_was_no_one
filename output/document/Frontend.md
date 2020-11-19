@@ -1,6 +1,8 @@
-# Frontend
+# Frontend  
 
-> FrontEnd는 `Vue.js`로 구현되었습니다. (해당 프로젝트는 `vue cli`를 사용해 구축되었습니다.)
+![Frontend](https://img.shields.io/badge/Frontend-Vue.js-yellow)  ![javascript](https://img.shields.io/badge/Language-Javascript-yellow)  ![HTML/CSS](https://img.shields.io/badge/Language-HTML%2FCSS-yellow)
+
+> FrontEnd `Vue.js`로 구현되었습니다. (해당 프로젝트는 `vue cli`를 사용해 구축되었습니다.)
 >
 > BackEnd 및 AI와 `axios`와 `socket`을 사용하여 통신합니다.
 
@@ -364,4 +366,183 @@ UserServer-->PlayGame: 게임 결과 반영 완료 전달
 | InGameServer(WebSocket) -  `Play`    | gameBack_InGame (`Spring`) | 게임 플레이 시 게임의 Play 관련 소켓, 해당 부분에서는 Turn 및 투표 결과 전달로 사용 | /renewing     |
 | `AIServer`                           | gameAI(`Django`)           | AI (어떤 그림을 그린 것인지 판단 후 결과 전달)               | 8005(port)    |
 | `DB`                                 | DataBase                   | 전체 Database                                                | 3306          |
+
+
+
+## Code
+
+### Socket 연결 코드 (ex. Chatting)
+
+```vue
+<template>
+	<div><div class="chat__part">
+            <div class="chatting__area">
+                <div class="scrollbar-box" id="scrollbar__style" >
+                    <div class="force-overflow" >
+                        <br v-for="n in 27" :key="n + 'chatBRKey'"/>
+                        <div v-for="(log, index) in chatLogs" class="log" :key="index + 'chatLogKey'">
+                            <strong style="margin-left: 5px;">{{ log.event }}</strong>: <span style="color: rgb(201, 201, 201);">{{ log.data }}</span>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <select class="custom-select" id="inputMessageSelect" aria-label="Select Chat phrases" style="background-color: rgba(255, 255, 255, 0.3); color: white; border: none;">
+                    <option selected style="color:black;">채팅 문구 선택</option>
+                    <option v-for="(chat, index) in chatList" :value="index" :key="chat + 'chatkey'" style="color:black;">{{ chat }}</option>
+                </select>
+                <div class="input-group-append">
+                    <div class="btn btn-outline-secondary" type="button" @click="chatMessage">Enter</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    
+    data() {
+        return {
+            // 소켓, 채팅 메시지
+            chatMsg: '',
+            chatLogs: [],
+            socket: null,
+        }
+    },
+        
+    
+
+    created() {
+    	this.connect();	   
+    },
+        
+    destroyed() {
+        this.socket.close();
+        this.socketPlay.close();
+        this.audioBtn.pause();
+    },
+        
+    methods: {
+        
+        // 채팅 부분
+        // 소켓 연결
+        connect() {
+            this.socket = new WebSocket(`${socketURL}/${this.game.id}`);
+            this.socket.onopen = () => {
+                
+                this.socket.onmessage = ({data}) => {
+                    this.chatLogs.push(JSON.parse(data));
+                    const chatBox = document.querySelector(".scrollbar-box");
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                };
+            };
+        },
+
+        // 채팅 버튼
+        chatMessage() {
+            var s = document.getElementById("inputMessageSelect");
+            var idx = s.options[s.selectedIndex].value;
+            if (this.chatList[idx] === undefined) {
+                alert('메시지를 선택해주세요');
+            } else {
+                this.socket.send(JSON.stringify({ event: this.myNickname, data: this.chatList[idx], room_id: this.game.id }));
+            }
+        },
+    }
+</script>
+```
+
+
+
+### Session 사용 시 로그인 확인 후 돌리는 코드
+
+```javascript
+import Auth from './views/user/Auth.vue'
+
+// 로그인이 필요한 경우엔 requireAuth 를 사용한다. beforeEnter: requireAuth()
+const requireAuth = () => (to, from, next) => {
+    let id = window.sessionStorage.getItem('id');
+    let token = window.sessionStorage.getItem('token');
+
+    if(id && token) {
+        return next();
+    } else {
+        window.sessionStorage.clear();
+        return next('/');
+    }
+};
+
+// 이미 로그인을 한 경우에는 getAuth 를 사용한다. beforeEnter: getAuth()
+const getAuth = () => (to, from, next) => {
+    let id = window.sessionStorage.getItem('id');
+    let token = window.sessionStorage.getItem('token');
+
+    if(id && token) {
+        return next('/lobby');
+    } else {
+        window.sessionStorage.clear();
+        return next();
+    }
+};
+
+
+export default [
+    // test
+    {
+        path : '/',
+        name : 'Auth',
+        component : Auth,
+        beforeEnter: getAuth()
+    },
+]
+```
+
+
+
+### 하위 컴포넌트 메서드 호출하기(ref)
+
+```vue
+<template>
+    <div id="PlayGame">
+        <div v-if="isMode">
+            <ModeOne @imgFile="sendAI" ref="modeOne" />
+        </div>
+    </div>
+</template>
+
+<script>
+	methods: {
+        this.$refs.modeOne.$refs.draw.resetCanvas();
+    }
+</script>
+```
+
+- 해당 컴포넌트에 `ref = {호출할 이름}` 을 건 후에 `this.$refs.{호출할 이름}.{해당 컴포넌트 메서드명}()`으로 호출할 수 있다.
+
+
+
+### 하위 컴포넌트에서 상위 컴포넌트로 올리기(emit)
+
+```vue
+<!-- 상위 컴포넌트의 template-->
+<template>
+    <div id="PlayGame">
+        <div v-if="isMode">
+            <ModeOne @imgFile="sendAI" ref="modeOne" />
+        </div>
+    </div>
+</template>
+```
+
+```vue
+<!-- 하위 컴포넌트-->
+<script>
+    methods: {
+		imgFile(image) {
+    		this.$emit('imgFile', image);
+		},
+    }
+</script>
+```
 
