@@ -317,13 +317,14 @@ sequenceDiagram
 
 
 
-### :black_small_square: WebSocket
+### :black_small_square: WebSocket(대기방 채팅)
 
-> ?
+> 대기방에 있는 유저끼리 채팅을 하는 프로세스
 
 ```mermaid
 sequenceDiagram
-	WebSocket->>?: ..?
-
+	WebSocket(frontend)->>ChatSocketHandler(afterConnectionEstablished): room_id 전송, 웹소켓 세션 전송(같은 방으로 묶어주기)
+    WebSocket(frontend)->>ChatSocketHandler(handleTextMessage): JSON(채팅 데이터 전송) 
+    ChatSocketHandler(handleTextMessage)-->>WebSocket(frontend):JSON(같은방에 있는 유저들에게 채팅 데이터 전송)
 ```
 
