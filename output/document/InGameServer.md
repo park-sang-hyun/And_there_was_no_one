@@ -176,25 +176,52 @@
 
 ### :black_small_square: Game
 
-> ?
+> 게임 전체 동작의 과정
 
 ```mermaid
 sequenceDiagram
 
-	GameController->>?: ..?
+	Controller->>Service: Game Start
+	Controller->>Service: Game End
+	Controller->>Service: Room Update
+	Controller->>Service: Leader Mandate
+	Service->>Repository: 
+	Repository->>xml: 
+	xml->>DB: 
+	DB->>xml: 
+	xml->>Repository: 
+	Repository->>Service: 
+	Service->>Controller: Game Start
+	Service->>Controller: Game End
+	Service->>Controller: Room Update
+	Service->>Controller: Leader Mandate
 ```
 
 ### :black_small_square: Vote
 
-> ?
-
-```mermaid
-sequenceDiagram
-	VoteController->>?: ..?
-
-```
-
-
+> > 투표하기
+>
+> ```mermaid
+> sequenceDiagram
+> Vote->>VoteServer: 투표 완료 요청
+> VoteServer->>DB: 투표 정보 저장 요청
+> DB->>VoteServer: 투표 정보 저장 완료 전달
+> VoteServer->>Vote: 투표 완료 전달
+> ```
+>
+> > 투표결과 확인
+>
+> ```mermaid
+> sequenceDiagram
+> Room->>VoteServer: 현재 룸에 저장된 투표 결과 요청
+> VoteServer->>DB: 현재 룸에 저장된 투표정보 요청
+> DB->>VoteServer: 현대 룸에 저장된 투표정보 전달
+> VoteServer->>Room: 최대 득표수 유저 정보 전달
+> VoteServer->>DB: 현재 룸에 저장된 투표정보 삭제 요청
+> DB->>VoteServer: 현대 룸에 저장된 투표정보 삭제완료 요청
+> ```
+>
+> 
 
 ### :black_small_square: Draw
 
