@@ -1,5 +1,9 @@
 # README
 
+![Backend_One](https://img.shields.io/badge/Backend-Django-green)  ![Backend_Two](https://img.shields.io/badge/Backend-Spring-blue)  ![Frontend](https://img.shields.io/badge/Frontend-Vue.js-yellow)  ![DB](https://img.shields.io/badge/DB-Mysql-lightgrey)  ![python](https://img.shields.io/badge/Language-Python-green)  ![java](https://img.shields.io/badge/Language-Java-blue)  ![javascript](https://img.shields.io/badge/Language-Javascript-yellow)  ![HTML/CSS](https://img.shields.io/badge/Language-HTML%2FCSS-yellow)  ![sql](https://img.shields.io/badge/Language-sql-lightgrey)    
+
+
+
 ## '그리고 아무도 없었다' 개요
 
 > '그리고 아무도 없었다'는 비언어적으로 소통하며 교류할 수 있는 파티게임입니다.
@@ -30,7 +34,7 @@
 
 ### Why 그리고 아무도 없었다
 
-> 게임의 설정 상 Shadow가 탐정들에게 걸리지 않는 이상 마지막에 Shadow의 정체를 밝혀주지 않습니다. 그렇기 때문에 결과적으로 마지막엔 아무도 남지 않는다라는 의미로 그리고 아무도 없었다라는 이름으로 탄생하게 되었습니다.
+> 게임의 설정 상 Shadow가 탐정들에게 걸리지 않는 이상 마지막에 Shadow의 정체를 밝히지 않습니다. 그렇기 때문에 결과적으로 마지막엔 아무도 남지 않는다라는 의미로 그리고 아무도 없었다라는 이름으로 탄생하게 되었습니다.
 
 
 
@@ -139,13 +143,15 @@
 
 ![첫화면](./output/images/첫화면.png)
 
+### [Beta 홍보 영상 🎞️](https://youtu.be/dCh7_HpKsk4)
+
 
 
 ## 기술 설명
 
-### ERD
+### ERD ![DB](https://img.shields.io/badge/DB-Mysql-lightgrey)
 
-![ERD](./output/images/ERD.png)
+![ERD](./output/database/ERD.png)
 
 ### Wire Frame
 
@@ -153,11 +159,11 @@
 
 
 
-##  Color
+##  Color ![black](https://img.shields.io/badge/-black-black)
 
-> 게임의 컨셉이 `미스터리`인 관계 상 검은색(Black)을 기준으로 어두운 분위기의 탁색을 사용했습니다.
+> 게임의 컨셉이 `미스터리`인 관계 상 **검은색(Black)을 기준**으로 어두운 분위기의 **탁색**을 사용했습니다.
 >
-> 화면의 위에 올라가는 컴포넌트들은 투명도를 적용하여 배경이 비치도록 설정하여 은밀하게 보이는 듯한 효과를 주었습니다.
+> 화면의 위에 올라가는 컴포넌트들은 **투명도를 적용**하여 배경이 비치도록 설정하여 은밀하게 보이는 듯한 효과를 주었습니다.
 
 
 
@@ -190,13 +196,15 @@ gantt
         room CRUD(Back-Spring)			:done,		des3, 10-26,10-29
         section 4주차
         lobby, game CRUD(Back-Spring)	:done,		des4, 10-30,11-06
-        socket 구현						:done,		des4, 10-07,11-10
+        socket 구현						:done,		des4, 11-07,11-10
         user token 연결(Back-Front)		:done,		des4, 11-01,11-02
 		AI 모델 선정					:done,		des4,	10-19,11-06
 		페이지 별 세부 영역(Front)			:done,		des4, 11-01,11-08
 		section 5주차
-		Front-Back 연결					:done,		des5, 11-09,11-11
 		Front 게임 코드 구현				:done,		des5, 11-08,11-10
+		Front-Back 연결					:done,		des5, 11-09,11-11
+		AI 학습							:done,		des5, 11-07,11-12
+		Front-AI 연결						:done,		des5, 11-12,11-13
 		Front css 완료					:done,		des5, 11-09,11-16
 		Front-Back socket 연결			:done,		des5, 11-12,11-14
 		Back 추가기능 구현				:done,		des5, 11-13,11-15
