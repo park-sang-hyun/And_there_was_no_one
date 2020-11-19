@@ -81,7 +81,8 @@
   - [AIServer (클릭 시 이동)](./output/document/AIServer.md)
   - [InGameServer (클릭 시 이동)](./output/document/InGameServer.md)
   - [LobbyServer (클릭 시 이동)](./output/document/LobbyServer.md)
-  - [AlarmServer (클릭시 이동)](./output/document/AlarmServer.md)
+  
+    
   
 - 각 서버의 포트 번호
 
