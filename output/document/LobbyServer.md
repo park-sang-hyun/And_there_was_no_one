@@ -275,11 +275,22 @@ sequenceDiagram
 
 ### :black_small_square: Room
 
-> ?
+> 게임방의 동작 과정
 
 ```mermaid
 sequenceDiagram
-	RoomController->>?: ..?
+	Controller->>Service: Room CRUD
+	Controller->>Service: 친구가 초대시 입장
+	Controller->>Service: 빠른 입장
+	Service->>Repository: 
+	Repository->>xml: 
+	xml->>DB: 
+	DB->>xml: 
+	xml->>Repository: 
+	Repository->>Service: 
+	Service->>Controller: Room CRUD
+	Service->>Controller: 친구가 초대시 입장
+	Service->>Controller: 빠른 입장
 
 ```
 
@@ -287,23 +298,33 @@ sequenceDiagram
 
 ### :black_small_square: User
 
-> ?
+> 유저의 동작 과정
 
 ```mermaid
 sequenceDiagram
-	UserController->>?: ..?
+	Controller->>Service: User CRUD
+	Controller->>Service: Rank Read
+	Service->>Repository: 
+	Repository->>xml: 
+	xml->>DB: 
+	DB->>xml: 
+	xml->>Repository: 
+	Repository->>Service: 
+	Service->>Controller: User CRUD
+	Service->>Controller: Rank Read
 
 ```
 
 
 
-### :black_small_square: WebSocket
+### :black_small_square: WebSocket(대기방 채팅)
 
-> ?
+> 대기방에 있는 유저끼리 채팅을 하는 프로세스
 
 ```mermaid
 sequenceDiagram
-	WebSocket->>?: ..?
-
+	WebSocket(frontend)->>ChatSocketHandler(afterConnectionEstablished): room_id 전송, 웹소켓 세션 전송(같은 방으로 묶어주기)
+    WebSocket(frontend)->>ChatSocketHandler(handleTextMessage): JSON(채팅 데이터 전송) 
+    ChatSocketHandler(handleTextMessage)-->>WebSocket(frontend):JSON(같은방에 있는 유저들에게 채팅 데이터 전송)
 ```
 
